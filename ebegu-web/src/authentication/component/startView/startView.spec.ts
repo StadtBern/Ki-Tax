@@ -48,7 +48,7 @@ describe('startView', function () {
         mockPrincipal = new TSUser();
         mockPrincipal.nachname = 'mockprincipal';
         mockPrincipal.vorname = 'tester';
-        mockPrincipal.role = TSRole.GESUCHSTELLER;
+        mockPrincipal.currentBerechtigung.role = TSRole.GESUCHSTELLER;
     });
 
     it('should be defined', function () {
@@ -73,7 +73,7 @@ describe('startView', function () {
             expect(state.go).toHaveBeenCalledWith('gesuchstellerDashboard');
         });
         it('should go to pendenzen if role is sachbearbeiter ja', function () {
-            mockPrincipal.role = TSRole.SACHBEARBEITER_JA;
+            mockPrincipal.currentBerechtigung.role = TSRole.SACHBEARBEITER_JA;
             spyOn(authService, 'getPrincipal').and.returnValue(mockPrincipal);
             spyOn(state, 'go');
             startViewController.$onInit();

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
@@ -154,9 +155,10 @@ public class EBEGUTokenAuthenticator implements TokenAuthenticator {
 	@Override
 	public void removeLoginToken() {
 		//this method is never actually called from our CookieTokenAuthModule
-		authService.logout(user.getAuthToken());
+		authService.logoutAndDelete(user.getAuthToken());
 	}
 
+	@Nullable
 	@SuppressFBWarnings("NM_CONFUSING")
 	@Override
 	public String getUserName() {

@@ -98,10 +98,11 @@
                                 </dv-loading-button>
                             </div>
                             <div class="col-md-4 ">
-                                <a id="cancelLink" unsaved-warning-clear
-                                   ng-click="vm.resetForm(); form.$setPristine();form.$setUntouched();">
+                                <dv-loading-button type="submit"
+                                                   button-click="vm.resetForm(); form.$setPristine();form.$setUntouched();"
+                                                   button-class="cancel-button">
                                     <span data-translate="CANCEL"></span>
-                                </a>
+                                </dv-loading-button>
                             </div>
                         </div>
                 </form>

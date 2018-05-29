@@ -37,6 +37,8 @@ public enum ReportVorlage {
 		MergeFieldKanton.class),
 	VORLAGE_REPORT_MITARBEITERINNEN("/reporting/Mitarbeiterinnen.xlsx", "Mitarbeiterinnen.xlsx", Constants.DATA,
 		MergeFieldMitarbeiterinnen.class),
+	VORLAGE_REPORT_BENUTZER("/reporting/Benutzer.xlsx", "Benutzer.xlsx", Constants.DATA,
+		MergeFieldBenutzer.class),
 	VORLAGE_REPORT_ZAHLUNG_AUFTRAG("/reporting/ZahlungAuftrag.xlsx", "ZahlungAuftrag.xlsx", Constants.DATA,
 		MergeFieldZahlungAuftrag.class),
 	VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE("/reporting/ZahlungAuftragPeriode.xlsx", "ZahlungAuftragPeriode.xlsx", Constants.DATA,

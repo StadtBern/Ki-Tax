@@ -452,12 +452,13 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			Join<InstitutionStammdaten, Institution> institutionJoin = null;
 			Join<Betreuung, InstitutionStammdaten> institutionstammdatenJoin = null;
 
-			if (benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT
-				|| benutzer.getRole() == UserRole.SACHBEARBEITER_INSTITUTION
-				|| benutzer.getRole() == UserRole.SCHULAMT
-				|| benutzer.getRole() == UserRole.ADMINISTRATOR_SCHULAMT
-				|| benutzer.getRole() == UserRole.ADMIN
-				|| benutzer.getRole() == UserRole.SACHBEARBEITER_JA) {
+			if (principalBean.isCallerInAnyOfRole(
+					UserRole.SACHBEARBEITER_TRAEGERSCHAFT,
+					UserRole.SACHBEARBEITER_INSTITUTION,
+					UserRole.SCHULAMT,
+					UserRole.ADMINISTRATOR_SCHULAMT,
+					UserRole.ADMIN,
+					UserRole.SACHBEARBEITER_JA)) {
 				// Join all the relevant relations only when the User belongs to Admin, JA, Schulamt, Institution or Traegerschaft
 				SetJoin<Gesuch, KindContainer> kindContainers = root.join(Gesuch_.kindContainers, JoinType.LEFT);
 				SetJoin<KindContainer, Betreuung> betreuungen = kindContainers.join(KindContainer_.betreuungen, JoinType.LEFT);
@@ -488,24 +489,25 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 			// Alle AUSSER Gesuchsteller, Institution und Trägerschaft muessen im Status eingeschraenkt werden,
 			// d.h. sie duerfen IN_BEARBEITUNG_GS und FREIGABEQUITTUNG NICHT sehen
-			if (!(benutzer.getRole() == UserRole.GESUCHSTELLER
-				|| benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT
-				|| benutzer.getRole() == UserRole.SACHBEARBEITER_INSTITUTION)) {
+			if (!(principalBean.isCallerInAnyOfRole(
+					UserRole.GESUCHSTELLER,
+					UserRole.SACHBEARBEITER_TRAEGERSCHAFT,
+					UserRole.SACHBEARBEITER_INSTITUTION))) {
 				// Nur GS darf ein Gesuch sehen, das sich im Status BEARBEITUNG_GS oder FREIGABEQUITTUNG befindet
 				predicatesToUse.add(root.get(Gesuch_.status).in(AntragStatus.IN_BEARBEITUNG_GS, AntragStatus.FREIGABEQUITTUNG).not());
 			}
 
 			if (institutionJoin != null) {
 				// only if the institutionJoin was set
-				if (benutzer.getRole() == UserRole.SACHBEARBEITER_TRAEGERSCHAFT) {
+				if (principalBean.isCallerInRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT)) {
 					predicatesToUse.add(cb.equal(institutionJoin.get(Institution_.traegerschaft), benutzer.getTraegerschaft()));
 				}
-				if (benutzer.getRole() == UserRole.SACHBEARBEITER_INSTITUTION) {
+				if (principalBean.isCallerInRole(UserRole.SACHBEARBEITER_INSTITUTION)) {
 					// es geht hier nicht um die institutionJoin des zugewiesenen benutzers sondern um die institutionJoin des eingeloggten benutzers
 					predicatesToUse.add(cb.equal(institutionJoin, benutzer.getInstitution()));
 				}
 			}
-			if (benutzer.getRole() == UserRole.GESUCHSTELLER) {
+			if (principalBean.isCallerInRole(UserRole.GESUCHSTELLER)) {
 				// Keine Papier-Antraege, die noch nicht verfuegt sind
 				Predicate predicatePapier = cb.equal(root.get(Gesuch_.eingangsart), Eingangsart.PAPIER);
 				Predicate predicateStatus = root.get(Gesuch_.status).in(AntragStatus.getAllVerfuegtStates()).not();
@@ -674,7 +676,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				&& (verantwortlicher.get().getRole().isRoleJugendamt() || verantwortlicher.get().getRole().isSuperadmin())
 				&& (gesuch.getFall().getVerantwortlicher() == null || !onlyIfNotSet)) {
 				if (persist) {
-					fallService.setVerantwortlicher(gesuch.getFall().getId(), verantwortlicher.get());
+					fallService.setVerantwortlicherJA(gesuch.getFall().getId(), verantwortlicher.get());
 				}
 				gesuch.getFall().setVerantwortlicher(verantwortlicher.get());
 				hasVerantwortlicheChanged = true;

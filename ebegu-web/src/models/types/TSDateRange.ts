@@ -40,4 +40,11 @@ export class TSDateRange {
     set gueltigBis(value: moment.Moment) {
         this._gueltigBis = value;
     }
+
+    /**
+     * Returns true if the given date is in the daterange of the current TSDateRange object.
+     */
+    public isInDateRange(date: moment.Moment): boolean {
+        return date.isBefore(this.gueltigBis) && date.isAfter(this.gueltigAb);
+    }
 }

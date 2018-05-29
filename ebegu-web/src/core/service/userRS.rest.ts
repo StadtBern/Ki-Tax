@@ -13,10 +13,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IEntityRS} from '../../core/service/iEntityRS.rest';
 import {IHttpService, ILogService, IPromise} from 'angular';
-import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import TSBerechtigungHistory from '../../models/TSBerechtigungHistory';
 import TSUser from '../../models/TSUser';
+import TSUserSearchresultDTO from '../../models/TSUserSearchresultDTO';
+import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import {IEntityRS} from './iEntityRS.rest';
 
 export default class UserRS implements IEntityRS {
     serviceURL: string;
@@ -54,5 +56,65 @@ export default class UserRS implements IEntityRS {
             this.$log.debug('PARSING user REST array object', response.data);
             return this.ebeguRestUtil.parseUserList(response.data);
         });
+    }
+
+    public searchUsers(userSearch: any): IPromise<TSUserSearchresultDTO> {
+        return this.http.post(this.serviceURL + '/search/', userSearch, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            this.$log.debug('PARSING benutzer REST array object', response.data);
+            return new TSUserSearchresultDTO(this.ebeguRestUtil.parseUserList(response.data.benutzerDTOs), response.data.paginationDTO.totalItemCount);
+        });
+    }
+
+    public findBenutzer(username: string): IPromise<TSUser> {
+        return this.http.get(this.serviceURL + '/username/' + encodeURIComponent(username))
+            .then((response: any) => {
+                this.$log.debug('PARSING benutzer REST object ', response.data);
+                return this.ebeguRestUtil.parseUser(new TSUser(), response.data);
+            });
+    }
+
+    public inactivateBenutzer(user: TSUser): IPromise<TSUser> {
+        let userRest = this.ebeguRestUtil.userToRestObject({}, user);
+        return this.http.put(this.serviceURL + '/inactivate/', userRest, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+                return this.ebeguRestUtil.parseUser(new TSUser(), response.data);
+        });
+    }
+
+    public reactivateBenutzer(user: TSUser): IPromise<TSUser> {
+        let userRest = this.ebeguRestUtil.userToRestObject({}, user);
+        return this.http.put(this.serviceURL + '/reactivate/', userRest, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.ebeguRestUtil.parseUser(new TSUser(), response.data);
+        });
+    }
+
+    public saveBenutzer(user: TSUser): IPromise<TSUser> {
+        let userRest = this.ebeguRestUtil.userToRestObject({}, user);
+        return this.http.put(this.serviceURL + '/save/', userRest, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response: any) => {
+            return this.ebeguRestUtil.parseUser(new TSUser(), response.data);
+        });
+    }
+
+    public getBerechtigungHistoriesForBenutzer(username: string): IPromise<TSBerechtigungHistory[]> {
+        return this.http.get(this.serviceURL + '/berechtigunghistory/' + encodeURIComponent(username))
+            .then((response: any) => {
+                this.$log.debug('PARSING benutzer REST object ', response.data);
+                return this.ebeguRestUtil.parseBerechtigungHistoryList(response.data);
+            });
     }
 }

@@ -51,6 +51,7 @@ import ch.dvbern.ebegu.authentication.AuthLoginElement;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
@@ -153,11 +154,22 @@ public class AuthResource {
 				loginElement.getNachname(), loginElement.getVorname(), loginElement.getEmail(), validRole);
 
 			// Der Benutzer wird gesucht. Wenn er noch nicht existiert wird er erstellt und wenn ja dann aktualisiert
-			Benutzer benutzer = new Benutzer();
+			Benutzer benutzer = null;
 			Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(loginElement.getUsername());
 			if (optBenutzer.isPresent()) {
 				benutzer = optBenutzer.get();
+				// Damit wird kein neues Element erstellt, sondern das bestehende "verändert". Führt sonst zu einem
+				// Löschen und Wiedereinfügen in der History-Tabelle
+				loginElement.getBerechtigungen().iterator().next().setId(benutzer.getCurrentBerechtigung().getId());
+			} else {
+				benutzer = new Benutzer();
+				Berechtigung localloginBerechtigung = new Berechtigung();
+				// Wir sind hier im locallogin: Die dafür erstellte Berechtigung ist defaultmässig aktiv
+				localloginBerechtigung.setBenutzer(benutzer);
+				benutzer.getBerechtigungen().add(localloginBerechtigung);
 			}
+			// Achtung: Damit wird der bereits vorhandene Benutzer wieder mit den Daten aus dem LocalLogin überschrieben!
+			// Dies ist aber gewünschtes Verhalten: Wenn wir uns mit dem Admin-Link einloggen, wollen wir immer Admin sein.
 			benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
 
 			Optional<AuthAccessElement> accessElement = authService.login(login);
@@ -195,9 +207,9 @@ public class AuthResource {
 	private JaxAuthAccessElementCookieData convertToJaxAuthAccessElement(AuthAccessElement access) {
 		return new JaxAuthAccessElementCookieData(
 			access.getAuthId(),
-			String.valueOf(access.getNachname()),
-			String.valueOf(access.getVorname()),
-			String.valueOf(access.getEmail()),
+			access.getNachname(),
+			access.getVorname(),
+			access.getEmail(),
 			String.valueOf(access.getRole()));
 	}
 
@@ -215,7 +227,7 @@ public class AuthResource {
 				String authToken = Objects.requireNonNull(authTokenCookie.getValue());
 				boolean cookieSecure = isCookieSecure();
 
-				if (authService.logout(authToken)) {
+				if (authService.logoutAndDelete(authToken)) {
 					// Respond with expired cookies
 					NewCookie authCookie = expireCookie(AuthConstants.COOKIE_AUTH_TOKEN, cookieSecure, true);
 					NewCookie xsrfCookie = expireCookie(AuthConstants.COOKIE_XSRF_TOKEN, cookieSecure, false);

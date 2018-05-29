@@ -13,11 +13,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DateUtil from '../utils/DateUtil';
+import EbeguUtil from '../utils/EbeguUtil';
 import {TSAmt} from './enums/TSAmt';
 import {rolePrefix, TSRole} from './enums/TSRole';
+import TSBerechtigung from './TSBerechtigung';
+import TSInstitution from './TSInstitution';
 import {TSMandant} from './TSMandant';
 import {TSTraegerschaft} from './TSTraegerschaft';
-import TSInstitution from './TSInstitution';
 
 export default class TSUser {
 
@@ -27,23 +30,30 @@ export default class TSUser {
     private _password: string;
     private _email: string;
     private _mandant: TSMandant;
-    private _traegerschaft: TSTraegerschaft;
-    private _institution: TSInstitution;
-    private _role: TSRole;
     private _amt: TSAmt;
+    private _gesperrt: boolean;
+
+    private _currentBerechtigung: TSBerechtigung;
+    private _berechtigungen: Array<TSBerechtigung> = [];
+
 
     constructor(vorname?: string, nachname?: string, username?: string, password?: string, email?: string,
-                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution, amt?: TSAmt) {
+                mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution,
+                amt?: TSAmt, gesperrt?: boolean) {
         this._vorname = vorname;
         this._nachname = nachname;
         this._username = username;
         this._password = password;
         this._email = email;
         this._mandant = mandant;
-        this._role = role;
-        this._traegerschaft = traegerschaft;
-        this._institution = institution;
         this._amt = amt;
+        this._gesperrt = gesperrt;
+        // Berechtigung
+        this._currentBerechtigung = new TSBerechtigung();
+        this._currentBerechtigung.role = role;
+        this._currentBerechtigung.institution = institution;
+        this._currentBerechtigung.traegerschaft = traegerschaft;
+        this._berechtigungen.push(this._currentBerechtigung);
     }
 
     get nachname(): string {
@@ -94,30 +104,6 @@ export default class TSUser {
         this._mandant = value;
     }
 
-    get role(): TSRole {
-        return this._role;
-    }
-
-    set role(value: TSRole) {
-        this._role = value;
-    }
-
-    get traegerschaft(): TSTraegerschaft {
-        return this._traegerschaft;
-    }
-
-    set traegerschaft(value: TSTraegerschaft) {
-        this._traegerschaft = value;
-    }
-
-    get institution(): TSInstitution {
-        return this._institution;
-    }
-
-    set institution(value: TSInstitution) {
-        this._institution = value;
-    }
-
     get amt(): TSAmt {
         if (!this._amt) {
             this._amt = this.analyseAmt();
@@ -129,12 +115,46 @@ export default class TSUser {
         this._amt = value;
     }
 
+    get gesperrt(): boolean {
+        return this._gesperrt;
+    }
+
+    set gesperrt(value: boolean) {
+        this._gesperrt = value;
+    }
+
+    get berechtigungen(): Array<TSBerechtigung> {
+        return this._berechtigungen;
+    }
+
+    set berechtigungen(value: Array<TSBerechtigung>) {
+        this._berechtigungen = value;
+    }
+
+    get currentBerechtigung(): TSBerechtigung {
+        if (EbeguUtil.isNullOrUndefined(this._currentBerechtigung)) {
+            for (let obj of this.berechtigungen) {
+                if (obj.gueltigkeit.isInDateRange(DateUtil.now())) {
+                    this._currentBerechtigung = obj;
+                }
+            }
+        }
+        if (!this._currentBerechtigung) {
+            console.log('ERROR - Benutzer {} hat keine Berechtigung!', this.username);
+        }
+        return this._currentBerechtigung;
+    }
+
+    set currentBerechtigung(value: TSBerechtigung) {
+        this._currentBerechtigung = value;
+    }
+
     getFullName(): string {
         return (this.vorname ? this.vorname : '') + ' ' + (this.nachname ? this.nachname : '');
     }
 
     getRoleKey(): string {
-        return rolePrefix() + this.role;
+        return rolePrefix() + this.currentBerechtigung.role;
     }
 
     /**
@@ -144,7 +164,7 @@ export default class TSUser {
      * ACHTUNG Diese Logik existiert auch im Server UserRole. Aenderungen muessen in beiden Orten gemacht werden.
      */
     private analyseAmt(): TSAmt {
-        switch (this.role) {
+        switch (this.currentBerechtigung.role) {
             case TSRole.SACHBEARBEITER_JA:
             case TSRole.ADMIN:
             case TSRole.SUPER_ADMIN:
@@ -155,5 +175,9 @@ export default class TSUser {
             default:
                 return TSAmt.NONE;
         }
+    }
+
+    public getCurrentRole() {
+        return this.currentBerechtigung.role;
     }
 }

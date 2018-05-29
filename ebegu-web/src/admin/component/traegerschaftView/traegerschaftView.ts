@@ -14,23 +14,18 @@
  */
 
 import {IComponentOptions} from 'angular';
-import './traegerschaftView.less';
-import {TSTraegerschaft} from '../../../models/TSTraegerschaft';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import {TraegerschaftRS} from '../../../core/service/traegerschaftRS.rest';
-import {OkDialogController} from '../../../gesuch/dialog/OkDialogController';
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import AbstractAdminViewController from '../../abstractAdminView';
+import {TSTraegerschaft} from '../../../models/TSTraegerschaft';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import AbstractAdminViewController from '../../abstractAdminView';
+import './traegerschaftView.less';
 import IFormController = angular.IFormController;
 
 let template = require('./traegerschaftView.html');
-let style = require('./traegerschaftView.less');
-let okDialogTempl = require('../../../gesuch/dialog/okDialogTemplate.html');
-let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
 export class TraegerschaftViewComponentConfig implements IComponentOptions {
@@ -100,11 +95,6 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
                     }
                 }
                 this.traegerschaft = undefined;
-                if (!traegerschaft.synchronizedWithOpenIdm) {
-                    this.dvDialog.showDialog(okDialogTempl, OkDialogController, {
-                        title: 'TRAEGERSCHAFT_CREATE_SYNCHRONIZE'
-                    });
-                }
             });
         }
     }
@@ -115,14 +105,5 @@ export class TraegerschaftViewController extends AbstractAdminViewController {
 
     setSelectedTraegerschaft(selected: TSTraegerschaft): void {
         this.traegerschaft = angular.copy(selected);
-    }
-
-    private syncWithOpenIdm(): void {
-        this.traegerschaftRS.synchronizeTraegerschaften().then((respone) => {
-            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
-            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
-                title: returnString
-            });
-        });
     }
 }

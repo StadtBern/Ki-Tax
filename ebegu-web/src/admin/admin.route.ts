@@ -40,6 +40,10 @@ export class IInstitutionStammdatenStateParams implements IStateParamsService {
     institutionId: string;
 }
 
+export class IBenutzerStateParams implements IStateParamsService {
+    benutzerId: string;
+}
+
 function getStates(): IState[] {
     return [
         {
@@ -54,6 +58,16 @@ function getStates(): IState[] {
             name: 'testdaten',
             template: '<dv-testdaten-view flex="auto" class="overflow-scroll"></dv-testdaten-view>',
             url: '/testdaten'
+        },
+        {
+            name: 'benutzerlist',
+            template: '<benutzer-list-view flex="auto" class="overflow-scroll"></benutzer-list-view>',
+            url: '/benutzerlist',
+        },
+        {
+            name: 'benutzer',
+            template: '<dv-benutzer flex="auto" class="overflow-scroll"></dv-benutzer>',
+            url: '/benutzerlist/benutzer/:benutzerId',
         },
         {
             name: 'institutionen',

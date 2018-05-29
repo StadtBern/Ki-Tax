@@ -44,6 +44,7 @@ import javax.validation.Valid;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer;
 import ch.dvbern.ebegu.entities.AbwesenheitContainer_;
@@ -73,6 +74,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchsperiodeStatus;
+import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
@@ -126,6 +128,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	private BenutzerService benutzerService;
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
+	@Inject
+	private PrincipalBean principalBean;
 
 	private final Logger LOG = LoggerFactory.getLogger(BetreuungServiceBean.class.getSimpleName());
 
@@ -534,7 +538,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		if (!benutzerOptional.isPresent()) {
 			throw new EbeguRuntimeException("getPendenzenForInstitution", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "current user not found");
 		}
-		Benutzer benutzer = benutzerOptional.get();
+		UserRole role = principalBean.discoverMostPrivilegedRoleOrThrowExceptionIfNone();
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
@@ -542,7 +546,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 
 		List<Predicate> predicates = new ArrayList<>();
 
-		if (benutzer.getRole().isRoleSchulamt()) {
+		if (role.isRoleSchulamt()) {
 			predicates.add(root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzSchulamt)));
 		} else { // for Institution or Traegerschaft. bz default
 			predicates.add(root.get(Betreuung_.betreuungsstatus).in(Arrays.asList(Betreuungsstatus.forPendenzInstitution)));
@@ -559,7 +563,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		predicates.add(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.gesuchsperiode).get(Gesuchsperiode_.status).in
 			(GesuchsperiodeStatus.AKTIV, GesuchsperiodeStatus.INAKTIV));
 
-		if (benutzer.getRole().isRoleSchulamt()) {
+		if (role.isRoleSchulamt()) {
 			// SCH darf nur Gesuche sehen, die bereits freigegebn wurden
 			predicates.add(root.get(Betreuung_.kind).get(KindContainer_.gesuch).get(Gesuch_.status).in
 				(AntragStatus.FOR_ADMIN_ROLE));

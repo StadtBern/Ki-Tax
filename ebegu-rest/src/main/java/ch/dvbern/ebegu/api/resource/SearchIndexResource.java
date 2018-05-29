@@ -237,10 +237,11 @@ public class SearchIndexResource {
 				quickSearch.setNumberOfResults(quickSearch.getNumberOfResults() - 1);
 			} else {
 				JaxAntragDTO jaxAntragDTO;
+				UserRole userRole = principalBean.discoverMostPrivilegedRole();
 				if (isInstOrTraegerschaft) { //fuer institutionen und traegerschaften nur erlaubte inst mitgeben
-					jaxAntragDTO = this.converter.gesuchToAntragDTO(gesuch, principalBean.getBenutzer().getRole(), allowedInst);
+					jaxAntragDTO = this.converter.gesuchToAntragDTO(gesuch, userRole, allowedInst);
 				} else {
-					jaxAntragDTO = this.converter.gesuchToAntragDTO(gesuch, principalBean.getBenutzer().getRole());
+					jaxAntragDTO = this.converter.gesuchToAntragDTO(gesuch, userRole);
 				}
 				searchEnry.setAntragDTO(jaxAntragDTO);
 				String fullNameGS1 = gesuch.getGesuchsteller1() != null ? gesuch.getGesuchsteller1().extractFullName() : "";

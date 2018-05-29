@@ -27,6 +27,8 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.BerechtigungHistory;
+import ch.dvbern.ebegu.entities.BerechtigungHistory_;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Traegerschaft_;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
@@ -79,7 +81,7 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	@Nonnull
 	@PermitAll
 	public Collection<Traegerschaft> getAllTraegerschaften() {
-		return new ArrayList<>(criteriaQueryHelper.getAll(Traegerschaft.class));
+		return new ArrayList<>(criteriaQueryHelper.getAllOrdered(Traegerschaft.class, Traegerschaft_.name));
 	}
 
 	@Override
@@ -87,8 +89,17 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 	public void removeTraegerschaft(@Nonnull String traegerschaftId) {
 		Validate.notNull(traegerschaftId);
 		Optional<Traegerschaft> traegerschaftToRemove = findTraegerschaft(traegerschaftId);
-		traegerschaftToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeTraegerschaft", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschaftId));
-		traegerschaftToRemove.ifPresent(traegerschaft -> persistence.remove(traegerschaft));
+		Traegerschaft traegerschaft = traegerschaftToRemove.orElseThrow(() -> new EbeguEntityNotFoundException("removeTraegerschaft",
+			ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschaftId));
+
+		// Es müssen auch alle Berechtigungen für diese Traegerschaft gelöscht werden
+		Collection<BerechtigungHistory> berechtigungenToDelete = criteriaQueryHelper.getEntitiesByAttribute(BerechtigungHistory.class, traegerschaft,
+			BerechtigungHistory_.traegerschaft);
+		for (BerechtigungHistory berechtigungHistory : berechtigungenToDelete) {
+			persistence.remove(berechtigungHistory);
+		}
+
+		persistence.remove(traegerschaft);
 	}
 
 	@Override

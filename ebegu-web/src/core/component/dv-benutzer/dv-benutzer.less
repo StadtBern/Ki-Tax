@@ -1,0 +1,74 @@
+/*
+ * Ki-Tax: System for the management of external childcare subsidies
+ * Copyright (C) 2018 City of Bern Switzerland
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+@import '../../../style/variables.less';
+
+.dv-benutzer {
+    background: #F0F0F0;
+    flex-grow: 0 !important;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 3rem;
+    display: block;
+    position: relative;
+    box-sizing: content-box;
+
+    .row {
+        .well {
+            margin-left: -2.5rem;
+            margin-right: -2.5rem;
+            box-shadow: none;
+            border: none;
+            border-radius: 0;
+            padding: 2rem 2.5rem 2rem 5rem;
+        }
+    }
+
+    hr.header {
+        margin-bottom: 2rem;
+    }
+}
+
+dv-benutzer {
+    display: flex;
+    align-items: flex-start;
+}
+
+.button-row {
+    flex-direction: row;
+    -ms-flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    margin-left: -16px;
+    padding-left: 16px;
+    margin-right: -16px;
+    padding-right: 16px;
+    margin-top: 2rem;
+    dv-loading-button {
+        margin-left: auto;
+        margin-right: auto;
+
+        position: static;
+        width: auto;
+        & > div {
+            width: auto;
+            padding: 0;
+        }
+    }
+    & > div {
+        padding: 0;
+        width: auto;
+    }
+}

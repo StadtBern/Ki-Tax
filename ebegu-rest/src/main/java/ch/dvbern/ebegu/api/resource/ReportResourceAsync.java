@@ -86,6 +86,7 @@ public class ReportResourceAsync {
 	@Path("/excel/gesuchStichtag")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, REVISOR })
 	public Response getGesuchStichtagReportExcel(
 		@QueryParam("dateTimeStichtag") @Nonnull String dateTimeStichtag,
 		@QueryParam("gesuchPeriodeID") @Nullable @Valid JaxId gesuchPeriodIdParam,
@@ -95,14 +96,7 @@ public class ReportResourceAsync {
 		Validate.notNull(dateTimeStichtag);
 		LocalDate datumVon = DateUtil.parseStringToDateOrReturnNow(dateTimeStichtag);
 
-		Workjob workJob = new Workjob();
-		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
-		workJob.setStartinguser(principalBean.getPrincipal().getName());
-		workJob.setTriggeringIp(ip);
-		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
-		workJob.setParams(param);
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_STICHTAG, datumVon, null, periodeId);
@@ -116,6 +110,7 @@ public class ReportResourceAsync {
 	@Path("/excel/gesuchZeitraum")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, REVISOR })
 	public Response getGesuchZeitraumReportExcel(
 		@QueryParam("dateTimeFrom") @Nonnull String dateTimeFromParam,
 		@QueryParam("dateTimeTo") @Nonnull String dateTimeToParam,
@@ -135,13 +130,7 @@ public class ReportResourceAsync {
 				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
-		Workjob workJob = new Workjob();
-		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
-		workJob.setStartinguser(principalBean.getPrincipal().getName());
-		workJob.setTriggeringIp(ip);
-		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
-		workJob.setParams(param);
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCH_ZEITRAUM, dateFrom, dateTo, periodeId);
@@ -172,13 +161,7 @@ public class ReportResourceAsync {
 			throw new EbeguRuntimeException("getKantonReportExcel", "Fehler beim erstellen Report Kanton", DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
-		Workjob workJob = new Workjob();
-		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
-		workJob.setStartinguser(principalBean.getPrincipal().getName());
-		workJob.setTriggeringIp(ip);
-		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
-		workJob.setParams(param);
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_KANTON, dateAuswertungVon, dateAuswertungBis, null);
 
@@ -191,6 +174,7 @@ public class ReportResourceAsync {
 	@Path("/excel/mitarbeiterinnen")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, REVISOR })
 	public Response getMitarbeiterinnenReportExcel(
 		@QueryParam("auswertungVon") @Nonnull String auswertungVon,
 		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
@@ -208,21 +192,31 @@ public class ReportResourceAsync {
 			throw new EbeguRuntimeException("getMitarbeiterinnenReportExcel", "Fehler beim erstellen Report Mitarbeiterinnen", DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
-		Workjob workJob = new Workjob();
-		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
-		workJob.setStartinguser(principalBean.getPrincipal().getName());
-		workJob.setTriggeringIp(ip);
-		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
-		workJob.setParams(param);
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_MITARBEITERINNEN, dateAuswertungVon, dateAuswertungBis, null);
 
 		return Response.ok(workJob.getId()).build();
 	}
 
-//	not implemented aync getZahlungsauftragReportExcel
-//	not implemented aync  getZahlungReportExcel(
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Benutzer'", response = JaxDownloadFile.class)
+	@Nonnull
+	@GET
+	@Path("/excel/benutzer")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
+	public Response getBenutzerReportExcel(
+		@Context HttpServletRequest request, @Context UriInfo uriInfo) {
+
+		String ip = downloadResource.getIP(request);
+
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
+
+		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_BENUTZER, null, null, null);
+
+		return Response.ok(workJob.getId()).build();
+	}
 
 	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Zahlungen pro Periode'", response = JaxDownloadFile.class)
 	@Nonnull
@@ -230,7 +224,8 @@ public class ReportResourceAsync {
 	@Path("/excel/zahlungperiode")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
-	public Response getZahlungPeridoReportExcel(
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, REVISOR })
+	public Response getZahlungPeriodReportExcel(
 		@QueryParam("gesuchsperiodeID") @Nonnull @Valid JaxId gesuchPeriodIdParam,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
 		throws EbeguRuntimeException {
@@ -238,13 +233,7 @@ public class ReportResourceAsync {
 		Validate.notNull(gesuchPeriodIdParam);
 		String ip = downloadResource.getIP(request);
 
-		Workjob workJob = new Workjob();
-		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
-		workJob.setStartinguser(principalBean.getPrincipal().getName());
-		workJob.setTriggeringIp(ip);
-		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
-		workJob.setParams(param);
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		String periodeId = gesuchPeriodIdParam.getId();
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_ZAHLUNG_AUFTRAG_PERIODE, null, null, periodeId);
@@ -258,6 +247,7 @@ public class ReportResourceAsync {
 	@Path("/excel/gesuchstellerkinderbetreuung")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, REVISOR })
 	public Response getGesuchstellerKinderBetreuungReportExcel(
 		@QueryParam("auswertungVon") @Nonnull String auswertungVon,
 		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
@@ -277,13 +267,7 @@ public class ReportResourceAsync {
 				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
 
-		Workjob workJob = new Workjob();
-		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
-		workJob.setStartinguser(principalBean.getPrincipal().getName());
-		workJob.setTriggeringIp(ip);
-		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
-		workJob.setParams(param);
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		String periodeId = gesuchPeriodIdParam != null ? gesuchPeriodIdParam.getId() : null;
 		workJob =  workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER_KINDER_BETREUUNG, dateFrom, dateTo, periodeId);
@@ -316,13 +300,7 @@ public class ReportResourceAsync {
 			throw new EbeguRuntimeException("getKinderReportExcel", "Fehler beim erstellen Report Kinder"
 				, DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
 		}
-		Workjob workJob = new Workjob();
-		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
-		workJob.setStartinguser(principalBean.getPrincipal().getName());
-		workJob.setTriggeringIp(ip);
-		workJob.setRequestURI(uriInfo.getRequestUri().toString());
-		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
-		workJob.setParams(param);
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_KINDER, dateFrom, dateTo, periodeId);
 
@@ -335,6 +313,7 @@ public class ReportResourceAsync {
 	@Path("/excel/gesuchsteller")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.TEXT_PLAIN)
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, REVISOR })
 	public Response getGesuchstellerReportExcel(
 		@QueryParam("stichtag") @Nonnull String stichtag,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) {
@@ -344,6 +323,15 @@ public class ReportResourceAsync {
 		Validate.notNull(stichtag);
 		LocalDate date = DateUtil.parseStringToDateOrReturnNow(stichtag);
 
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
+
+		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER, date, null, null);
+
+		return Response.ok(workJob.getId()).build();
+	}
+
+	@Nonnull
+	private Workjob createWorkjobForReport(@Context HttpServletRequest request, @Context UriInfo uriInfo, String ip) {
 		Workjob workJob = new Workjob();
 		workJob.setWorkJobType(WorkJobType.REPORT_GENERATION);
 		workJob.setStartinguser(principalBean.getPrincipal().getName());
@@ -351,9 +339,6 @@ public class ReportResourceAsync {
 		workJob.setRequestURI(uriInfo.getRequestUri().toString());
 		String param = StringUtils.substringAfterLast(request.getRequestURI(), URL_PART_EXCEL);
 		workJob.setParams(param);
-
-		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER, date, null, null);
-
-		return Response.ok(workJob.getId()).build();
+		return workJob;
 	}
 }

@@ -113,6 +113,10 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 			final UploadFileInfo uploadFileInfo = this.reportService.generateExcelReportMitarbeiterinnen(dateFrom, dateTo);
 			return uploadFileInfo;
 		}
+		case VORLAGE_REPORT_BENUTZER: {
+			final UploadFileInfo uploadFileInfo = this.reportService.generateExcelReportBenutzer();
+			return uploadFileInfo;
+		}
 		case VORLAGE_REPORT_ZAHLUNG_AUFTRAG: {
 			Validate.notNull(zahlungsauftragId, "Zahlungsauftrag ID must be passed as param");
 			final UploadFileInfo uploadFileInfo = this.reportService.generateExcelReportZahlungAuftrag(zahlungsauftragId);

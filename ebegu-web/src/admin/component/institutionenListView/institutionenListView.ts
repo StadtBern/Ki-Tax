@@ -17,7 +17,6 @@ import {IComponentOptions, IFormController} from 'angular';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import {InstitutionRS} from '../../../core/service/institutionRS.rest';
-import {OkHtmlDialogController} from '../../../gesuch/dialog/OkHtmlDialogController';
 import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
 import TSInstitution from '../../../models/TSInstitution';
 import EbeguUtil from '../../../utils/EbeguUtil';
@@ -25,7 +24,6 @@ import AbstractAdminViewController from '../../abstractAdminView';
 import './institutionenListView.less';
 import IStateService = angular.ui.IStateService;
 
-let okHtmlDialogTempl = require('../../../gesuch/dialog/okHtmlDialogTemplate.html');
 let template = require('./institutionenListView.html');
 let style = require('./institutionenListView.less');
 let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
@@ -82,17 +80,6 @@ export class InstitutionenListViewController extends AbstractAdminViewController
     editInstitution(institution: TSInstitution) {
         this.$state.go('institution', {
             institutionId: institution.id
-        });
-    }
-
-    private syncWithOpenIdm(): void {
-        this.institutionRS.synchronizeInstitutions().then((respone) => {
-            let returnString = respone.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
-            return this.dvDialog.showDialog(okHtmlDialogTempl, OkHtmlDialogController, {
-                title: returnString
-            }).then(() => {
-                //do nothing
-            });
         });
     }
 }

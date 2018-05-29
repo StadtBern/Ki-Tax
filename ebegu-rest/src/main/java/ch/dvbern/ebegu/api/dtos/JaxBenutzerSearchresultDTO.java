@@ -1,6 +1,6 @@
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -13,39 +13,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.api.client;
+package ch.dvbern.ebegu.api.dtos;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
+
 /**
- * Jax Element for Response of OpenAm, gives result and page counts
+ * Bei der Table mit Pagination muss die Totalanzahl Resultate vom Server mit zuruckgegeben werden im Resultat
  */
-@XmlRootElement(name = "openAmResponse")
+@XmlRootElement(name = "benutzer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxOpenAmResponse implements Serializable {
+public class JaxBenutzerSearchresultDTO implements Serializable {
 
-	private static final long serialVersionUID = 3556645949176582367L;
+	private static final long serialVersionUID = 3939072050781289382L;
+	private List<JaxAuthLoginElement> benutzerDTOs;
+	private PaginationDTO paginationDTO;
 
-	private String tokenId;
-	private String successUrl;
-
-	public String getTokenId() {
-		return tokenId;
+	public List<JaxAuthLoginElement> getBenutzerDTOs() {
+		return benutzerDTOs;
 	}
 
-	public void setTokenId(String tokenId) {
-		this.tokenId = tokenId;
+	public void setBenutzerDTOs(List<JaxAuthLoginElement> benutzerDTOs) {
+		this.benutzerDTOs = benutzerDTOs;
 	}
 
-	public String getSuccessUrl() {
-		return successUrl;
+	public PaginationDTO getPaginationDTO() {
+		return paginationDTO;
 	}
 
-	public void setSuccessUrl(String successUrl) {
-		this.successUrl = successUrl;
+	public void setPaginationDTO(PaginationDTO paginationDTO) {
+		this.paginationDTO = paginationDTO;
 	}
 }

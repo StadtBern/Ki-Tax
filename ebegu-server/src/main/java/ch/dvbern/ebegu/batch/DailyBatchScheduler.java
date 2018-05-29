@@ -78,4 +78,14 @@ public class DailyBatchScheduler {
 	public void runBatchGesuchsperiodeLoeschen() {
 		dailyBatch.runBatchGesuchsperiodeLoeschen();
 	}
+
+	@Schedule(second = "00", minute = "30", hour = "0", persistent = false)
+	public void runBatchAbgelaufeneRollen() {
+		dailyBatch.runBatchAbgelaufeneRollen();
+	}
+
+	@Schedule(second = "59", minute = "00", hour = "02", persistent = false)
+	public void runBatchDeleteInvalidAuthTokens() {
+		dailyBatch.runBatchDeleteInvalidAuthTokens();
+	}
 }

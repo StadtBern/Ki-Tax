@@ -42,9 +42,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.entities.Adresse;
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
-import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.entities.Berechtigung;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Fall;
@@ -61,7 +60,6 @@ import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
@@ -166,9 +164,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 
 	@Inject
 	private WizardStepService wizardStepService;
-
-	@Inject
-	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
 	private Persistence persistence;
@@ -318,7 +313,10 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Benutzer benutzer = new Benutzer();
 		benutzer.setVorname(GESUCHSTELLER_VORNAME);
 		benutzer.setNachname(name);
-		benutzer.setRole(UserRole.GESUCHSTELLER);
+		Berechtigung berechtigung = new Berechtigung();
+		berechtigung.setRole(UserRole.GESUCHSTELLER);
+		berechtigung.setBenutzer(benutzer);
+		benutzer.getBerechtigungen().add(berechtigung);
 		benutzer.setEmail(GESUCHSTELLER_VORNAME.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
@@ -333,14 +331,18 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		Benutzer benutzer = new Benutzer();
 		benutzer.setVorname(vorname);
 		benutzer.setNachname(name);
+		Berechtigung berechtigung = new Berechtigung();
+		berechtigung.setBenutzer(benutzer);
+
 		if (traegerschaft != null) {
-			benutzer.setRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
-			benutzer.setTraegerschaft(traegerschaft);
+			berechtigung.setRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT);
+			berechtigung.setTraegerschaft(traegerschaft);
 		}
 		if (institution != null) {
-			benutzer.setRole(UserRole.SACHBEARBEITER_INSTITUTION);
-			benutzer.setInstitution(institution);
+			berechtigung.setRole(UserRole.SACHBEARBEITER_INSTITUTION);
+			berechtigung.setInstitution(institution);
 		}
+		benutzer.getBerechtigungen().add(berechtigung);
 		benutzer.setEmail(vorname.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
@@ -489,10 +491,6 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 	}
 
 	private void removeBenutzer(@Nonnull String username) {
-		Collection<AuthorisierterBenutzer> entitiesByAttribute = criteriaQueryHelper.getEntitiesByAttribute(AuthorisierterBenutzer.class, username, AuthorisierterBenutzer_.username);
-		for (AuthorisierterBenutzer authorisierterBenutzer : entitiesByAttribute) {
-			persistence.remove(authorisierterBenutzer);
-		}
 		if (benutzerService.findBenutzer(username).isPresent()) {
 			benutzerService.removeBenutzer(username);
 		}

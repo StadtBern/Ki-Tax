@@ -43,6 +43,10 @@ export function getTSRoleValues(): Array<TSRole> {
     ];
 }
 
+export function getTSRoleValuesWithoutSuperAdmin(): Array<TSRole> {
+    return getTSRoleValues().filter(value => value !== TSRole.SUPER_ADMIN);
+}
+
 export function rolePrefix(): string {
     return 'TSRole_';
 }

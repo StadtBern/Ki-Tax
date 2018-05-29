@@ -35,23 +35,17 @@ import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.Benutzer;
-import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Mandant;
-import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.services.AuthService;
 import ch.dvbern.ebegu.services.BenutzerService;
-import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.services.MandantService;
-import ch.dvbern.ebegu.services.TraegerschaftService;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
 
 /**
  * Service provided by KI-TAX to allow an external login module to create users and logins
@@ -60,15 +54,13 @@ import static ch.dvbern.ebegu.enums.UserRole.SACHBEARBEITER_INSTITUTION;
 @Stateless
 public class LoginConnectorResource implements ILoginConnectorResource {
 
-	private final Logger LOG = LoggerFactory.getLogger(LoginConnectorResource.class.getSimpleName());
+	private static final Logger LOG = LoggerFactory.getLogger(LoginConnectorResource.class.getSimpleName());
 
 	private final BenutzerService benutzerService;
 	private final AuthService authService;
 
 	private final VersionInfoBean versionInfoBean;
 
-	private final InstitutionService institutionService;
-	private final TraegerschaftService traegerschaftService;
 	private final MandantResource mandantResource;
 	private final MandantService mandantService;
 	private final LocalhostChecker localhostChecker;
@@ -87,8 +79,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		EbeguConfiguration configuration,
 		BenutzerService benutzerService,
 		AuthService authService,
-		InstitutionService institutionService,
-		TraegerschaftService traegerschaftService,
 		MandantResource mandantResource,
 		MandantService mandantService) {
 
@@ -97,8 +87,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		this.localhostChecker = localhostChecker;
 		this.benutzerService = benutzerService;
 		this.authService = authService;
-		this.institutionService = institutionService;
-		this.traegerschaftService = traegerschaftService;
 		this.mandantResource = mandantResource;
 		this.mandantService = mandantService;
 	}
@@ -132,8 +120,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		user.setEmail(benutzer.getEmail());
 		user.setNachname(benutzer.getNachname());
 		user.setVorname(benutzer.getVorname());
-		UserRole passedBenutzerRole = convertRoleString(benutzer.getRole());
-		user.setRole(passedBenutzerRole);
 
 		String unusedAttr = StringUtils.join(benutzer.getCommonName(), benutzer.getTelephoneNumber(),
 			benutzer.getMobile(), benutzer.getPreferredLang(), benutzer.getPostalCode(), benutzer.getState(),
@@ -149,25 +135,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 			});
 		user.setMandant(mandant);
 
-		if (SACHBEARBEITER_INSTITUTION == passedBenutzerRole) {
-			Institution instFromDB = this.institutionService.findInstitution(benutzer.getInstitutionId()).orElseThrow(() -> {
-				LOG.error("Institution not found for passed id: '{}' that was received in Benutzer from externalLoginModul",
-					benutzer.getInstitutionId());
-				return new EbeguEntityNotFoundException("updateOrStoreUserFromIAM", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
-			});
-			user.setInstitution(instFromDB);
-		}
-
-		if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == passedBenutzerRole) {
-
-			Traegerschaft traegerschaftFromDB = this.traegerschaftService.findTraegerschaft(benutzer.getTraegerschaftId()).orElseThrow(() -> {
-				LOG.error("Traegerschaft not found for passed id: '{}' that was received in Benutzer from externalLoginModul",
-					benutzer.getTraegerschaftId());
-				return new EbeguEntityNotFoundException("updateOrStoreUserFromIAM", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
-			});
-			user.setTraegerschaft(traegerschaftFromDB);
-		}
-
 		Benutzer storedUser = benutzerService.updateOrStoreUserFromIAM(user);
 		return convertBenutzerToJax(storedUser);
 	}
@@ -180,6 +147,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		jaxExternalBenutzer.setVorname(storedUser.getVorname());
 		jaxExternalBenutzer.setRole(storedUser.getRole().name());
 		jaxExternalBenutzer.setMandantId(storedUser.getMandant().getId());
+		jaxExternalBenutzer.setGesperrt(storedUser.getGesperrt());
 		if (storedUser.getInstitution() != null) {
 			jaxExternalBenutzer.setInstitutionId(storedUser.getInstitution().getId());
 		}
@@ -187,7 +155,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 			jaxExternalBenutzer.setTraegerschaftId(storedUser.getTraegerschaft().getId());
 		}
 		return jaxExternalBenutzer;
-
 	}
 
 	@Nonnull
@@ -229,12 +196,12 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 			loginDataForCookie.getEmail(),
 			loginDataForCookie.getRole().name()
 		);
-
 	}
 
 	/**
 	 * currently we allow requests to this services only from localhost
 	 */
+	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
 	private void checkLocalAccessOnly() {
 		if (!this.configuration.isRemoteLoginConnectorAllowed()) {
 			boolean isLocallyAccessed = this.localhostChecker.isAddressLocalhost(request.getRemoteAddr());

@@ -24,21 +24,22 @@ export default class AuthenticationUtil {
      *  Navigiert basierend auf der Rolle zu einer anderen Startseite
      */
     public static navigateToStartPageForRole(user: TSUser, $state: IStateService): void {
-        if (user.role === TSRole.SUPER_ADMIN) {
+        let currentRole: TSRole = user.getCurrentRole();
+        if (currentRole === TSRole.SUPER_ADMIN) {
             $state.go('faelle');
-        } else if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getAdministratorJugendamtRole().indexOf(currentRole) > -1) {
             $state.go('pendenzen');
-        } else if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getTraegerschaftInstitutionOnlyRoles().indexOf(currentRole) > -1) {
             $state.go('pendenzenBetreuungen');
-        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getSchulamtOnlyRoles().indexOf(currentRole) > -1) {
             $state.go('pendenzen');
-        } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getSteueramtOnlyRoles().indexOf(currentRole) > -1) {
             $state.go('pendenzenSteueramt');
-        } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getGesuchstellerOnlyRoles().indexOf(currentRole) > -1) {
             $state.go('gesuchstellerDashboard');
-        } else if (TSRoleUtil.getJuristOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getJuristOnlyRoles().indexOf(currentRole) > -1) {
             $state.go('faelle');
-        } else if (TSRoleUtil.getRevisorOnlyRoles().indexOf(user.role) > -1) {
+        } else if (TSRoleUtil.getRevisorOnlyRoles().indexOf(currentRole) > -1) {
             $state.go('faelle');
         } else {
             console.error('Achtung, keine Startpage definiert fuer Rolle ', user.getRoleKey(), ', nehme gesuchstellerDashboard');

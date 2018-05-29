@@ -45,21 +45,21 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungPredicateObjectDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.MitteilungTableFilterDTO;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Berechtigung;
+import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Betreuungsmitteilung;
@@ -89,9 +89,14 @@ import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.util.SearchUtil;
+import ch.dvbern.ebegu.types.DateRange_;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -142,6 +147,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Inject
 	private ApplicationPropertyService applicationPropertyService;
+
+	@Inject
+	private PrincipalBean principalBean;
 
 
 	@Override
@@ -428,11 +436,12 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	}
 
 	private <T> Mitteilung getEntwurfForCurrentRolle(SingularAttribute<Mitteilung, T> attribute, @Nonnull T linkedEntity) {
-		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getEntwurfForCurrentRolle", "No User is logged in"));
-		UserRole currentUserRole = loggedInBenutzer.getRole();
+		UserRole currentUserRole = principalBean.discoverMostPrivilegedRoleOrThrowExceptionIfNone();
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Mitteilung> query = cb.createQuery(Mitteilung.class);
 		Root<Mitteilung> root = query.from(Mitteilung.class);
+		Join<Mitteilung, Benutzer> joinSender = root.join(Mitteilung_.sender);
+		SetJoin<Benutzer, Berechtigung> joinSenderBerechtigungen = joinSender.join(Benutzer_.berechtigungen);
 		List<Predicate> predicates = new ArrayList<>();
 
 		Predicate predicateLinkedObject = cb.equal(root.get(attribute), linkedEntity);
@@ -446,17 +455,24 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		predicates.add(predicateSender);
 
 		if (currentUserRole.isRoleJugendamt()) {
-			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getJugendamtRoles());
-			predicates.add(predicateSenderGleichesAmt);
+			setActiveAndRolePredicates(cb, joinSenderBerechtigungen, predicates, UserRole.getJugendamtRoles());
 		} else if (currentUserRole.isRoleSchulamt()) {
-			Predicate predicateSenderGleichesAmt = root.get(Mitteilung_.sender).get(Benutzer_.role).in(UserRole.getSchulamtRoles());
-			predicates.add(predicateSenderGleichesAmt);
+			setActiveAndRolePredicates(cb, joinSenderBerechtigungen, predicates, UserRole.getSchulamtRoles());
 		}
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
 		Mitteilung entwurf = persistence.getCriteriaSingleResult(query);
 		authorizer.checkWriteAuthorizationMitteilung(entwurf);
 		return entwurf;
+	}
+
+	private void setActiveAndRolePredicates(CriteriaBuilder cb, SetJoin<Benutzer, Berechtigung> joinSenderBerechtigungen,
+		List<Predicate> predicates, List<UserRole> jugendamtRoles) {
+		Predicate predicateActive = cb.between(cb.literal(LocalDate.now()),
+			joinSenderBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinSenderBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
+		Predicate predicateSenderGleichesAmt = joinSenderBerechtigungen.get(Berechtigung_.role).in(jugendamtRoles);
+		predicates.add(cb.and(predicateActive, predicateSenderGleichesAmt));
 	}
 
 	@Override
@@ -724,7 +740,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 	@SuppressWarnings({"rawtypes", "unchecked", "PMD.NcssMethodCount"}) // Je nach Abfrage ist es String oder Long
 	private Pair<Long, List<Mitteilung>> searchMitteilungen(@Nonnull MitteilungTableFilterDTO mitteilungTableFilterDto, @Nonnull Boolean includeClosed, @Nonnull SearchMode mode) {
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		CriteriaQuery query = SearchUtil.getQueryForSearchMode(cb, mode);
+		CriteriaQuery query = SearchUtil.getQueryForSearchMode(cb, mode, "searchMitteilungen");
 
 		// Construct from-clause
 		Root<Mitteilung> root = query.from(Mitteilung.class);
@@ -734,6 +750,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		Join<Fall, Benutzer> joinBesitzer = joinFall.join(Fall_.besitzer, JoinType.LEFT);
 		Join<Mitteilung, Benutzer> joinSender = root.join(Mitteilung_.sender, JoinType.LEFT);
 		Join<Mitteilung, Benutzer> joinEmpfaenger = root.join(Mitteilung_.empfaenger, JoinType.LEFT);
+		SetJoin<Benutzer, Berechtigung> joinEmpfaengerBerechtigungen = joinEmpfaenger.join(Benutzer_.berechtigungen);
 
 		// Predicates derived from PredicateDTO (Filter coming from client)
 		MitteilungPredicateObjectDTO predicateObjectDto = mitteilungTableFilterDto.getSearch().getPredicateObject();
@@ -802,12 +819,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (predicateObjectDto.getEmpfaengerAmt() != null) {
 				Amt amt = Amt.valueOf(predicateObjectDto.getEmpfaengerAmt());
 				switch (amt) {
-				case JUGENDAMT:
-					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtSuperadminRoles()));
+				case JUGENDAMT: {
+					setActiveAndRolePredicates(cb, joinEmpfaengerBerechtigungen, predicates, UserRole.getJugendamtSuperadminRoles());
 					break;
-				case SCHULAMT:
-					predicates.add(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getSchulamtRoles()));
+				}
+				case SCHULAMT: {
+					setActiveAndRolePredicates(cb, joinEmpfaengerBerechtigungen, predicates, UserRole.getSchulamtRoles());
 					break;
+				}
 				}
 			}
 			// mitteilungStatus
@@ -827,7 +846,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 		case SEARCH:
 			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
 			query.select(root.get(Mitteilung_.id)).where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
-			constructOrderByClause(mitteilungTableFilterDto, cb, query, root, joinFall, joinBesitzer, joinSender, joinEmpfaenger);
+			constructOrderByClause(mitteilungTableFilterDto, cb, query, root, joinFall, joinBesitzer, joinSender, joinEmpfaenger, joinEmpfaengerBerechtigungen);
 			break;
 		case COUNT:
 			//noinspection unchecked // Je nach Abfrage ist das Query String oder Long
@@ -845,7 +864,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			if (mitteilungTableFilterDto.getPagination() != null) {
 				int firstIndex = mitteilungTableFilterDto.getPagination().getStart();
 				Integer maxresults = mitteilungTableFilterDto.getPagination().getNumber();
-				List<String> orderedIdsToLoad = SearchUtil.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
+				List<String> orderedIdsToLoad = SearchUtil.determineDistinctIdsToLoad(gesuchIds, firstIndex, maxresults);
 				pagedResult = findMitteilungen(orderedIdsToLoad);
 			} else {
 				pagedResult = findMitteilungen(gesuchIds);
@@ -863,8 +882,8 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@SuppressWarnings("ReuseOfLocalVariable")
 	private void constructOrderByClause(@Nonnull MitteilungTableFilterDTO tableFilterDTO, CriteriaBuilder cb, CriteriaQuery query,
-			Root<Mitteilung> root, Join<Mitteilung, Fall> joinFall, Join<Fall, Benutzer> joinBesitzer,
-			Join<Mitteilung, Benutzer> joinSender, Join<Mitteilung, Benutzer> joinEmpfaenger) {
+		Root<Mitteilung> root, Join<Mitteilung, Fall> joinFall, Join<Fall, Benutzer> joinBesitzer,
+		Join<Mitteilung, Benutzer> joinSender, Join<Mitteilung, Benutzer> joinEmpfaenger, SetJoin<Benutzer, Berechtigung> joinEmpfaengerBerechtigungen) {
 		Expression<?> expression = null;
 		if (tableFilterDTO.getSort() != null && tableFilterDTO.getSort().getPredicate() != null) {
 			switch (tableFilterDTO.getSort().getPredicate()) {
@@ -887,9 +906,14 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				expression = joinEmpfaenger.get(Benutzer_.vorname);
 				break;
 			case "empfaengerAmt":
+				Predicate predicateActive = cb.between(cb.literal(LocalDate.now()),
+					joinEmpfaengerBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+					joinEmpfaengerBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
+				Predicate predicateJA = joinEmpfaengerBerechtigungen.get(Berechtigung_.role).in(UserRole.getJugendamtRoles());
+				Expression<Boolean> isActiveJA = cb.and(predicateActive, predicateJA);
 				String sJugendamt = ServerMessageUtil.getMessage(Amt.class.getSimpleName() + '_' + Amt.JUGENDAMT.name());
 				String sSchulamt = ServerMessageUtil.getMessage(Amt.class.getSimpleName() + '_' + Amt.SCHULAMT.name());
-				expression = cb.selectCase().when(joinEmpfaenger.get(Benutzer_.role).in(UserRole.getJugendamtRoles()), sJugendamt).otherwise(sSchulamt);
+				expression = cb.selectCase().when(isActiveJA, sJugendamt).otherwise(sSchulamt);
 				break;
 			case "mitteilungStatus":
 				expression = root.get(Mitteilung_.mitteilungStatus);
@@ -956,9 +980,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nullable
 	private MitteilungTeilnehmerTyp getMitteilungTeilnehmerTypForCurrentUser() {
-		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("getMitteilungenForCurrentRolle", "No User is logged in"));
+		UserRole currentUserRole = principalBean.discoverMostPrivilegedRoleOrThrowExceptionIfNone();
 		//noinspection EnumSwitchStatementWhichMissesCases
-		switch (loggedInBenutzer.getRole()) {
+		switch (currentUserRole) {
 		case GESUCHSTELLER: {
 			return MitteilungTeilnehmerTyp.GESUCHSTELLER;
 		}
@@ -997,9 +1021,9 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 				+ Arrays.toString(statusRequired));
 		}
 		// Es muss sowohl der EmpfaengerTyp (bei Institution und GS) wie auch das Amt (bei JA und SCH) uebereinstimmen
-		Benutzer loggedInBenutzer = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("setMitteilungsStatusIfBerechtigt", "No User is logged in"));
+		UserRole currentUserRole = principalBean.discoverMostPrivilegedRoleOrThrowExceptionIfNone();
 		boolean sameEmpfaengerTyp = mitteilung.getEmpfaengerTyp() == getMitteilungTeilnehmerTypForCurrentUser();
-		boolean sameAmt = mitteilung.getEmpfaengerAmt() == loggedInBenutzer.getAmt();
+		boolean sameAmt = mitteilung.getEmpfaengerAmt() == currentUserRole.getAmt();
 		if (sameEmpfaengerTyp && sameAmt) {
 			mitteilung.setMitteilungStatus(statusRequested);
 		}

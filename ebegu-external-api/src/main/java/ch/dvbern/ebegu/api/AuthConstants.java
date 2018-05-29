@@ -26,8 +26,6 @@ public interface AuthConstants {
 	String PARAM_XSRF_TOKEN = "X-XSRF-TOKEN";
 	String COOKIE_XSRF_TOKEN = "XSRF-TOKEN";
 	int COOKIE_TIMEOUT_SECONDS = 60 * 60 * 12; //aktuell 12h
-	String OPENIDM_INST_PREFIX = "I-";
-	String OENIDM_TRAEGERSCHAFT_PREFIX = "T-";
 	/**
 	 * Path to locallogin page (relative to base path) that will be used if no login connector api is specified
 	 */

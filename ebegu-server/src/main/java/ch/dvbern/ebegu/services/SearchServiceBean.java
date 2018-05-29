@@ -147,18 +147,10 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		}
 
 		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+
 		@SuppressWarnings("rawtypes") // Je nach Abfrage ist es String oder Long
-			CriteriaQuery query;
-		switch (mode) {
-		case SEARCH:
-			query = cb.createQuery(String.class);
-			break;
-		case COUNT:
-			query = cb.createQuery(Long.class);
-			break;
-		default:
-			throw new IllegalStateException("Undefined Mode for searchAllAntraege Query: " + mode);
-		}
+		CriteriaQuery query = SearchUtil.getQueryForSearchMode(cb, mode, "searchAllAntraege");
+
 		// Construct from-clause
 		@SuppressWarnings("unchecked") // Je nach Abfrage ist das Query String oder Long
 		Root<Gesuch> root = query.from(Gesuch.class);
@@ -335,7 +327,7 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			if (antragTableFilterDto.getPagination() != null) {
 				int firstIndex = antragTableFilterDto.getPagination().getStart();
 				Integer maxresults = antragTableFilterDto.getPagination().getNumber();
-				List<String> orderedIdsToLoad = SearchUtil.determineDistinctGesuchIdsToLoad(gesuchIds, firstIndex, maxresults);
+				List<String> orderedIdsToLoad = SearchUtil.determineDistinctIdsToLoad(gesuchIds, firstIndex, maxresults);
 				pagedResult = findGesuche(orderedIdsToLoad);
 			} else {
 				pagedResult = findGesuche(gesuchIds);
@@ -515,7 +507,7 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 	private String[] ensureYearFormat(String gesuchsperiodeString) {
 		String[] years = gesuchsperiodeString.split("/");
 		if (years.length != 2) {
-			throw new EbeguRuntimeException("searchAllAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " + gesuchsperiodeString);
+			throw new EbeguRuntimeException("ensureYearFormat", "Der Gesuchsperioden string war nicht im erwarteten Format x/y sondern " + gesuchsperiodeString);
 		}
 		String[] result = new String[2];
 		result[0] = changeTwoDigitYearToFourDigit(years[0]);
@@ -532,7 +524,7 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		if (year.length() < currentYearAsString.length()) { // jahr ist im kurzformat
 			return currentYearAsString.substring(0, currentYearAsString.length() - year.length()) + year;
 		}
-		throw new EbeguRuntimeException("searchAllAntraege", "Der Gesuchsperioden string war nicht im erwarteten Format yy oder yyyy sondern " + year);
+		throw new EbeguRuntimeException("changeTwoDigitYearToFourDigit", "Der Gesuchsperioden string war nicht im erwarteten Format yy oder yyyy sondern " + year);
 	}
 
 	private List<Gesuch> findGesuche(@Nonnull List<String> gesuchIds) {

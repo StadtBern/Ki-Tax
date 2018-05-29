@@ -99,10 +99,11 @@
                                             </dv-loading-button>
                                         </div>
                                         <div class="col-md-4">
-                                            <a href="#" id="cancelLink" class="dv-btn" unsaved-warning-clear
-                                               ng-click="vm.cancelTraegerschaft(); vm.form.$setPristine();vm.form.$setUntouched(); $event.preventDefault();">
+                                            <dv-loading-button type="submit"
+                                                               button-click="vm.cancelTraegerschaft(); vm.form.$setPristine();vm.form.$setUntouched(); $event.preventDefault();"
+                                                               button-class="cancel-button">
                                                 <span data-translate="CANCEL"></span>
-                                            </a>
+                                            </dv-loading-button>
                                         </div>
                                     </div>
                                 </div>
@@ -123,18 +124,6 @@
                                                     <span data-translate="TRAEGERSCHAFT_HINZUFUEGEN"></span>
                                                 </dv-loading-button>
                                             </dv-input-container>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <br/>
-                                            <!--Knopf zum synchen traegerschaften -->
-                                            <dv-loading-button type="submit"
-                                                               button-click="vm.syncWithOpenIdm()"
-                                                               button-class="">
-                                                <span data-translate="TRAEGERSCHAFTEN_SYNCHRONIZE"></span>
-                                            </dv-loading-button>
                                         </div>
                                     </div>
                                 </div>

@@ -155,8 +155,10 @@ describe('gesuchModelManager', function () {
                 let currentUser: TSUser = new TSUser('Test', 'User', 'username');
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(currentUser);
                 spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
+                spyOn(fallRS, 'setVerantwortlicherJA').and.returnValue($q.when({}));
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
 
+                scope.$apply();
                 expect(gesuchModelManager.getGesuch()).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall).toBeDefined();
                 expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(currentUser);
@@ -202,8 +204,10 @@ describe('gesuchModelManager', function () {
             it('puts the given user as the verantwortlicher for the fall', () => {
                 gesuchModelManager.initGesuch(false, TSEingangsart.PAPIER);
                 spyOn(authServiceRS, 'getPrincipal').and.returnValue(undefined);
+                spyOn(fallRS, 'setVerantwortlicherJA').and.returnValue($q.when({}));
                 let user: TSUser = new TSUser('Emiliano', 'Camacho');
                 gesuchModelManager.setUserAsFallVerantwortlicher(user);
+                scope.$apply();
                 expect(gesuchModelManager.getGesuch().fall.verantwortlicher).toBe(user);
             });
         });

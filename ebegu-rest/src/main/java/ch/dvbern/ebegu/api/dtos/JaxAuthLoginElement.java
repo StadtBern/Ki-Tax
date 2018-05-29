@@ -14,6 +14,9 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,25 +35,32 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	@Nonnull
 	private String username = "";
+
 	@Nonnull
 	private String password = "";
+
 	@Nonnull
 	private String nachname = "";
+
 	@Nonnull
 	private String vorname = "";
+
 	@Nonnull
 	private String email = "";
-	@Nonnull
-	private UserRole role;
 
 	@Nonnull
 	private Amt amt;
 
 	private JaxMandant mandant;
-	@Nullable
-	private JaxTraegerschaft traegerschaft;
-	@Nullable
-	private JaxInstitution institution;
+
+	private boolean gesperrt;
+
+	@Nonnull
+	private JaxBerechtigung currentBerechtigung;
+
+	@Nonnull
+	private Set<JaxBerechtigung> berechtigungen = new LinkedHashSet<>();
+
 
 	@SuppressFBWarnings(value = "NM_CONFUSING", justification = "Other method is external interface, cant change that")
 	@Nonnull
@@ -99,15 +109,6 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	}
 
 	@Nonnull
-	public UserRole getRole() {
-		return role;
-	}
-
-	public void setRole(@Nonnull UserRole role) {
-		this.role = role;
-	}
-
-	@Nonnull
 	public Amt getAmt() {
 		return amt;
 	}
@@ -124,21 +125,43 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 		this.mandant = mandant;
 	}
 
-	@Nullable
-	public JaxTraegerschaft getTraegerschaft() {
-		return traegerschaft;
+	public boolean isGesperrt() {
+		return gesperrt;
 	}
 
-	public void setTraegerschaft(@Nullable JaxTraegerschaft traegerschaft) {
-		this.traegerschaft = traegerschaft;
+	public void setGesperrt(boolean gesperrt) {
+		this.gesperrt = gesperrt;
+	}
+
+	@Nonnull
+	public JaxBerechtigung getCurrentBerechtigung() {
+		return currentBerechtigung;
+	}
+
+	public void setCurrentBerechtigung(@Nonnull JaxBerechtigung currentBerechtigung) {
+		this.currentBerechtigung = currentBerechtigung;
+	}
+
+	public Set<JaxBerechtigung> getBerechtigungen() {
+		return berechtigungen;
+	}
+
+	public void setBerechtigungen(Set<JaxBerechtigung> berechtigungen) {
+		this.berechtigungen = berechtigungen;
+	}
+
+	@Nonnull
+	public UserRole getRole() {
+		return getCurrentBerechtigung().getRole();
 	}
 
 	@Nullable
 	public JaxInstitution getInstitution() {
-		return institution;
+		return getCurrentBerechtigung().getInstitution();
 	}
 
-	public void setInstitution(@Nullable JaxInstitution institution) {
-		this.institution = institution;
+	@Nullable
+	public JaxTraegerschaft getTraegerschaft() {
+		return getCurrentBerechtigung().getTraegerschaft();
 	}
 }

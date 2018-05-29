@@ -15,7 +15,6 @@
 
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
-import {TSEingangsart} from '../../../models/enums/TSEingangsart';
 import TSFall from '../../../models/TSFall';
 import TSGesuch from '../../../models/TSGesuch';
 import TSUser from '../../../models/TSUser';
@@ -24,7 +23,7 @@ import UserRS from '../../service/userRS.rest';
 import {VerantwortlicherselectController} from './dv-verantwortlicherselect';
 import ITranslateService = angular.translate.ITranslateService;
 
-describe('gesuchToolbar', function () {
+describe('dvVerantwortlicherSelect', function () {
 
     let gesuchModelManager: GesuchModelManager;
     let verantwortlicherselectController: VerantwortlicherselectController;
@@ -55,9 +54,10 @@ describe('gesuchToolbar', function () {
 
         it('returns the fullname of the verantwortlicher', () => {
             let verantwortlicher: TSUser = new TSUser('Emiliano', 'Camacho');
-            spyOn(authServiceRS, 'getPrincipal').and.returnValue(verantwortlicher);
-            spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
-            gesuchModelManager.initGesuch(true, TSEingangsart.PAPIER);
+            let gesuch: TSGesuch = new TSGesuch();
+            gesuch.fall = new TSFall();
+            gesuch.fall.verantwortlicher = verantwortlicher;
+            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
             expect(verantwortlicherselectController.getVerantwortlicherFullName()).toEqual('Emiliano Camacho');
         });
     });

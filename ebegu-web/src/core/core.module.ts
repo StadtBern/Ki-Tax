@@ -15,6 +15,8 @@
 
 import 'angular';
 import './core.module.less';
+import {DVBenutzerListConfig} from './component/dv-benutzer-list/dv-benutzer-list';
+import {DVBenutzerConfig} from './component/dv-benutzer/dv-benutzer';
 import {appRun} from './core.route';
 import {configure} from './config';
 import router from '../dvbModules/router/router.module';
@@ -249,6 +251,8 @@ export const EbeguWebCore: angular.IModule = angular
     .component('dvAccordion', new DvAccordionComponentConfig())
     .component('dvAccordionTab', new DvAccordionTabComponentConfig())
     .component('dvVersion', new DVVersionComponentConfig())
+    .component('dvBenutzerList', new DVBenutzerListConfig())
+    .component('dvBenutzer', new DVBenutzerConfig())
     .service('MahnungRS', MahnungRS)
     .service('ReportRS', ReportRS)
     .service('ReportAsyncRS', ReportAsyncRS)

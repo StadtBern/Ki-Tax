@@ -23,11 +23,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import ch.dvbern.ebegu.api.client.JaxOpenIdmResult;
 import ch.dvbern.ebegu.api.dtos.JaxAbstractFinanzielleSituation;
 import ch.dvbern.ebegu.api.dtos.JaxAdresse;
 import ch.dvbern.ebegu.api.dtos.JaxAdresseContainer;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
+import ch.dvbern.ebegu.api.dtos.JaxBerechtigung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuung;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensum;
 import ch.dvbern.ebegu.api.dtos.JaxBetreuungspensumContainer;
@@ -62,6 +62,7 @@ import ch.dvbern.ebegu.enums.Land;
 import ch.dvbern.ebegu.enums.Taetigkeit;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
+import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -187,13 +188,23 @@ public class TestJaxDataUtil {
 
 	public static JaxAuthLoginElement createTestJaxBenutzer() {
 		JaxAuthLoginElement jaxBenutzer = new JaxAuthLoginElement();
-		jaxBenutzer.setRole(UserRole.ADMIN);
+		JaxBerechtigung jaxBerechtigung = createTestJaxBerechtigung();
+		jaxBenutzer.getBerechtigungen().add(jaxBerechtigung);
+		jaxBenutzer.setCurrentBerechtigung(jaxBerechtigung);
 		jaxBenutzer.setUsername("TestUser");
 		jaxBenutzer.setPassword("1234");
 		jaxBenutzer.setEmail("testuser@example.com");
 		jaxBenutzer.setNachname("NachnameTest");
 		jaxBenutzer.setVorname("VornameTest");
 		return jaxBenutzer;
+	}
+
+	public static JaxBerechtigung createTestJaxBerechtigung() {
+		JaxBerechtigung berechtigung = new JaxBerechtigung();
+		berechtigung.setRole(UserRole.ADMIN);
+		berechtigung.setGueltigAb(LocalDate.now());
+		berechtigung.setGueltigBis(Constants.END_OF_TIME);
+		return berechtigung;
 	}
 
 	public static JaxGesuch createTestJaxGesuch() {
@@ -363,25 +374,6 @@ public class TestJaxDataUtil {
 		JaxTraegerschaft jaxTraegerschaft = new JaxTraegerschaft();
 		jaxTraegerschaft.setName("Test_Traegerschaft");
 		jaxTraegerschaft.setActive(true);
-		return null;
+		return jaxTraegerschaft;
 	}
-
-	public static JaxOpenIdmResult creatOpenIdmTraegerschaft(String name) {
-		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
-		jaxOpenIdmResult.set_id(name);
-		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@example.com");
-		jaxOpenIdmResult.setType("sponsor");
-		return jaxOpenIdmResult;
-	}
-
-	public static JaxOpenIdmResult creatOpenIdmInst(String name) {
-		JaxOpenIdmResult jaxOpenIdmResult = new JaxOpenIdmResult();
-		jaxOpenIdmResult.set_id(name);
-		jaxOpenIdmResult.setName(name);
-		jaxOpenIdmResult.setMail(name + "@example.com");
-		jaxOpenIdmResult.setType("institution");
-		return jaxOpenIdmResult;
-	}
-
 }

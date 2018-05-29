@@ -84,7 +84,7 @@ describe('mitteilungenView', function () {
     describe('loading initial data', function () {
         it('should create an empty TSMItteilung for GS', function () {
             let gesuchsteller: TSUser = new TSUser();
-            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            gesuchsteller.currentBerechtigung.role = TSRole.GESUCHSTELLER;
             spyOn(authServiceRS, 'isRole').and.returnValue(true);
 
             createMitteilungForUser(gesuchsteller);
@@ -93,7 +93,7 @@ describe('mitteilungenView', function () {
         });
         it('should create an empty TSMItteilung for JA', function () {
             let sachbearbeiter_ja: TSUser = new TSUser();
-            sachbearbeiter_ja.role = TSRole.SACHBEARBEITER_JA;
+            sachbearbeiter_ja.currentBerechtigung.role = TSRole.SACHBEARBEITER_JA;
             spyOn(authServiceRS, 'isOneOfRoles').and.callFake((roles: Array<TSRole>) => {
                 return roles.indexOf(TSRole.SACHBEARBEITER_JA) >= 0;
             });
@@ -105,7 +105,7 @@ describe('mitteilungenView', function () {
         });
         it('should create an empty TSMItteilung for Institution', function () {
             let sachbearbeiter_inst: TSUser = new TSUser();
-            sachbearbeiter_inst.role = TSRole.SACHBEARBEITER_INSTITUTION;
+            sachbearbeiter_inst.currentBerechtigung.role = TSRole.SACHBEARBEITER_INSTITUTION;
             spyOn(authServiceRS, 'isOneOfRoles').and.callFake((roles: Array<TSRole>) => {
                 return roles.indexOf(TSRole.SACHBEARBEITER_INSTITUTION) >= 0;
             });
@@ -119,7 +119,7 @@ describe('mitteilungenView', function () {
     describe('sendMitteilung', function () {
         it('should send the current mitteilung and update currentMitteilung with the new content', function () {
             let gesuchsteller: TSUser = new TSUser();
-            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            gesuchsteller.currentBerechtigung.role = TSRole.GESUCHSTELLER;
             spyOn(authServiceRS, 'isRole').and.returnValue(true);
 
             createMitteilungForUser(gesuchsteller);
@@ -144,7 +144,7 @@ describe('mitteilungenView', function () {
     describe('setErledigt', function () {
         it('should change the status from GELESEN to ERLEDIGT and save the mitteilung', function () {
             let gesuchsteller: TSUser = new TSUser();
-            gesuchsteller.role = TSRole.GESUCHSTELLER;
+            gesuchsteller.currentBerechtigung.role = TSRole.GESUCHSTELLER;
             spyOn(authServiceRS, 'isRole').and.returnValue(true);
 
             createMitteilungForUser(gesuchsteller);

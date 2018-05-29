@@ -83,7 +83,7 @@ export class ZahlungsauftragViewController {
 
     private updateZahlungsauftrag() {
 
-        switch (this.authServiceRS.getPrincipal().role) {
+        switch (this.authServiceRS.getPrincipal().getCurrentRole()) {
 
             case TSRole.SACHBEARBEITER_INSTITUTION:
             case TSRole.SACHBEARBEITER_TRAEGERSCHAFT: {

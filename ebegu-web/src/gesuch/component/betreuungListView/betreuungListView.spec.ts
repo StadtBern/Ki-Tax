@@ -13,6 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {EbeguWebCore} from '../../../core/core.module';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
@@ -43,9 +44,10 @@ describe('betreuungListViewTest', function () {
         let ebeguUtil: EbeguUtil = $injector.get('EbeguUtil');
         let errorService: ErrorService = $injector.get('ErrorService');
         let $timeout = $injector.get('$timeout');
+        let authServiceRS: AuthServiceRS = $injector.get('AuthServiceRS');
 
         betreuungListView = new BetreuungListViewController($state, gesuchModelManager, $translate, dialog, ebeguUtil, undefined,
-            errorService, wizardStepManager, undefined, $injector.get('$rootScope'), undefined, $timeout);
+            errorService, wizardStepManager, authServiceRS, $injector.get('$rootScope'), undefined, $timeout);
     }));
 
     describe('Public API', function () {

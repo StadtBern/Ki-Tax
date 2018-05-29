@@ -109,13 +109,15 @@ public interface FallService {
 	Optional<Benutzer> getHauptOrDefaultVerantwortlicher(@Nonnull Fall fall);
 
 	/**
-	 * Update-Querry to store verantwortlicher direct on fall
+	 * stores the verantwortlicherJA on the given fall
 	 */
-	int setVerantwortlicher(String id, Benutzer benutzer);
+	@Nonnull
+	Fall setVerantwortlicherJA(@Nonnull String fallId, @Nullable Benutzer benutzer);
 
 	/**
-	 * Update-Querry to store verantwortlicherSCH direct on fall
+	 * stores the verantwortlicherSCH on the given fall
 	 */
-	int setVerantwortlicherSCH(String id, Benutzer benutzer);
+	@Nonnull
+	Fall setVerantwortlicherSCH(@Nonnull String fallId, @Nullable Benutzer benutzer);
 
 }

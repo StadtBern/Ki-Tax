@@ -52,7 +52,6 @@ import ch.dvbern.ebegu.api.resource.util.ResourceHelper;
 import ch.dvbern.ebegu.api.util.RestUtil;
 import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.dto.JaxAntragDTO;
-import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
@@ -64,9 +63,7 @@ import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.FallService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.GesuchsperiodeService;
@@ -103,9 +100,6 @@ public class GesuchResource {
 	private InstitutionService institutionService;
 
 	@Inject
-	private BenutzerService benutzerService;
-
-	@Inject
 	private FallService fallService;
 
 	@Inject
@@ -126,7 +120,7 @@ public class GesuchResource {
 	public Response create(
 		@Nonnull @NotNull JaxGesuch gesuchJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Gesuch convertedGesuch = converter.gesuchToEntity(gesuchJAXP, new Gesuch());
 		Gesuch persistedGesuch = this.gesuchService.createGesuch(convertedGesuch);
@@ -148,7 +142,7 @@ public class GesuchResource {
 	public JaxGesuch update(
 		@Nonnull @NotNull JaxGesuch gesuchJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(gesuchJAXP.getId());
 		Optional<Gesuch> optGesuch = gesuchService.findGesuch(gesuchJAXP.getId());
@@ -169,7 +163,7 @@ public class GesuchResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuch findGesuch(
-		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
 		Validate.notNull(gesuchJAXPId.getId());
 		String gesuchID = converter.toEntityId(gesuchJAXPId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(gesuchID);
@@ -199,7 +193,7 @@ public class GesuchResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxAntragDTO findGesuchForFreigabe(
-		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
 		Validate.notNull(gesuchJAXPId.getId());
 		String gesuchID = converter.toEntityId(gesuchJAXPId);
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuchForFreigabe(gesuchID);
@@ -230,13 +224,13 @@ public class GesuchResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxGesuch findGesuchForInstitution(
-		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
 
 		final JaxGesuch completeGesuch = findGesuch(gesuchJAXPId);
 
-		final Optional<Benutzer> optBenutzer = benutzerService.findBenutzer(this.principalBean.getPrincipal().getName());
-		if (optBenutzer.isPresent()) {
-			if (UserRole.SUPER_ADMIN == optBenutzer.get().getRole()) {
+		UserRole role = principalBean.discoverMostPrivilegedRole();
+		if (role != null) {
+			if (UserRole.SUPER_ADMIN == role) {
 				return completeGesuch;
 			} else {
 				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
@@ -280,7 +274,7 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull String bemerkung,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(gesuchJAXPId.getId());
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
@@ -305,7 +299,7 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
 		@Nonnull @NotNull String bemerkungPruefungSTV,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(gesuchJAXPId.getId());
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
@@ -328,7 +322,7 @@ public class GesuchResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateStatus(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId,
-		@Nonnull @NotNull @PathParam("statusDTO") AntragStatusDTO statusDTO) throws EbeguException {
+		@Nonnull @NotNull @PathParam("statusDTO") AntragStatusDTO statusDTO) {
 
 		Validate.notNull(gesuchJAXPId.getId());
 		Validate.notNull(statusDTO);
@@ -392,7 +386,7 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@Nullable @QueryParam("date") String stringDate,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(antragJaxId.getId());
 
@@ -424,7 +418,7 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("gesuchsperiodeId") JaxId gesuchsperiodeJaxId,
 		@Nullable @QueryParam("date") String stringDate,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(gesuchsperiodeJaxId.getId());
 		Validate.notNull(antragJaxId.getId());
@@ -457,7 +451,7 @@ public class GesuchResource {
 		@Nullable @PathParam("usernameJA") String usernameJA,
 		@Nullable @PathParam("usernameSCH") String usernameSCH,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
 		resourceHelper.assertGesuchStatusForFreigabe(antragJaxId.getId());
@@ -480,7 +474,7 @@ public class GesuchResource {
 	public Response setBeschwerdeHaengig(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
@@ -505,7 +499,7 @@ public class GesuchResource {
 	public Response setAbschliessen(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);
@@ -617,7 +611,7 @@ public class GesuchResource {
 	public Response removeBeschwerdeHaengig(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
 		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.BESCHWERDE_HAENGIG);
@@ -726,7 +720,7 @@ public class GesuchResource {
 	public Response closeWithoutAngebot(
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
 		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.GEPRUEFT);
@@ -754,7 +748,7 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@PathParam("hasFSDocument") boolean hasFSDocument,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		// Sicherstellen, dass der Status des Client-Objektes genau dem des Servers entspricht
 		resourceHelper.assertGesuchStatusEqual(antragJaxId.getId(), AntragStatusDTO.GEPRUEFT);
@@ -777,7 +771,7 @@ public class GesuchResource {
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findGesuchBetreuungenStatus(
-		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchJAXPId) {
 
 		Validate.notNull(gesuchJAXPId.getId());
 		Optional<Gesuch> gesuchOptional = gesuchService.findGesuch(converter.toEntityId(gesuchJAXPId));
@@ -819,7 +813,7 @@ public class GesuchResource {
 		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
 		@Nonnull @NotNull @PathParam("finSitStatus") FinSitStatus finSitStatus,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
 		Validate.notNull(antragJaxId.getId());
 		final String antragId = converter.toEntityId(antragJaxId);

@@ -29,8 +29,8 @@ public final class SearchUtil {
 	private SearchUtil() {
 	}
 
-	public static List<String> determineDistinctGesuchIdsToLoad(List<String> allGesuchIds, int startindex, int maxresults) {
-		List<String> uniqueGesuchIds = new ArrayList<>(new LinkedHashSet<>(allGesuchIds)); //keep order but remove duplicate ids
+	public static List<String> determineDistinctIdsToLoad(List<String> allIds, int startindex, int maxresults) {
+		List<String> uniqueGesuchIds = new ArrayList<>(new LinkedHashSet<>(allIds)); //keep order but remove duplicate ids
 		int lastindex = Math.min(startindex + maxresults, (uniqueGesuchIds.size()));
 		return uniqueGesuchIds.subList(startindex, lastindex);
 	}
@@ -40,7 +40,7 @@ public final class SearchUtil {
 	}
 
 	@SuppressWarnings("rawtypes") // Je nach Abfrage ist es String oder Long
-	public static CriteriaQuery getQueryForSearchMode(CriteriaBuilder cb, SearchMode mode) {
+	public static CriteriaQuery getQueryForSearchMode(CriteriaBuilder cb, SearchMode mode, String methodName) {
 		CriteriaQuery query;
 		switch (mode) {
 		case SEARCH:
@@ -50,7 +50,7 @@ public final class SearchUtil {
 			query = cb.createQuery(Long.class);
 			return query;
 		default:
-			throw new IllegalStateException("Undefined Mode for searchAllAntraege Query: " + mode);
+			throw new IllegalStateException("Undefined Mode for " + methodName + " Query: " + mode);
 		}
 	}
 }

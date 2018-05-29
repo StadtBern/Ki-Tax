@@ -46,7 +46,7 @@ import ch.dvbern.ebegu.api.dtos.JaxId;
 import ch.dvbern.ebegu.api.dtos.JaxKindContainer;
 import ch.dvbern.ebegu.api.dtos.JaxVerfuegung;
 import ch.dvbern.ebegu.api.util.RestUtil;
-import ch.dvbern.ebegu.entities.Benutzer;
+import ch.dvbern.ebegu.authentication.PrincipalBean;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Institution;
@@ -55,7 +55,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguException;
-import ch.dvbern.ebegu.services.BenutzerService;
 import ch.dvbern.ebegu.services.BetreuungService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
@@ -86,9 +85,6 @@ public class VerfuegungResource {
 	@Inject
 	private InstitutionService institutionService;
 
-	@Inject
-	private BenutzerService benutzerService;
-
 	@SuppressWarnings("CdiInjectionPointsInspection")
 	@Inject
 	private JaxBConverter converter;
@@ -98,6 +94,10 @@ public class VerfuegungResource {
 
 	@Inject
 	private Persistence persistence;
+
+	@Inject
+	private PrincipalBean principalBean;
+
 
 	private static final Logger LOG = LoggerFactory.getLogger(VerfuegungResource.class.getSimpleName());
 
@@ -129,15 +129,11 @@ public class VerfuegungResource {
 			JaxGesuch gesuchJax = converter.gesuchToJAX(gesuchWithCalcVerfuegung);
 
 			Set<JaxKindContainer> kindContainers = gesuchJax.getKindContainers();
-			Optional<Benutzer> currentBenutzer = benutzerService.getCurrentBenutzer();
-			if (currentBenutzer.isPresent()) {
-				UserRole currentUserRole = currentBenutzer.get().getRole();
-				// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
-				// damit nur die relevanten Kinder geschickt werden
-				if (UserRole.SACHBEARBEITER_TRAEGERSCHAFT == currentUserRole || UserRole.SACHBEARBEITER_INSTITUTION == currentUserRole) {
-					Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
-					RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
-				}
+			// Es wird gecheckt ob der Benutzer zu einer Institution/Traegerschaft gehoert. Wenn ja, werden die Kinder gefilter
+			// damit nur die relevanten Kinder geschickt werden
+			if (principalBean.isCallerInAnyOfRole(UserRole.SACHBEARBEITER_TRAEGERSCHAFT, UserRole.SACHBEARBEITER_INSTITUTION)) {
+				Collection<Institution> instForCurrBenutzer = institutionService.getAllowedInstitutionenForCurrentBenutzer(false);
+				RestUtil.purgeKinderAndBetreuungenOfInstitutionen(kindContainers, instForCurrBenutzer);
 			}
 			return Response.ok(kindContainers).build();
 

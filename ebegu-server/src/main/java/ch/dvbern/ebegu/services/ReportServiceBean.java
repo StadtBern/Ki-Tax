@@ -54,22 +54,17 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.jboss.ejb3.annotation.TransactionTimeout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.persistence.criteria.SetJoin;
 
 import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.AbstractDateRangedEntity_;
 import ch.dvbern.ebegu.entities.Abwesenheit;
 import ch.dvbern.ebegu.entities.AntragStatusHistory;
 import ch.dvbern.ebegu.entities.AntragStatusHistory_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
+import ch.dvbern.ebegu.entities.Berechtigung;
+import ch.dvbern.ebegu.entities.Berechtigung_;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Betreuung_;
 import ch.dvbern.ebegu.entities.Erwerbspensum;
@@ -103,9 +98,10 @@ import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.ReportService;
+import ch.dvbern.ebegu.reporting.benutzer.BenutzerDataRow;
+import ch.dvbern.ebegu.reporting.benutzer.BenutzerExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstellerKinderBetreuung.GesuchstellerKinderBetreuungExcelConverter;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
@@ -129,6 +125,14 @@ import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
 import ch.dvbern.oss.lib.excelmerger.RowFiller;
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeFieldProvider;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.jboss.ejb3.annotation.TransactionTimeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -144,6 +148,9 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @Stateless
 @Local(ReportService.class)
 public class ReportServiceBean extends AbstractReportServiceBean implements ReportService {
+
+	@Inject
+	private BenutzerService benutzerService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceBean.class);
 
@@ -166,6 +173,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private MitarbeiterinnenExcelConverter mitarbeiterinnenExcelConverter;
+
+	@Inject
+	private BenutzerExcelConverter benutzerExcelConverter;
 
 	@Inject
 	private ZahlungAuftragExcelConverter zahlungAuftragExcelConverter;
@@ -452,6 +462,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		final Join<Gesuch, Fall> fallJoin = root.join(Gesuch_.fall, JoinType.INNER);
 		final Join<Fall, Benutzer> verantwortlicherJoin = fallJoin.join(Fall_.verantwortlicher, JoinType.LEFT);
+		SetJoin<Benutzer, Berechtigung> verantwortlicherBerechtigungenJoin = verantwortlicherJoin.join(Benutzer_.berechtigungen);
 
 		query.multiselect(verantwortlicherJoin.get(Benutzer_.id).alias(Benutzer_.id.getName()),
 			verantwortlicherJoin.get(Benutzer_.nachname).alias(Benutzer_.nachname.getName()),
@@ -461,11 +472,15 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		query.groupBy(verantwortlicherJoin.get(Benutzer_.id), verantwortlicherJoin.get(Benutzer_.nachname), verantwortlicherJoin.get(Benutzer_.vorname));
 		query.orderBy(builder.asc(verantwortlicherJoin.get(Benutzer_.nachname)));
 
-		Predicate isAdmin = builder.equal(verantwortlicherJoin.get(Benutzer_.role), UserRole.ADMIN);
-		Predicate isSachbearbeiterJA = builder.equal(verantwortlicherJoin.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
-		Predicate orRoles = builder.or(isAdmin, isSachbearbeiterJA);
+		// Der Benutzer muss eine aktive Berechtigung mit Rolle ADMIN oder SACHBEARBEITER_JA haben
+		Predicate predicateActive = builder.between(builder.literal(LocalDate.now()),
+			verantwortlicherBerechtigungenJoin.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			verantwortlicherBerechtigungenJoin.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
+		Predicate isAdmin = verantwortlicherBerechtigungenJoin.get(Berechtigung_.role).in(UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = verantwortlicherBerechtigungenJoin.get(Berechtigung_.role).in(UserRole.SACHBEARBEITER_JA);
+		Predicate predAdminOrSachbearbeiterJA = builder.or(isAdmin, isSachbearbeiterJA);
 
-		query.where(orRoles);
+		query.where(predicateActive, predAdminOrSachbearbeiterJA);
 
 		return persistence.getCriteriaResults(query);
 	}
@@ -482,6 +497,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		Root<AntragStatusHistory> root = query.from(AntragStatusHistory.class);
 		final Join<AntragStatusHistory, Benutzer> benutzerJoin = root.join(AntragStatusHistory_.benutzer, JoinType.INNER);
+		SetJoin<Benutzer, Berechtigung> joinBerechtigungen = benutzerJoin.join(Benutzer_.berechtigungen);
 
 		query.multiselect(
 			benutzerJoin.get(Benutzer_.id).alias(Benutzer_.id.getName()),
@@ -495,12 +511,15 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		final Predicate predicateDatumVon = builder.greaterThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumVon.atStartOfDay());
 		// Datum der Verfuegung muss vor (oder gleich) dem Ende des Abfragezeitraums sein
 		final Predicate predicateDatumBis = builder.lessThanOrEqualTo(root.get(AntragStatusHistory_.timestampVon), datumBis.atStartOfDay());
+		// Der Benutzer muss eine aktive Berechtigung mit Rolle ADMIN oder SACHBEARBEITER_JA haben
+		Predicate predicateActive = builder.between(builder.literal(LocalDate.now()),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
+		Predicate isAdmin = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.ADMIN);
+		Predicate isSachbearbeiterJA = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.SACHBEARBEITER_JA);
+		Predicate predAdminOrSachbearbeiterJA = builder.or(isAdmin, isSachbearbeiterJA);
 
-		Predicate isAdmin = builder.equal(benutzerJoin.get(Benutzer_.role), UserRole.ADMIN);
-		Predicate isSachbearbeiterJA = builder.equal(benutzerJoin.get(Benutzer_.role), UserRole.SACHBEARBEITER_JA);
-		Predicate predOrRoles = builder.or(isAdmin, isSachbearbeiterJA);
-
-		query.where(predicateStatus, predicateDatumVon, predicateDatumBis, predOrRoles);
+		query.where(predicateStatus, predicateDatumVon, predicateDatumBis, predicateActive, predAdminOrSachbearbeiterJA);
 
 		query.groupBy(benutzerJoin.get(Benutzer_.id), benutzerJoin.get(Benutzer_.nachname), benutzerJoin.get(Benutzer_.vorname));
 		query.orderBy(builder.asc(benutzerJoin.get(Benutzer_.nachname)));
@@ -1247,5 +1266,93 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				kindContainer.setKindMutiert(Boolean.TRUE);
 			}
 		}
+	}
+
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Nonnull
+	public UploadFileInfo generateExcelReportBenutzer() throws ExcelMergeException {
+		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_BENUTZER;
+
+		InputStream is = ReportServiceBean.class.getResourceAsStream(reportVorlage.getTemplatePath());
+		Validate.notNull(is, VORLAGE + reportVorlage.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportVorlage.getDataSheetName());
+
+		List<BenutzerDataRow> reportData = getReportDataBenutzer();
+
+		ExcelMergerDTO excelMergerDTO = benutzerExcelConverter.toExcelMergerDTO(reportData, Locale.getDefault());
+
+		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());
+		benutzerExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportVorlage.getDefaultExportFilename(),
+			Constants.TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
+	}
+
+	private List<BenutzerDataRow> getReportDataBenutzer() {
+		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Benutzer> query = builder.createQuery(Benutzer.class);
+		Root<Benutzer> root = query.from(Benutzer.class);
+		SetJoin<Benutzer, Berechtigung> joinBerechtigungen = root.join(Benutzer_.berechtigungen);
+
+		List<Predicate> predicates = new ArrayList<>();
+
+		// Gesuchsteller sollen nicht ausgegeben werden
+		Predicate predicateActive = builder.between(builder.literal(LocalDate.now()),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			joinBerechtigungen.get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigBis));
+		Predicate predicateRoleNotGS = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.GESUCHSTELLER).not();
+		predicates.add(predicateActive);
+		predicates.add(predicateRoleNotGS);
+
+		// Wenn es sich nicht um einen SuperAdmin handelt, muss noch der Mandant beachtet werden, sowie die SuperAdmin ausgefiltert werden.
+		Benutzer user = benutzerService.getCurrentBenutzer().orElseThrow(() -> new EbeguRuntimeException("searchBenutzer", "No User is logged in"));
+		UserRole role = user.getRole();
+		if (role != UserRole.SUPER_ADMIN) {
+			// Admins duerfen alle Benutzer ihres Mandanten sehen
+			predicates.add(builder.equal(root.get(Benutzer_.mandant), user.getMandant()));
+			// Und sie duerfen keine Superadmins sehen
+			Predicate predicateRoleNotSuperadmin = joinBerechtigungen.get(Berechtigung_.role).in(UserRole.SUPER_ADMIN).not();
+			predicates.add(predicateRoleNotSuperadmin);
+		}
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicates));
+		List<Benutzer> benutzerList = persistence.getCriteriaResults(query);
+		List<BenutzerDataRow> dataRowList = convertToBenutzerDataRow(benutzerList);
+		return dataRowList;
+	}
+
+	@Nonnull
+	private List<BenutzerDataRow> convertToBenutzerDataRow(List<Benutzer> benutzerList) {
+		List<BenutzerDataRow> dataRowList = new ArrayList<>();
+
+		for (Benutzer benutzer : benutzerList) {
+			BenutzerDataRow row = new BenutzerDataRow();
+			row.setUsername(benutzer.getUsername());
+
+			row.setNachname(benutzer.getNachname());
+			row.setVorname(benutzer.getVorname());
+			row.setEmail(benutzer.getEmail());
+			row.setRole(ServerMessageUtil.translateEnumValue(benutzer.getRole()));
+			LocalDate gueltigBis = benutzer.getCurrentBerechtigung().getGueltigkeit().getGueltigBis();
+			if (gueltigBis.isBefore(Constants.END_OF_TIME)) {
+				row.setRoleGueltigBis(gueltigBis);
+			}
+			String institution = benutzer.getInstitution() != null ? benutzer.getInstitution().getName() : null;
+			String traegerschaft = benutzer.getTraegerschaft() != null ? benutzer.getTraegerschaft().getName() : null;
+			row.setInstitution(institution);
+			row.setTraegerschaft(traegerschaft);
+			row.setGesperrt(benutzer.getGesperrt());
+			dataRowList.add(row);
+		}
+		return dataRowList;
 	}
 }

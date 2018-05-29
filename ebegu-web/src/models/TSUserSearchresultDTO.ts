@@ -1,7 +1,6 @@
-
 /*
  * Ki-Tax: System for the management of external childcare subsidies
- * Copyright (C) 2017 City of Bern Switzerland
+ * Copyright (C) 2018 City of Bern Switzerland
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -14,29 +13,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ch.dvbern.ebegu.api.client;
+import TSUser from './TSUser';
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+export default class TSUserSearchresultDTO {
 
-/**
- * Dies das proxy interface fuer den HTTP Endpunkt des openam
- */
-public interface IOpenAmRESTProxClient {
+    private _userDTOs: Array<TSUser>;
+    private _totalResultSize: number;
 
-	@POST
-	@Path("/am/json/authenticate")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	Response login(
-		@HeaderParam("X-OpenAM-Username") String username,
-		@HeaderParam("X-OpenAM-Password") String password,
-		@HeaderParam("Content-Type") String contentType);
+    constructor(userDTOs?: Array<TSUser>, totalResultSize?: number) {
+        this._userDTOs = userDTOs;
+        this._totalResultSize = totalResultSize;
+    }
 
+    get userDTOs(): Array<TSUser> {
+        return this._userDTOs;
+    }
+
+    set userDTOs(value: Array<TSUser>) {
+        this._userDTOs = value;
+    }
+
+    get totalResultSize(): number {
+        return this._totalResultSize;
+    }
+
+    set totalResultSize(value: number) {
+        this._totalResultSize = value;
+    }
 }
-
