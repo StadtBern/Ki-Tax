@@ -65,7 +65,7 @@ public class NeedleTest {
 		JaxAdresseContainer adr = TestJaxDataUtil.createTestJaxAdr(null);
 		adr.getAdresseJA().setGueltigAb(null);
 		adr.getAdresseJA().setGueltigBis(null);
-		GesuchstellerAdresseContainer adrEntity = converter.adresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
+		GesuchstellerAdresseContainer adrEntity = converter.gesuchstellerAdresseContainerToEntity(adr, new GesuchstellerAdresseContainer());
 		Assert.assertEquals(Constants.START_OF_TIME, adrEntity.extractGueltigkeit().getGueltigAb());
 		Assert.assertEquals(Constants.END_OF_TIME, adrEntity.extractGueltigkeit().getGueltigBis());
 	}

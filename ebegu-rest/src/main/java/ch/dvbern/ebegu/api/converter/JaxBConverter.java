@@ -2855,12 +2855,6 @@ public class JaxBConverter {
 		return resultSet;
 	}
 
-	//TODO (team) wieso wird hier null zurueckgegeben? --> anstelle sollte man wohl besser gesuchstellerAdresseContainerToEntity verwenden
-	public GesuchstellerAdresseContainer adresseContainerToEntity(JaxAdresseContainer alternativeAdresse, GesuchstellerAdresseContainer
-		gesuchstellerAdresseContainer) {
-		return null;
-	}
-
 	public Mitteilung mitteilungToEntity(JaxMitteilung mitteilungJAXP, Mitteilung mitteilung) {
 		Validate.notNull(mitteilungJAXP);
 		Validate.notNull(mitteilung);
