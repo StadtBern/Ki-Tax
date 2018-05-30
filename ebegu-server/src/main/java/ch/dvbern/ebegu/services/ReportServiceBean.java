@@ -1347,12 +1347,29 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 				row.setRoleGueltigBis(gueltigBis);
 			}
 			String institution = benutzer.getInstitution() != null ? benutzer.getInstitution().getName() : null;
-			String traegerschaft = benutzer.getTraegerschaft() != null ? benutzer.getTraegerschaft().getName() : null;
+			String traegerschaft = getTraegerschaftForBenutzer(benutzer);
 			row.setInstitution(institution);
 			row.setTraegerschaft(traegerschaft);
 			row.setGesperrt(benutzer.getGesperrt());
 			dataRowList.add(row);
 		}
 		return dataRowList;
+	}
+
+	/**
+	 * The Traegerschaft comes directly from the user when it has one. If it has an Institution the tragerschaft will be the one
+	 * the institution belongs to.
+	 * Nuull is returned when the user has no traegerschaft and no institution or this one has no traegerschaft.
+	 * The role isn't taken into account!
+	 */
+	@Nullable
+	private String getTraegerschaftForBenutzer(@Nonnull Benutzer benutzer) {
+		if (benutzer.getTraegerschaft() != null ) {
+			return benutzer.getTraegerschaft().getName();
+		}
+		if (benutzer.getInstitution() != null && benutzer.getInstitution().getTraegerschaft() != null) {
+			return benutzer.getInstitution().getTraegerschaft().getName();
+		}
+		return null;
 	}
 }
