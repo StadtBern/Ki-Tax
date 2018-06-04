@@ -18,9 +18,11 @@ package ch.dvbern.ebegu.services;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.security.PermitAll;
@@ -208,5 +210,23 @@ public class InstitutionServiceBean extends AbstractBaseService implements Insti
 			return getAllInstitutionen();
 		}
 		return Collections.emptyList();
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
+	public EnumSet<BetreuungsangebotTyp> getAllAngeboteFromInstitution(@Nonnull String institutionId) {
+		List<InstitutionStammdaten> allInstStammdaten = getAllInstStammdaten(institutionId);
+		return allInstStammdaten.stream().map(InstitutionStammdaten::getBetreuungsangebotTyp)
+			.collect(Collectors.toCollection(() -> EnumSet.noneOf(BetreuungsangebotTyp.class))); // EnumSet.noneOf creates a new empty set of the given type
+	}
+
+	private List<InstitutionStammdaten> getAllInstStammdaten(String institutionId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<InstitutionStammdaten> query = cb.createQuery(InstitutionStammdaten.class);
+		Root<InstitutionStammdaten> root = query.from(InstitutionStammdaten.class);
+		//Traegerschaft
+		Predicate predTraegerschaft = cb.equal(root.get(InstitutionStammdaten_.institution).get(Institution_.id), institutionId);
+		query.where(predTraegerschaft);
+		return persistence.getCriteriaResults(query);
 	}
 }

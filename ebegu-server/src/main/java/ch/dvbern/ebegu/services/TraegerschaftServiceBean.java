@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,8 +30,10 @@ import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.BerechtigungHistory;
 import ch.dvbern.ebegu.entities.BerechtigungHistory_;
+import ch.dvbern.ebegu.entities.Institution;
 import ch.dvbern.ebegu.entities.Traegerschaft;
 import ch.dvbern.ebegu.entities.Traegerschaft_;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -38,6 +41,7 @@ import ch.dvbern.lib.cdipersistence.Persistence;
 import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 
 /**
@@ -52,6 +56,10 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
+
+	@Inject
+	private InstitutionService institutionService;
+
 
 	@Nonnull
 	@Override
@@ -110,5 +118,23 @@ public class TraegerschaftServiceBean extends AbstractBaseService implements Tra
 		Traegerschaft traegerschaft = traegerschaftOptional.orElseThrow(() -> new EbeguEntityNotFoundException("setInactive", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschaftId));
 		traegerschaft.setActive(false);
 		persistence.merge(traegerschaft);
+	}
+
+	@Override
+	@RolesAllowed({ ADMIN, SUPER_ADMIN, ADMINISTRATOR_SCHULAMT })
+	public EnumSet<BetreuungsangebotTyp> getAllAngeboteFromTraegerschaft(@Nonnull String traegerschaftId) {
+		Validate.notNull(traegerschaftId);
+		Optional<Traegerschaft> traegerschaftOptional = findTraegerschaft(traegerschaftId);
+		Traegerschaft traegerschaft = traegerschaftOptional.orElseThrow(() -> new EbeguEntityNotFoundException("setInactive", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, traegerschaftId));
+
+		EnumSet<BetreuungsangebotTyp> result = EnumSet.noneOf(BetreuungsangebotTyp.class);
+
+		Collection<Institution> allInstitutionen = institutionService.getAllInstitutionenFromTraegerschaft(traegerschaft.getId());
+		allInstitutionen.forEach(institution -> {
+			EnumSet<BetreuungsangebotTyp> allAngeboteInstitution = institutionService.getAllAngeboteFromInstitution(institution.getId());
+			result.addAll(allAngeboteInstitution);
+		});
+
+		return result;
 	}
 }

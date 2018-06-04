@@ -16,11 +16,13 @@
 package ch.dvbern.ebegu.services;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.Institution;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
 /**
  * Service zum Verwalten von Institutionen
@@ -90,5 +92,10 @@ public interface InstitutionService {
 	 * gilt nur fuer die Rolen vom Schulamt
 	 */
 	Collection<Institution> getAllowedInstitutionenForCurrentBenutzer(boolean restrictedForSCH);
+
+	/**
+	 * returns all types of Angebot that are offered bu this Institution
+	 */
+	EnumSet<BetreuungsangebotTyp> getAllAngeboteFromInstitution(@Nonnull String institutionId);
 
 }
