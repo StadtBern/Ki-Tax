@@ -1266,8 +1266,6 @@
     "ROLLE_KUNEFTIG": "Zukünftige Berechtigung",
     "ROLLE": "Rolle",
     "ROLLE_GUELTIG_BIS": "gültig bis",
-    "ROLLE_BEENDEN": "Rolle beenden",
-    "ROLLE_BEENDET_INFO": "Nach Ablauf der Gültigkeit der Rolle erhält der Benutzer automatisch die Rolle GESUCHSTELLER zugewiesen",
     "ROLLE_AB": "Zukünftige Rolle",
     "ROLLE_GUELTIG_AB": "gültig ab",
     "BERECHTIGUNG_HINZUFUEGEN": "Zukünftige Berechtigung erfassen",
