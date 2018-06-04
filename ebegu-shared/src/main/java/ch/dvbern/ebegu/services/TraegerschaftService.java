@@ -16,11 +16,13 @@
 package ch.dvbern.ebegu.services;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.Traegerschaft;
+import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 
 /**
  * Service zum Verwalten von Traegerschaften
@@ -63,4 +65,9 @@ public interface TraegerschaftService {
 	 * marks an Traegerschft as inactive on the Database.
 	 */
 	void setInactive(@Nonnull String traegerschaftId);
+
+	/**
+	 * returns all types of Angebot that are offered by at least one of the Institutions of this traegerschaft
+	 */
+	EnumSet<BetreuungsangebotTyp> getAllAngeboteFromTraegerschaft(@Nonnull String traegerschaftId);
 }

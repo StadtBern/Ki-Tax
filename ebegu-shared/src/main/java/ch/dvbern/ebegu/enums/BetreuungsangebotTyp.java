@@ -29,6 +29,30 @@ public enum BetreuungsangebotTyp {
 	TAGI,
 	FERIENINSEL;
 
+	public boolean isKita() {
+		return KITA == this;
+	}
+
+	public boolean isTagesschule() {
+		return TAGESSCHULE == this;
+	}
+
+	public boolean isTageselternKleinkind() {
+		return TAGESELTERN_KLEINKIND == this;
+	}
+
+	public boolean isTageselternSchulkind() {
+		return TAGESELTERN_SCHULKIND == this;
+	}
+
+	public boolean isTagi() {
+		return TAGI == this;
+	}
+
+	public boolean isFerieninsel() {
+		return FERIENINSEL == this;
+	}
+
 	public boolean isSchulamt() {
 		return TAGESSCHULE == this || FERIENINSEL == this;
 	}

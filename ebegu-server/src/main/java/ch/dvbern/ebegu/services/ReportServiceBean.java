@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -191,6 +192,9 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 	@Inject
 	private InstitutionService institutionService;
+
+	@Inject
+	private TraegerschaftService traegerschaftService;
 
 	@Inject
 	private Persistence persistence;
@@ -1297,7 +1301,12 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			getContentTypeForExport());
 	}
 
-	private List<BenutzerDataRow> getReportDataBenutzer() {
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Nonnull
+	public List<BenutzerDataRow> getReportDataBenutzer() {
 		final CriteriaBuilder builder = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Benutzer> query = builder.createQuery(Benutzer.class);
 		Root<Benutzer> root = query.from(Benutzer.class);
@@ -1351,6 +1360,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setInstitution(institution);
 			row.setTraegerschaft(traegerschaft);
 			row.setGesperrt(benutzer.getGesperrt());
+			setBetreuungsangebote(row, benutzer);
 			dataRowList.add(row);
 		}
 		return dataRowList;
@@ -1371,5 +1381,43 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			return benutzer.getInstitution().getTraegerschaft().getName();
 		}
 		return null;
+	}
+
+	public void setBetreuungsangebote(@Nonnull BenutzerDataRow row, @Nonnull Benutzer benutzer) {
+		// we go through all Traegerschaft/Inst/InstStammdaten and check which kind of Angebot they offer.
+		// We don't get this information directly from the sql-query because it would be quite difficult and the result very long
+		// since it is a report and the users allow them to take long to execute, this shouldn't be any problem.
+
+		// to improve performance we have a Map where we save already calculated results. We use the ID so we can have a Map for both
+		// traegerschaft and Institutionen
+		Map<String, EnumSet<BetreuungsangebotTyp>> betreuungsangebotMap = new HashMap<>();
+
+		// traegerschaft has a higher priority than institution
+		if (benutzer.getTraegerschaft() != null) {
+			if (!betreuungsangebotMap.containsKey(benutzer.getTraegerschaft().getId())) {
+				EnumSet<BetreuungsangebotTyp> allAngeboteTraegerschaft = traegerschaftService
+					.getAllAngeboteFromTraegerschaft(benutzer.getTraegerschaft().getId());
+				betreuungsangebotMap.put(benutzer.getTraegerschaft().getId(), allAngeboteTraegerschaft);
+			}
+			setBetreuungsangebotValues(row, betreuungsangebotMap.get(benutzer.getTraegerschaft().getId()));
+
+		} else if (benutzer.getInstitution() != null) {
+			if (!betreuungsangebotMap.containsKey(benutzer.getInstitution().getId())) {
+				EnumSet<BetreuungsangebotTyp> allAngeboteInstitution = institutionService
+					.getAllAngeboteFromInstitution(benutzer.getInstitution().getId());
+				betreuungsangebotMap.put(benutzer.getInstitution().getId(), allAngeboteInstitution);
+			}
+			setBetreuungsangebotValues(row, betreuungsangebotMap.get(benutzer.getInstitution().getId()));
+		}
+
+	}
+
+	public void setBetreuungsangebotValues(@Nonnull BenutzerDataRow row, @Nonnull EnumSet<BetreuungsangebotTyp> angebote) {
+		row.setKita(angebote.stream().anyMatch(BetreuungsangebotTyp::isKita));
+		row.setTageselternKleinkind(angebote.stream().anyMatch(BetreuungsangebotTyp::isTageselternKleinkind));
+		row.setTageselternSchulkind(angebote.stream().anyMatch(BetreuungsangebotTyp::isTageselternSchulkind));
+		row.setTagi(angebote.stream().anyMatch(BetreuungsangebotTyp::isTagi));
+		row.setTagesschule(angebote.stream().anyMatch(BetreuungsangebotTyp::isTagesschule));
+		row.setFerieninsel(angebote.stream().anyMatch(BetreuungsangebotTyp::isFerieninsel));
 	}
 }

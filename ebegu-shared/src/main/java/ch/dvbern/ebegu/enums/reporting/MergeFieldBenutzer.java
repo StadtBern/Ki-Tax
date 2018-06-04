@@ -43,7 +43,15 @@ public enum MergeFieldBenutzer implements MergeFieldProvider {
 	roleGueltigBis(new SimpleMergeField<>("roleGueltigBis", DATE_CONVERTER)),
 	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
 	traegerschaft(new SimpleMergeField<>("traegerschaft", STRING_CONVERTER)),
-	gesperrt(new SimpleMergeField<>("gesperrt", BOOLEAN_X_CONVERTER));
+	gesperrt(new SimpleMergeField<>("gesperrt", BOOLEAN_X_CONVERTER)),
+	isKita(new SimpleMergeField<>("isKita", BOOLEAN_X_CONVERTER)),
+	isTageselternKleinkind(new SimpleMergeField<>("isTageselternKleinkind", BOOLEAN_X_CONVERTER)),
+	isTageselternSchulkind(new SimpleMergeField<>("isTageselternSchulkind", BOOLEAN_X_CONVERTER)),
+	isTagi(new SimpleMergeField<>("isTagi", BOOLEAN_X_CONVERTER)),
+	isTagesschule(new SimpleMergeField<>("isTagesschule", BOOLEAN_X_CONVERTER)),
+	isFerieninsel(new SimpleMergeField<>("isFerieninsel", BOOLEAN_X_CONVERTER)),
+	isJugendamt(new SimpleMergeField<>("isJugendamt", BOOLEAN_X_CONVERTER)),
+	isSchulamt(new SimpleMergeField<>("isSchulamt", BOOLEAN_X_CONVERTER));
 
 	@Nonnull
 	private final MergeField<?> mergeField;

@@ -63,7 +63,7 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 	@Override
 	public String process() {
 		String typeProp = getParameters().getProperty(REPORT_VORLAGE_TYPE_PARAM);
-		LOG.info("processing report generation job for type " + typeProp);
+		LOG.info("processing report generation job for type {}", typeProp);
 		final ReportVorlage reportType = ReportVorlage.valueOf(typeProp);
 		try {
 			final UploadFileInfo uploadFileInfo = triggerReportGeneration(reportType); //gespeichertes file

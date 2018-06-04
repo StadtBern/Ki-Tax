@@ -33,6 +33,12 @@ public class BenutzerDataRow {
 	@Nullable
 	private String traegerschaft;
 	private Boolean gesperrt;
+	private Boolean isKita;
+	private Boolean isTageselternKleinkind;
+	private Boolean isTageselternSchulkind;
+	private Boolean isTagi;
+	private Boolean isTagesschule;
+	private Boolean isFerieninsel;
 
 
 	public BenutzerDataRow() {
@@ -111,5 +117,65 @@ public class BenutzerDataRow {
 
 	public void setGesperrt(Boolean gesperrt) {
 		this.gesperrt = gesperrt;
+	}
+
+	public Boolean isKita() {
+		return isKita;
+	}
+
+	public void setKita(Boolean isKita) {
+		this.isKita = isKita;
+	}
+
+	public Boolean isTageselternKleinkind() {
+		return isTageselternKleinkind;
+	}
+
+	public void setTageselternKleinkind(Boolean tageselternKleinkind) {
+		isTageselternKleinkind = tageselternKleinkind;
+	}
+
+	public Boolean isTageselternSchulkind() {
+		return isTageselternSchulkind;
+	}
+
+	public void setTageselternSchulkind(Boolean tageselternSchulkind) {
+		isTageselternSchulkind = tageselternSchulkind;
+	}
+
+	public Boolean isTagi() {
+		return isTagi;
+	}
+
+	public void setTagi(Boolean tagi) {
+		isTagi = tagi;
+	}
+
+	public Boolean isTagesschule() {
+		return isTagesschule;
+	}
+
+	public void setTagesschule(Boolean tagesschule) {
+		isTagesschule = tagesschule;
+	}
+
+	public Boolean isFerieninsel() {
+		return isFerieninsel;
+	}
+
+	public void setFerieninsel(Boolean ferieninsel) {
+		isFerieninsel = ferieninsel;
+	}
+
+	public Boolean isJugendamt() {
+		return (this.isKita != null && this.isKita)
+			|| (this.isTageselternKleinkind != null && this.isTageselternKleinkind)
+			|| (this.isTageselternSchulkind != null && this.isTageselternSchulkind)
+			|| (this.isTagi != null && this.isTagi);
+	}
+
+	public Boolean isSchulamt() {
+		return (this.isTagesschule != null && this.isTagesschule)
+			|| (this.isFerieninsel != null && this.isFerieninsel);
 	}
 }

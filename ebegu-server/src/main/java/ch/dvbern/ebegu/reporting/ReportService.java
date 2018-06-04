@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.reporting.benutzer.BenutzerDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.kanton.KantonDataRow;
@@ -93,4 +94,7 @@ public interface ReportService {
 
 	@Nonnull
 	UploadFileInfo generateExcelReportBenutzer() throws ExcelMergeException;
+
+	@Nonnull
+	List<BenutzerDataRow> getReportDataBenutzer();
 }

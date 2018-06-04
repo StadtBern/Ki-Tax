@@ -31,15 +31,14 @@ import ch.dvbern.ebegu.entities.Gesuchsperiode;
 import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.reporting.ReportService;
+import ch.dvbern.ebegu.reporting.benutzer.BenutzerDataRow;
 import ch.dvbern.ebegu.reporting.gesuchstichtag.GesuchStichtagDataRow;
 import ch.dvbern.ebegu.reporting.gesuchzeitraum.GesuchZeitraumDataRow;
 import ch.dvbern.ebegu.reporting.kanton.mitarbeiterinnen.MitarbeiterinnenDataRow;
 import ch.dvbern.ebegu.services.GesuchService;
-import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tests.util.UnitTestTempFolder;
 import ch.dvbern.ebegu.tets.TestDataUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
-import ch.dvbern.lib.cdipersistence.Persistence;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -51,7 +50,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings({ "InstanceMethodNamingConvention", "MethodParameterNamingConvention", "InstanceVariableNamingConvention" })
 @RunWith(Arquillian.class)
@@ -292,5 +294,39 @@ public class ReportServiceBeanTest extends AbstractEbeguLoginTest {
 
 		assertNotNull(uploadFileInfo.getBytes());
 		unitTestTempfolder.writeToTempDir(uploadFileInfo.getBytes(), "ExcelReportGesuchstellerKinderBetreuung.xlsx");
+	}
+
+	@Test
+	public void generateExcelReportBenutzer() {
+		final List<BenutzerDataRow> reportDataBenutzer = reportService.getReportDataBenutzer();
+
+		assertNotNull(reportDataBenutzer);
+		assertEquals(7, reportDataBenutzer.size()); // anonymous is a user too
+
+		// Admin benutzer
+		assertTrue(reportDataBenutzer.stream().anyMatch(benutzerDataRow -> benutzerDataRow.getUsername().equals("blku")));
+		reportDataBenutzer.stream().filter(benutzerDataRow -> benutzerDataRow.getUsername().equals("blku"))
+			.forEach(row -> {
+				assertEquals("Administrator", row.getRole());
+				assertFalse(row.isGesperrt());
+				assertNull(row.getTraegerschaft());
+				assertNull(row.getInstitution());
+			});
+
+		// Institution benutzer
+		assertTrue(reportDataBenutzer.stream().anyMatch(benutzerDataRow -> benutzerDataRow.getUsername().equals("inst1")));
+		reportDataBenutzer.stream().filter(benutzerDataRow -> benutzerDataRow.getUsername().equals("inst1"))
+			.forEach(row -> {
+				assertEquals("Sachbearbeiter Institution", row.getRole());
+				assertFalse(row.isGesperrt());
+				assertNotNull(row.getTraegerschaft());
+				assertNotNull(row.getInstitution());
+				assertTrue(row.isKita());
+				assertTrue(row.isTagi());
+				assertFalse(row.isTageselternKleinkind());
+				assertFalse(row.isTageselternSchulkind());
+				assertFalse(row.isTagesschule());
+				assertFalse(row.isFerieninsel());
+			});
 	}
 }
