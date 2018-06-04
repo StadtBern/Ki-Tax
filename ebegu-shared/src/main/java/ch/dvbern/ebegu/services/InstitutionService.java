@@ -94,7 +94,7 @@ public interface InstitutionService {
 	Collection<Institution> getAllowedInstitutionenForCurrentBenutzer(boolean restrictedForSCH);
 
 	/**
-	 * returns all types of Angebot that are offered bu this Institution
+	 * returns all types of Angebot that are offered by this Institution
 	 */
 	EnumSet<BetreuungsangebotTyp> getAllAngeboteFromInstitution(@Nonnull String institutionId);
 
