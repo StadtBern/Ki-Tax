@@ -313,7 +313,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 
 		WriteProtectedDokument document = saveGeneratedDokumentInDB(baos.toByteArray(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
-			"KompletteKorrespondenz", false);
+			"KompletteKorrespondenz.pdf", false);
 
 		return document;
 	}
