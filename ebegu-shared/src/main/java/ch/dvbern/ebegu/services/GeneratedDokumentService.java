@@ -46,35 +46,48 @@ public interface GeneratedDokumentService {
 	WriteProtectedDokument saveDokument(@Nonnull WriteProtectedDokument dokument);
 
 	@Nullable
-	WriteProtectedDokument findGeneratedDokument(String gesuchId, String filename);
+	WriteProtectedDokument findGeneratedDokument(@Nonnull String gesuchId, @Nonnull String filename);
 
-	Pain001Dokument findPain001Dokument(String zahlungsauftragId, String filename);
+	@Nullable
+	Pain001Dokument findPain001Dokument(@Nonnull String zahlungsauftragId, @Nonnull String filename);
 
 	@Nonnull
-	WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException;
+	WriteProtectedDokument saveGeneratedDokumentInDB(@Nonnull byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, @Nonnull AbstractEntity entity,
+		@Nonnull String fileName, boolean writeProtected) throws MimeTypeParseException;
 
-	WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(Gesuch gesuch,
-		Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
+	@Nonnull
+	WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(@Nonnull Gesuch gesuch, @Nonnull Boolean forceCreation)
+		throws MimeTypeParseException, MergeDocException;
 
-	WriteProtectedDokument getBegleitschreibenDokument(Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
+	@Nonnull
+	WriteProtectedDokument getBegleitschreibenDokument(@Nonnull Gesuch gesuch, @Nonnull Boolean forceCreation)
+		throws MimeTypeParseException, MergeDocException;
 
-	WriteProtectedDokument getKompletteKorrespondenz(Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
+	@Nonnull
+	WriteProtectedDokument getKompletteKorrespondenz(@Nonnull Gesuch gesuch) throws MimeTypeParseException, MergeDocException;
 
-	WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(Gesuch gesuch,
-		Boolean forceCreation) throws MimeTypeParseException, MergeDocException;
+	@Nonnull
+	WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(@Nonnull Gesuch gesuch, @Nonnull Boolean forceCreation)
+		throws MimeTypeParseException, MergeDocException;
 
-	WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(Gesuch gesuch, Betreuung betreuung, String manuelleBemerkungen,
-		Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;
+	@Nonnull
+	WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(@Nonnull Gesuch gesuch, @Nonnull Betreuung betreuung,
+		@Nonnull String	manuelleBemerkungen, @Nonnull Boolean forceCreation) throws MimeTypeParseException, MergeDocException, IOException;
 
-	WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung,
-		Boolean createWriteProtected) throws MimeTypeParseException, IOException, MergeDocException;
+	@Nonnull
+	WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(@Nonnull Mahnung mahnung, @Nonnull Boolean createWriteProtected)
+		throws MimeTypeParseException, IOException, MergeDocException;
 
-	WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung,
-		Boolean forceCreation) throws MimeTypeParseException, IOException, MergeDocException;
+	@Nonnull
+	WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(@Nonnull Betreuung betreuung, @Nonnull Boolean forceCreation)
+		throws MimeTypeParseException, IOException, MergeDocException;
 
-	WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException;
+	@Nonnull
+	WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(@Nonnull Zahlungsauftrag zahlungsauftrag, @Nonnull Boolean forceCreation)
+		throws MimeTypeParseException;
 
-	void removeAllGeneratedDokumenteFromGesuch(Gesuch gesuch);
+	void removeAllGeneratedDokumenteFromGesuch(@Nonnull Gesuch gesuch);
 
-	Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch);
+	@Nonnull
+	Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(@Nonnull Gesuch gesuch);
 }

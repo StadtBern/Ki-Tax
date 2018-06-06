@@ -22,6 +22,9 @@ import javax.ws.rs.ext.Provider;
 
 import ch.dvbern.ebegu.api.validation.EbeguExceptionReport;
 import ch.dvbern.ebegu.errors.EbeguException;
+import ch.dvbern.ebegu.services.GesuchServiceBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by imanol on 01.03.16.
@@ -30,9 +33,12 @@ import ch.dvbern.ebegu.errors.EbeguException;
 @Provider
 public class EbeguExceptionMapper extends AbstractEbeguExceptionMapper<EbeguException> {
 
+	private static final Logger LOG = LoggerFactory.getLogger(GesuchServiceBean.class.getSimpleName());
+
 	@Override
 	public Response toResponse(EbeguException exception) {
 		// wollen wir das hier so handhaben?
+		LOG.error("Es ist eine EbeguException aufgetreten", exception);
 		return buildViolationReportResponse(exception, Status.BAD_REQUEST);
 	}
 

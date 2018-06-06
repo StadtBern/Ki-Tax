@@ -44,12 +44,13 @@ import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AbstractEntity;
+import ch.dvbern.ebegu.entities.AbstractEntity_;
 import ch.dvbern.ebegu.entities.Adresse;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.FileMetadata_;
 import ch.dvbern.ebegu.entities.GeneratedDokument;
 import ch.dvbern.ebegu.entities.GeneratedDokument_;
 import ch.dvbern.ebegu.entities.Gesuch;
-import ch.dvbern.ebegu.entities.Gesuch_;
 import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Mahnung;
 import ch.dvbern.ebegu.entities.Mandant;
@@ -58,7 +59,6 @@ import ch.dvbern.ebegu.entities.Pain001Dokument_;
 import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.WriteProtectedDokument;
 import ch.dvbern.ebegu.entities.Zahlungsauftrag;
-import ch.dvbern.ebegu.entities.Zahlungsauftrag_;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.ApplicationPropertyKey;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
@@ -83,6 +83,7 @@ import ch.dvbern.oss.lib.iso20022.pain001.v00103ch02.Pain001Service;
 import com.lowagie.text.DocumentException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,29 +162,29 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	@Override
 	@Nullable
-	public WriteProtectedDokument findGeneratedDokument(String gesuchId, String filename) {
+	public WriteProtectedDokument findGeneratedDokument(@Nonnull String gesuchId, @Nonnull String filename) {
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<GeneratedDokument> query = cb.createQuery(GeneratedDokument.class);
 		Root<GeneratedDokument> root = query.from(GeneratedDokument.class);
 
-		Predicate predGesuch = cb.equal(root.get(GeneratedDokument_.gesuch).get(Gesuch_.id), gesuchId);
-		Predicate predFileName = cb.equal(root.get(GeneratedDokument_.filename), filename);
+		Predicate predGesuch = cb.equal(root.get(GeneratedDokument_.gesuch).get(AbstractEntity_.id), gesuchId);
+		Predicate predFileName = cb.equal(root.get(FileMetadata_.filename), filename);
 
 		query.where(predGesuch, predFileName);
 		return persistence.getCriteriaSingleResult(query);
 	}
 
-	@Override
 	@Nullable
-	public Pain001Dokument findPain001Dokument(String zahlungsauftragId, String filename) {
+	@Override
+	public Pain001Dokument findPain001Dokument(@Nonnull String zahlungsauftragId, @Nonnull String filename) {
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Pain001Dokument> query = cb.createQuery(Pain001Dokument.class);
 		Root<Pain001Dokument> root = query.from(Pain001Dokument.class);
 
-		Predicate predZahlungsauftrag = cb.equal(root.get(Pain001Dokument_.zahlungsauftrag).get(Zahlungsauftrag_.id), zahlungsauftragId);
-		Predicate predFileName = cb.equal(root.get(Pain001Dokument_.filename), filename);
+		Predicate predZahlungsauftrag = cb.equal(root.get(Pain001Dokument_.zahlungsauftrag).get(AbstractEntity_.id), zahlungsauftragId);
+		Predicate predFileName = cb.equal(root.get(FileMetadata_.filename), filename);
 
 		query.where(predZahlungsauftrag, predFileName);
 		return persistence.getCriteriaSingleResult(query);
@@ -196,7 +197,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 	@Nonnull
 	@Override
 	@SuppressFBWarnings("BC_UNCONFIRMED_CAST")
-	public WriteProtectedDokument saveGeneratedDokumentInDB(byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, AbstractEntity entity, String fileName, boolean writeProtected) throws MimeTypeParseException {
+	public WriteProtectedDokument saveGeneratedDokumentInDB(@Nonnull byte[] data, @Nonnull GeneratedDokumentTyp dokumentTyp, @Nonnull AbstractEntity entity, @Nonnull String fileName, boolean writeProtected) throws MimeTypeParseException {
 
 		WriteProtectedDokument writeProtectedDokument;
 		String filePathToRemove = null;
@@ -238,9 +239,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return returnDocument;
 	}
 
+	@Nonnull
 	@Override
-	public WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(final Gesuch gesuch,
-		Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+	public WriteProtectedDokument getFinSitDokumentAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
+		@Nonnull Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
 			throw new EbeguRuntimeException("getFinSitDokumentAccessTokenGeneratedDokument", ErrorCodeEnum.ERROR_FIN_SIT_IS_NOT_REQUIRED);
@@ -277,14 +279,16 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return persistedDokument;
 	}
 
+	@Nonnull
 	@Override
-	public WriteProtectedDokument getBegleitschreibenDokument(final Gesuch gesuch) throws MimeTypeParseException, MergeDocException {
+	public WriteProtectedDokument getBegleitschreibenDokument(@Nonnull final Gesuch gesuch, @Nonnull Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch.getJahrAndFallnummer());
 
 		// Das Begleitschreiben wird per Definition immer erst nach dem Verfügen erstellt, da die Verfügungen bzw. Nicht-Eintretensverfügungen als
 		// Anhang im Brief erwähnt werden! Sollte das Gesuch ein Status von Verfuegt haben, wird es als writeprotected gespeichert
-		WriteProtectedDokument document = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), fileNameForGeneratedDokumentTyp, true);
+		WriteProtectedDokument document = getDocumentIfExistsAndIsWriteProtected(gesuch.getId(), fileNameForGeneratedDokumentTyp, forceCreation);
 		if (document == null) {
+
 			boolean writeProtectPDF = gesuch.getStatus().isAnyStatusOfVerfuegt();
 			boolean addWatermark = !gesuch.getStatus().isAnyStatusOfVerfuegt();
 			byte[] data = pdfService.generateBegleitschreiben(gesuch, !addWatermark);
@@ -294,8 +298,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return document;
 	}
 
+	@Nonnull
 	@Override
-	public WriteProtectedDokument getKompletteKorrespondenz(final Gesuch gesuch) throws MimeTypeParseException, MergeDocException {
+	public WriteProtectedDokument getKompletteKorrespondenz(@Nonnull final Gesuch gesuch) throws MimeTypeParseException, MergeDocException {
 
 		List<InputStream> docsToMerge = new ArrayList<>();
 
@@ -367,9 +372,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return EMPTY_BYTES;
 	}
 
+	@Nonnull
 	@Override
-	public WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(final Gesuch gesuch,
-		Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+	public WriteProtectedDokument getFreigabequittungAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
+		@Nonnull Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		final String fileNameForGeneratedDokumentTyp = DokumenteUtil.getFileNameForGeneratedDokumentTyp(GeneratedDokumentTyp.FREIGABEQUITTUNG, gesuch.getJahrAndFallnummer());
 
@@ -425,12 +431,11 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 				// zurückgegeben und der Benutzer erhält eine entsprechende Fehlermeldung.
 				LOGGER.error("Die schreibgeschützte Datei {} konnte nicht gefunden werden!", persistedDokument.getFilepfad());
 				return persistedDokument; // Neu hier das (verwaiste) Entity zuereckgegeben, damit wenigstens nicht noch ein neues Dokument auf dem Filesystem erstellt wird. Ergibt Fehler im Download auf Client
-			} else {
-				// GAU:Das Entity ist da, aber das File auf dem Filesystem nicht. Das File darf aber grundsätzlich neu
-				// erstellt werden, es ist noch nicht writeprotected. Wir geben also null zurück.
-				LOGGER.error("Die Datei {} konnte nicht gefunden werden. Wir geben null zurück, damit sie neu erstellt wird.", persistedDokument.getFilepfad());
-				return null;
 			}
+			// GAU:Das Entity ist da, aber das File auf dem Filesystem nicht. Das File darf aber grundsätzlich neu
+			// erstellt werden, es ist noch nicht writeprotected. Wir geben also null zurück.
+			LOGGER.error("Die Datei {} konnte nicht gefunden werden. Wir geben null zurück, damit sie neu erstellt wird.", persistedDokument.getFilepfad());
+			return null;
 		}
 		return persistedDokument;
 	}
@@ -492,6 +497,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return bgEvaluator;
 	}
 
+	@Nonnull
 	@Override
 	public WriteProtectedDokument getVerfuegungDokumentAccessTokenGeneratedDokument(@Nonnull final Gesuch gesuch,
 		@Nonnull Betreuung betreuung, @Nonnull String manuelleBemerkungen, @Nonnull Boolean forceCreation) throws
@@ -528,6 +534,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			Betreuung matchedBetreuung = gesuchWithVerfuegung.extractBetreuungById(betreuung.getId());
 			if (matchedBetreuung != null) {
 				if (!manuelleBemerkungen.isEmpty()) {
+					Validate.notNull(matchedBetreuung.getVerfuegung());
 					matchedBetreuung.getVerfuegung().setManuelleBemerkungen(manuelleBemerkungen);
 				}
 
@@ -550,8 +557,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		return persistedDokument;
 	}
 
+	@Nonnull
 	@Override
-	public WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(Mahnung mahnung, Boolean createWriteProtected) throws MimeTypeParseException,
+	public WriteProtectedDokument getMahnungDokumentAccessTokenGeneratedDokument(@Nonnull Mahnung mahnung, @Nonnull Boolean createWriteProtected) throws MimeTypeParseException,
 		MergeDocException {
 
 		Gesuch gesuch = mahnung.getGesuch();
@@ -560,7 +568,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			mahnungDB == null || mahnungDB.getTimestampErstellt() == null ? "ENTWURF" : Constants.FILENAME_DATE_TIME_FORMATTER.format(mahnungDB.getTimestampErstellt()));
 
 		// Das Dokument muss solange neu erstellt werden, bis die Mahnung ausgelöst war
-		boolean regenerateFile = mahnungDB == null;
+		boolean regenerateFile = (mahnungDB == null);
 		// Wenn wir es nicht neu generieren wollen, suchen wir erst gar nicht nach einem evt. schon existierenden file. Grund: Der Entwurf wird immer unter
 		// demselben Namen gespeichert, so dass wir im Status ENTWURF sehr wahrscheinlich bereits ein altes File finden.
 		if (!regenerateFile) {
@@ -593,8 +601,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	}
 
+	@Nonnull
 	@Override
-	public WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(Betreuung betreuung, Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
+	public WriteProtectedDokument getNichteintretenDokumentAccessTokenGeneratedDokument(@Nonnull Betreuung betreuung, @Nonnull Boolean forceCreation) throws MimeTypeParseException, MergeDocException {
 
 		Gesuch gesuch = betreuung.extractGesuch();
 		GeneratedDokumentTyp dokumentTyp = GeneratedDokumentTyp.NICHTEINTRETEN;
@@ -627,9 +636,10 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 	}
 
+	@Nonnull
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SACHBEARBEITER_INSTITUTION, SACHBEARBEITER_TRAEGERSCHAFT, JURIST, REVISOR })
-	public WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(Zahlungsauftrag zahlungsauftrag, Boolean forceCreation) throws MimeTypeParseException {
+	public WriteProtectedDokument getPain001DokumentAccessTokenGeneratedDokument(@Nonnull Zahlungsauftrag zahlungsauftrag, @Nonnull Boolean forceCreation) throws MimeTypeParseException {
 
 		WriteProtectedDokument persistedDokument = null;
 
@@ -713,8 +723,9 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 		}
 	}
 
+	@Nonnull
 	@Override
-	public Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(Gesuch gesuch) {
+	public Collection<GeneratedDokument> findGeneratedDokumentsFromGesuch(@Nonnull Gesuch gesuch) {
 		Objects.requireNonNull(gesuch);
 		this.authorizer.checkReadAuthorization(gesuch);
 		return criteriaQueryHelper.getEntitiesByAttribute(GeneratedDokument.class, gesuch, GeneratedDokument_.gesuch);

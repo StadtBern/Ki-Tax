@@ -249,9 +249,6 @@ public class DownloadResource {
 		if (gesuch.isPresent()) {
 			WriteProtectedDokument generatedDokument = generatedDokumentService
 				.getFinSitDokumentAccessTokenGeneratedDokument(gesuch.get(), false);
-			if (generatedDokument == null) {
-				return Response.noContent().build();
-			}
 			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 		}
 		throw new EbeguEntityNotFoundException("getFinSitDokumentAccessTokenGeneratedDokument",
@@ -271,12 +268,11 @@ public class DownloadResource {
 		"&uuml;bergebenen Id.")
 	@Nonnull
 	@GET
-	@Path("/{gesuchid}/BEGLEITSCHREIBEN/{forceCreation}/generated")
+	@Path("/{gesuchid}/BEGLEITSCHREIBEN/generated")
 	@Consumes(MediaType.WILDCARD)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBegleitschreibenDokumentAccessTokenGeneratedDokument(
 		@Nonnull @Valid @PathParam("gesuchid") JaxId jaxGesuchId,
-		@Nonnull @Valid @PathParam("forceCreation") Boolean forceCreation,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo) throws EbeguEntityNotFoundException, MergeDocException, MimeTypeParseException {
 
 		Validate.notNull(jaxGesuchId.getId());
@@ -284,10 +280,7 @@ public class DownloadResource {
 
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
-			WriteProtectedDokument generatedDokument = generatedDokumentService.getBegleitschreibenDokument(gesuch.get());
-			if (generatedDokument == null) {
-				return Response.noContent().build();
-			}
+			WriteProtectedDokument generatedDokument = generatedDokumentService.getBegleitschreibenDokument(gesuch.get(), false);
 			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 		}
 		throw new EbeguEntityNotFoundException("getBegleitschreibenDokumentAccessTokenGeneratedDokument",
@@ -321,9 +314,6 @@ public class DownloadResource {
 		final Optional<Gesuch> gesuch = gesuchService.findGesuch(converter.toEntityId(jaxGesuchId));
 		if (gesuch.isPresent()) {
 			WriteProtectedDokument generatedDokument = generatedDokumentService.getKompletteKorrespondenz(gesuch.get());
-			if (generatedDokument == null) {
-				return Response.noContent().build();
-			}
 			return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 		}
 		throw new EbeguEntityNotFoundException("getKompletteKorrespondenzAccessTokenGeneratedDokument",
@@ -361,9 +351,6 @@ public class DownloadResource {
 
 		WriteProtectedDokument generatedDokument = generatedDokumentService
 			.getFreigabequittungAccessTokenGeneratedDokument(gesuch, forceCreation);
-		if (generatedDokument == null) {
-			return Response.noContent().build();
-		}
 		return getFileDownloadResponse(uriInfo, ip, generatedDokument);
 	}
 
@@ -493,10 +480,6 @@ public class DownloadResource {
 
 			WriteProtectedDokument persistedDokument = generatedDokumentService
 				.getPain001DokumentAccessTokenGeneratedDokument(zahlungsauftrag.get(), false);
-			if (persistedDokument == null) {
-				return Response.noContent().build();
-
-			}
 			return getFileDownloadResponse(uriInfo, ip, persistedDokument);
 
 		}
@@ -537,9 +520,11 @@ public class DownloadResource {
 	 */
 	private void loadRelationsAndDetach(Gesuch gesuch) {
 		for (KindContainer kindContainer : gesuch.getKindContainers()) {
-			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-				betreuung.getBetreuungspensumContainers().size();
-				betreuung.getAbwesenheitContainers().size();
+			if (kindContainer.getBetreuungen() != null) {
+				for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+					betreuung.getBetreuungspensumContainers().size();
+					betreuung.getAbwesenheitContainers().size();
+				}
 			}
 		}
 		if (gesuch.getGesuchsteller1() != null) {

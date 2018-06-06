@@ -498,7 +498,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
 
     public openBegleitschreibenPDF(): void {
         let win: Window = this.downloadRS.prepareDownloadWindow();
-        this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id, false)
+        this.downloadRS.getBegleitschreibenDokumentAccessTokenGeneratedDokument(this.gesuchModelManager.getGesuch().id)
             .then((downloadFile: TSDownloadFile) => {
                 this.$log.debug('accessToken: ' + downloadFile.accessToken);
                 this.downloadRS.startDownload(downloadFile.accessToken, downloadFile.filename, false, win);

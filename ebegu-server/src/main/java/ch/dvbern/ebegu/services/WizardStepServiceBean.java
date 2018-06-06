@@ -349,7 +349,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 
 			// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
 			try {
-				generatedDokumentService.getBegleitschreibenDokument(verfuegenWizardStep.getGesuch());
+				generatedDokumentService.getBegleitschreibenDokument(verfuegenWizardStep.getGesuch(), true);
 			} catch (MimeTypeParseException | MergeDocException e) {
 				LOG.error("Error updating Deckblatt Dokument", e);
 			}

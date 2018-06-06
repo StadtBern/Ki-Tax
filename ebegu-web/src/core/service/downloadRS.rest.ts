@@ -60,8 +60,8 @@ export class DownloadRS {
             });
     }
 
-    public getBegleitschreibenDokumentAccessTokenGeneratedDokument(gesuchId: string, forceCreation: boolean): IPromise<TSDownloadFile> {
-        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/BEGLEITSCHREIBEN/' + forceCreation + '/generated')
+    public getBegleitschreibenDokumentAccessTokenGeneratedDokument(gesuchId: string): IPromise<TSDownloadFile> {
+        return this.http.get(this.serviceURL + '/' + encodeURIComponent(gesuchId) + '/BEGLEITSCHREIBEN/generated')
             .then((response: any) => {
                 this.log.debug('PARSING DownloadFile REST object ', response.data);
                 return this.ebeguRestUtil.parseDownloadFile(new TSDownloadFile(), response.data);
