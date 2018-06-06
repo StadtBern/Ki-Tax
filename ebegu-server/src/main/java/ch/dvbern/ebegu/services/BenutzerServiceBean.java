@@ -521,15 +521,15 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			query.where(predicate);
 			//reduce to unique Benutzer
 			List<Benutzer> listWithDuplicates = persistence.getCriteriaResults(query);
-			LinkedHashSet<Benutzer> set = new LinkedHashSet<>();
+			LinkedHashSet<Benutzer> setOfBenutzer = new LinkedHashSet<>();
 			//richtige reihenfolge beibehalten
 			for (String userId : benutzerIds) {
 				listWithDuplicates.stream()
 					.filter(benutzer -> benutzer.getId().equals(userId))
 					.findFirst()
-					.ifPresent(set::add);
+					.ifPresent(setOfBenutzer::add);
 			}
-			return new ArrayList<>(set);
+			return new ArrayList<>(setOfBenutzer);
 		}
 		return Collections.emptyList();
 	}

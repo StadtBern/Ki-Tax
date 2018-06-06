@@ -538,15 +538,15 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 			query.where(predicate);
 			//reduce to unique gesuche
 			List<Gesuch> listWithDuplicates = persistence.getCriteriaResults(query);
-			LinkedHashSet<Gesuch> set = new LinkedHashSet<>();
+			LinkedHashSet<Gesuch> setOfGesuche = new LinkedHashSet<>();
 			//richtige reihenfolge beibehalten
 			for (String gesuchId : gesuchIds) {
 				listWithDuplicates.stream()
 					.filter(gesuch -> gesuch.getId().equals(gesuchId))
 					.findFirst()
-					.ifPresent(set::add);
+					.ifPresent(setOfGesuche::add);
 			}
-			return new ArrayList<>(set);
+			return new ArrayList<>(setOfGesuche);
 		}
 		return Collections.emptyList();
 	}
