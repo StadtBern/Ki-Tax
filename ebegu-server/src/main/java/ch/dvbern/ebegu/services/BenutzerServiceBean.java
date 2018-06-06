@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -518,8 +519,17 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			Root<Benutzer> root = query.from(Benutzer.class);
 			Predicate predicate = root.get(Benutzer_.id).in(benutzerIds);
 			query.where(predicate);
-			//reduce to unique benutzer
-			return persistence.getCriteriaResults(query);
+			//reduce to unique Benutzer
+			List<Benutzer> listWithDuplicates = persistence.getCriteriaResults(query);
+			LinkedHashSet<Benutzer> setOfBenutzer = new LinkedHashSet<>();
+			//richtige reihenfolge beibehalten
+			for (String userId : benutzerIds) {
+				listWithDuplicates.stream()
+					.filter(benutzer -> benutzer.getId().equals(userId))
+					.findFirst()
+					.ifPresent(setOfBenutzer::add);
+			}
+			return new ArrayList<>(setOfBenutzer);
 		}
 		return Collections.emptyList();
 	}
