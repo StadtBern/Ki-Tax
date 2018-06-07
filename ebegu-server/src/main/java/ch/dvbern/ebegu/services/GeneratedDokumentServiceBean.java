@@ -317,8 +317,8 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 			throw new MergeDocException("getKompletteKorrespondenz", "Dokumente konnten nicht gemergt werden", e);
 		}
 
-		WriteProtectedDokument document = saveGeneratedDokumentInDB(baos.toByteArray(), GeneratedDokumentTyp.BEGLEITSCHREIBEN, gesuch,
-			"KompletteKorrespondenz", false);
+		WriteProtectedDokument document = saveGeneratedDokumentInDB(baos.toByteArray(), GeneratedDokumentTyp.KOMPLETTE_KORRESPONDEZ, gesuch,
+			"KompletteKorrespondenz.pdf", false);
 
 		return document;
 	}
