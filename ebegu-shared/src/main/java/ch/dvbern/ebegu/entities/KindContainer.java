@@ -144,11 +144,12 @@ public class KindContainer extends AbstractEntity implements Comparable<KindCont
 		this.nextNumberBetreuung = nextNumberBetreuung;
 	}
 
+	@Nullable
 	public Set<Betreuung> getBetreuungen() {
 		return betreuungen;
 	}
 
-	public void setBetreuungen(Set<Betreuung> betreuungen) {
+	public void setBetreuungen(@Nullable Set<Betreuung> betreuungen) {
 		this.betreuungen = betreuungen;
 	}
 
