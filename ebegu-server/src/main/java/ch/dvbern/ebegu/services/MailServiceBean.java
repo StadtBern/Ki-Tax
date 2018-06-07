@@ -89,7 +89,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoBetreuungAbgelehnt wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddr is null");
 			}
@@ -105,7 +105,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoBetreuungAbgelehnt(betreuung, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoBetreuungAbgelehnt wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoBetreuungAbgelehnt wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddress is null");
 			}
@@ -120,7 +120,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoSchulamtAnmeldungUebernommen(betreuung, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoSchulamtAnmeldungUebernommen wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoSchulamtAnmeldungUebernommen wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoSchulamtAnmeldungUebernommen because Gesuchsteller 1 or mailaddress is null");
 			}
@@ -135,7 +135,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoSchulamtAnmeldungAbgelehnt(betreuung, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoSchulamtAnmeldungAbgelehnt wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoSchulamtAnmeldungAbgelehnt wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoSchulamtAnmeldungAbgelehnt because Gesuchsteller 1 or mailaddress is null");
 			}
@@ -166,7 +166,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoVerfuegtGesuch(gesuch, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoVerfuegtGesuch wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoVerfuegtGesuch wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoVerfuegtGesuch because Gesuchsteller 1 is null");
 			}
@@ -182,7 +182,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoVerfuegtMutaion(gesuch, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoVerfuegtMutation wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoVerfuegtMutation wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoVerfuegtMutation because Gesuchsteller 1 is null");
 			}
@@ -198,7 +198,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoMahnung(gesuch, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoMahnung wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoMahnung wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoMahnung because Gesuchsteller 1 is null");
 			}
@@ -214,7 +214,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getWarnungGesuchNichtFreigegeben(gesuch, gesuchsteller, mailaddress, anzahlTageBisLoeschung);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer WarnungGesuchNichtFreigegeben wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer WarnungGesuchNichtFreigegeben wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendWarnungGesuchNichtFreigegeben because Gesuchsteller 1 is null");
 			}
@@ -230,7 +230,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getWarnungFreigabequittungFehlt(gesuch, gesuchsteller, mailaddress, anzahlTageBisLoeschung);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer WarnungFreigabequittungFehlt wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer WarnungFreigabequittungFehlt wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendWarnungFreigabequittungFehlt because Gesuchsteller 1 is null");
 			}
@@ -246,7 +246,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoGesuchGeloescht(gesuch, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.debug("Email fuer InfoGesuchGeloescht wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoGesuchGeloescht wurde versendet an {}", mailaddress);
 			} else {
 				LOG.warn("skipping sendInfoGesuchGeloescht because Gesuchsteller 1 is null");
 			}
@@ -305,7 +305,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 					if (betreuung.getVorgaengerId() == null) { //this is a new Betreuung for this Antrag
 						if (status.isSendToInstitution()) { //wenn status warten, abgewiesen oder bestaetigt ist
 							sendMessageWithTemplate(message, mailaddress);
-							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
+							LOG.info("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
 						}
 					} else {
 						Betreuung vorgaengerBetreuung = betreuungService.findBetreuung(betreuung
@@ -318,7 +318,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 							//wenn status der aktuellen Betreuung bestaetigt ist UND wenn vorgaenger NICHT die gleiche ist wie die aktuelle
 							//oder wenn status der aktuellen Betreuung warten oder abgewiesen ist
 							sendMessageWithTemplate(message, mailaddress);
-							LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
+							LOG.info("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
 						}
 					}
 				} else {
@@ -326,7 +326,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 					if (status.isSendToInstitution()) {
 						//wenn status warten, abgewiesen oder bestaetigt ist
 						sendMessageWithTemplate(message, mailaddress);
-						LOG.debug("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
+						LOG.info("Email fuer InfoBetreuungGeloescht wurde versendet an {}", mailaddress);
 					}
 
 				}
@@ -353,7 +353,7 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 
 		try {
 			sendMessageWithTemplate(message, mailaddress);
-			LOG.debug("Email fuer InfoBetreuungVerfuegt wurde versendet an {}", mailaddress);
+			LOG.info("Email fuer InfoBetreuungVerfuegt wurde versendet an {}", mailaddress);
 		} catch (MailException e) {
 			LOG.error("Mail InfoBetreuungVerfuegt konnte nicht verschickt werden fuer Betreuung {}", betreuung.getId(), e);
 		}
