@@ -89,9 +89,9 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			if (gesuchsteller != null && StringUtils.isNotEmpty(mailaddress)) {
 				String message = mailTemplateConfig.getInfoBetreuungenBestaetigt(gesuch, gesuchsteller, mailaddress);
 				sendMessageWithTemplate(message, mailaddress);
-				LOG.info("Email fuer InfoBetreuungAbgelehnt wurde versendet an {}", mailaddress);
+				LOG.info("Email fuer InfoBetreuungBestaetigt wurde versendet an {}", mailaddress);
 			} else {
-				LOG.warn("skipping sendInfoBetreuungAbgelehnt because Gesuchsteller 1 or mailaddr is null");
+				LOG.warn("skipping sendInfoBetreuungenBestaetigt because Gesuchsteller 1 or mailaddr is null");
 			}
 		}
 	}
