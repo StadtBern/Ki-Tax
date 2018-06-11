@@ -46,6 +46,10 @@ public enum MathUtil {
 		this.roundingMode = roundingMode;
 	}
 
+	public static boolean isEven(int number) {
+		return number % 2 == 0;
+	}
+
 	@Nonnull
 	private BigDecimal validatePrecision(@Nonnull BigDecimal value) {
 		if (value.precision() > precision) {
