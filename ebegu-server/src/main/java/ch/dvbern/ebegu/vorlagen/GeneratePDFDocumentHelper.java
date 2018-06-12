@@ -30,6 +30,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.lib.doctemplate.common.DocTemplateException;
 import ch.dvbern.lib.doctemplate.docx.DOCXMergeEngine;
 import com.google.common.io.ByteStreams;
@@ -197,7 +198,9 @@ public class GeneratePDFDocumentHelper {
 					byte[] data = PdfReader.getStreamBytes(stream);
 					// Man muss hier doppelt die Kodierung angeben und es funktioniert nicht mit UTF-8. Scheint nicht
 					// auf unseren Windows-Rechner zu funktionieren!!!
-					String correctedStr = new String(data, Charset.forName(PDFENCODING)).replace(NUMOFPAGE, String.valueOf(i)).replace(NUMOFPAGES, String.valueOf(pages));
+					String correctedStr = new String(data, Charset.forName(PDFENCODING))
+						.replace(NUMOFPAGE, String.valueOf(i))
+						.replace(NUMOFPAGES, String.valueOf(pages));
 					stream.setData(correctedStr.getBytes(PDFENCODING));
 				}
 			}
@@ -290,17 +293,18 @@ public class GeneratePDFDocumentHelper {
 
 	/**
 	 * Merge multiple pdf into one pdf
-	 *
-	 * @param list  of pdf input stream
+	 * @param pdfToMergeList  of pdf input stream
 	 * @param outputStream output file output stream
+	 * @param addOddPages when true it creates a blank page after each single document if this has an odd number of pages. This is useful
+	 * when the resulting pdf is printed as thoguh each single document was printed separately
 	 */
-	public static void doMerge(List<InputStream> list, OutputStream outputStream) throws DocumentException, IOException {
+	public static void doMerge(List<InputStream> pdfToMergeList, OutputStream outputStream, boolean addOddPages) throws DocumentException, IOException {
 		Document document = new Document();
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 		document.open();
 		PdfContentByte cb = writer.getDirectContent();
 
-		for (InputStream in : list) {
+		for (InputStream in : pdfToMergeList) {
 			PdfReader reader = new PdfReader(in);
 			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
 				//import the page from source pdf
@@ -309,6 +313,10 @@ public class GeneratePDFDocumentHelper {
 				document.setPageSize(page.getBoundingBox());
 				document.newPage();
 				cb.addTemplate(page, 0, 0);
+			}
+			if (addOddPages && !MathUtil.isEven(writer.getPageNumber())) {
+				document.newPage();
+				writer.setPageEmpty(false); // Use this method to make sure a page is added, even if it's empty.
 			}
 		}
 

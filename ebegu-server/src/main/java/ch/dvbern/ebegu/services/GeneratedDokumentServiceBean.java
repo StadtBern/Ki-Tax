@@ -312,7 +312,7 @@ public class GeneratedDokumentServiceBean extends AbstractBaseService implements
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			GeneratePDFDocumentHelper.doMerge(docsToMerge, baos);
+			GeneratePDFDocumentHelper.doMerge(docsToMerge, baos, true);
 		} catch (DocumentException | IOException e) {
 			throw new MergeDocException("getKompletteKorrespondenz", "Dokumente konnten nicht gemergt werden", e);
 		}
