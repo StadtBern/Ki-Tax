@@ -226,6 +226,8 @@ public class ZahlungServiceBean extends AbstractBaseService implements ZahlungSe
 		}
 		LOGGER.info(sb.toString());
 		calculateZahlungsauftrag(zahlungsauftrag);
+		// Die Überprüfung der Zahlung direkt durchführen
+		zahlungUeberpruefungServiceBean.pruefungZahlungen(zahlungsauftrag.getDatumGeneriert());
 		return persistence.merge(zahlungsauftrag);
 	}
 
