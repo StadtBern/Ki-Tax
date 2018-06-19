@@ -64,8 +64,8 @@ public class MandantServiceBean extends AbstractBaseService implements MandantSe
 		if (mandants != null && !mandants.isEmpty()) {
 			return mandants.iterator().next();
 		} else {
-			LOG.error("Wir erwarten, dass mindestens ein Mandant bereits in der DB existiert");
-			throw new EbeguRuntimeException("getFirst", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+			String message = "Wir erwarten, dass mindestens ein Mandant bereits in der DB existiert";
+			throw new EbeguRuntimeException("getFirst", message, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		}
 	}
 }

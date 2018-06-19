@@ -54,8 +54,8 @@ public final class StateMachineFactory {
 			new StateMachine<>(gesuch.getStatus(), config);
 		gesuchFiniteStateMachine.onUnhandledTrigger((antragStatus, antragEvent) -> {
 
-			LOG.error("State Machine received unhandled event ({}) for current state {}", antragEvent, antragStatus);
-			throw new EbeguRuntimeException("handleFSMEvent", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, antragStatus);
+			String message = String.format("State Machine received unhandled event (%s) for current state %s", antragEvent, antragStatus);
+			throw new EbeguRuntimeException("handleFSMEvent", message, ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, antragStatus);
 		});
 
 		return gesuchFiniteStateMachine;

@@ -86,7 +86,6 @@ public class FileSaverServiceBean implements FileSaverService {
 			LOG.info("Save file in FileSystem: {}", absoluteFilePath);
 
 		} catch (IOException e) {
-			LOG.error("Can't save file in FileSystem: {}", uploadFileInfo.getFilename(), e);
 			throw new EbeguRuntimeException("save", "Could not save file in filesystem {0}", e, absoluteFilePath);
 		}
 	}
@@ -188,7 +187,6 @@ public class FileSaverServiceBean implements FileSaverService {
 					.forEach(file -> deleteFileIfTokenExpired(file));
 			}
 		} catch (IOException e) {
-			LOG.error("Can't save file in FileSystem: {}", absoluteFilePath, e);
 			throw new EbeguRuntimeException("save", "Could not save file in filesystem {0}", e, absoluteFilePath);
 		}
 	}

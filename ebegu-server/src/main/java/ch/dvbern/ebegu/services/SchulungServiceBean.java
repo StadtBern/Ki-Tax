@@ -413,8 +413,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 			FreigabeCopyUtil.copyForFreigabe(gesuch);
 			gesuchService.updateGesuch(gesuch, false, null);
 		} catch (Exception e) {
-			LOG.warn("Could not create Testfall {}", classTestfall.getSimpleName());
-			throw new EbeguRuntimeException("createFall", "Could not create Testfall {}", e,
+			throw new EbeguRuntimeException("createFall", "Could not create Testfall " + classTestfall.getSimpleName(), e,
 				classTestfall.getSimpleName());
 		}
 	}

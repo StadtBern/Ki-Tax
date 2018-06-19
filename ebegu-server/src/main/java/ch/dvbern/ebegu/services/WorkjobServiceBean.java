@@ -203,8 +203,8 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		final List<Workjob> openWorkjobs = this.findWorkjobs(principalBean.getPrincipal().getName(), statesToSearch);
 		final boolean alreadyQueued = openWorkjobs.stream().anyMatch(workJob::isSame);
 		if (alreadyQueued) {
-			LOG.error("An identical Workjob was already queued by this user; {} ", workJob);
-			throw new EbeguRuntimeException("checkIfJobCreationAllowed", ErrorCodeEnum.ERROR_JOB_ALREADY_EXISTS);
+			String messsage = String.format("An identical Workjob was already queued by this user; %s ", workJob);
+			throw new EbeguRuntimeException("checkIfJobCreationAllowed", messsage, ErrorCodeEnum.ERROR_JOB_ALREADY_EXISTS);
 		}
 	}
 

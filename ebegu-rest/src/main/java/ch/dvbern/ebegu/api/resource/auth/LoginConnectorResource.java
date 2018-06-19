@@ -163,8 +163,8 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		checkLocalAccessOnly();
 		final JaxMandant first = mandantResource.getFirst();
 		if (first.getId() == null) {
-			LOG.error("error while loading mandant");
-			throw new EbeguEntityNotFoundException("getFirst", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
+			String message = "error while loading mandant";
+			throw new EbeguEntityNotFoundException("getFirst", message, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
 		} else {
 			return first.getId();
 		}
@@ -206,9 +206,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		if (!this.configuration.isRemoteLoginConnectorAllowed()) {
 			boolean isLocallyAccessed = this.localhostChecker.isAddressLocalhost(request.getRemoteAddr());
 			if (!isLocallyAccessed) {
-				final String requestedHost = this.request.getHeader("host");
-				String hostmachine = requestedHost != null ? requestedHost.split(":")[0] : "";
-				LOG.error("Refusing remote access for host {} from remote addr {} ", hostmachine, request.getRemoteAddr());
 				throw new EJBAccessException("This Service may only be called from localhost but was accessed from  " + request.getRemoteAddr());
 			}
 		}
@@ -232,7 +229,6 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 	private UserRole convertRoleString(@Nullable String roleString) {
 		if (roleString == null) {
 			String msg = "Null Value for role, Could not convert to a valid UserRole";
-			LOG.error(msg);
 			throw new IllegalArgumentException(msg);
 		}
 		try {

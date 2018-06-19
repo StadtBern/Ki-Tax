@@ -336,8 +336,8 @@ public class GesuchResource {
 			}
 			return Response.ok().build();
 		}
-		LOG.error("Could not update Status because the Geusch with ID " + gesuchJAXPId.getId() + " could not be read");
-		throw new EbeguEntityNotFoundException("updateStatus", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
+		String message = "Could not update Status because the Geusch with ID " + gesuchJAXPId.getId() + " could not be read";
+		throw new EbeguEntityNotFoundException("updateStatus", message, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + gesuchJAXPId.getId());
 	}
 
 	/**

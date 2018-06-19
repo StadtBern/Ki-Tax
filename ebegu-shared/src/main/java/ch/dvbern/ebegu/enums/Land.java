@@ -15,6 +15,7 @@
 
 package ch.dvbern.ebegu.enums;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
@@ -288,6 +289,7 @@ public enum Land {
 		return sortierung;
 	}
 
+	@Nullable
 	public static Land getByBsvCode(final String bsvCode) {
 		for (final Land land : values()) {
 			if (bsvCode.equals(land.getBsvCode())) {
@@ -310,7 +312,7 @@ public enum Land {
 		return null;
 	}
 
-	@Nullable
+	@Nonnull
 	public static Land fromString(String code) {
 		Validate.notNull(code, "Laendercode muss gesetzt sein");
 		for (final Land land : values()) {

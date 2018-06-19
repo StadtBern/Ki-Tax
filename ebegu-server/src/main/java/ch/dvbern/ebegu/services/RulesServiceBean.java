@@ -79,9 +79,9 @@ public class RulesServiceBean extends AbstractBaseService implements RulesServic
 			if (param.isPresent()) {
 				ebeguRuleParameters.put(param.get().getName(), param.get());
 			} else {
-				LOG.error("Required rule parameter '{}' could not be loaded  for the given Mandant '{}', Gesuchsperiode '{}'",
+				String message = String.format("Required rule parameter '%s' could not be loaded  for the given Mandant '%s', Gesuchsperiode '%s'",
 					currentParamKey, mandant, gesuchsperiode);
-				throw new EbeguEntityNotFoundException("getRulesForGesuchsperiode", ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND,
+				throw new EbeguEntityNotFoundException("getRulesForGesuchsperiode", message, ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND,
 					currentParamKey, Constants.DATE_FORMATTER.format(stichtag));
 			}
 		}

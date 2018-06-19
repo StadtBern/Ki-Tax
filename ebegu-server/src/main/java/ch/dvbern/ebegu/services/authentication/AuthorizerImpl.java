@@ -521,7 +521,6 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		UserRole userRole = principalBean.discoverMostPrivilegedRole();
 		if (!AntragStatus.writeAllowedForRole(userRole).contains(gesuch.getStatus())) {
 			String msg = "Cannot update Gesuch " + gesuch.getId() + " in Status " + gesuch.getStatus() + " in UserRole " + userRole;
-			LOGGER.error(msg);
 			throw new EbeguRuntimeException("isWriteAuthorized", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
 		}
 		if (principalBean.isCallerInAnyOfRole(JA_OR_ADM_OR_SCH)) {

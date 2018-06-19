@@ -139,9 +139,7 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 			return uploadFileInfo;
 		}
 		}
-
-		LOG.warn("No Report generated ");
-		throw new IllegalArgumentException("Unknown ReportType: " + workJobType);
+		throw new IllegalArgumentException("No Report generated: Unknown ReportType: " + workJobType);
 	}
 
 	private Properties getParameters() {

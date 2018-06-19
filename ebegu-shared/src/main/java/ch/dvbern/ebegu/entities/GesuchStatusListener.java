@@ -71,8 +71,8 @@ public class GesuchStatusListener {
 				stateMachine = StateMachineFactory.getStateMachine(gesuch, getConfig());
 			}
 
-			LOG.error("State Machine received unhandled transition from {} for current state {}", preStatus, postStatus);
-			throw new EbeguRuntimeException("handleFSMEvent", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, postStatus);
+			String message = String.format("State Machine received unhandled transition from %s for current state %s", preStatus, postStatus);
+			throw new EbeguRuntimeException("handleFSMEvent", message, ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, postStatus);
 		}
 	}
 

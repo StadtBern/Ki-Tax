@@ -285,7 +285,6 @@ public class EbeguVorlageServiceBean extends AbstractBaseService implements Ebeg
 			vorlage.setFilepfad(benutzerhandbuch.getPathWithoutFileName() + File.separator + benutzerhandbuch.getActualFilename());
 			return vorlage;
 		} catch (IOException | MimeTypeParseException e) {
-			LOGGER.error("Could not save vorlage!", e);
 			throw new EbeguRuntimeException("getBenutzerhandbuch", "Could not create Benutzerhandbuch", e);
 		}
 	}

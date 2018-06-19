@@ -43,7 +43,7 @@ public class EbeguValidationExceptionMapper extends AbstractEbeguExceptionMapper
 
 	@Override
 	public Response toResponse(ValidationException exception) {
-		LOG.error("ResteasyValidationException occured ", exception);
+		LOG.warn("ResteasyValidationException occured ", exception);
 
 		if (exception instanceof ConstraintDefinitionException) {
 			return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);

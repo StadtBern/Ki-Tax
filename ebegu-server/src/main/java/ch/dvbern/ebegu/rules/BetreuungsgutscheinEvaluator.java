@@ -207,7 +207,7 @@ public class BetreuungsgutscheinEvaluator {
 		Verfuegung verfuegungForRestanspruch = betreuung.getVerfuegungOrVorgaengerVerfuegung();
 		if (verfuegungForRestanspruch == null) {
 			String message = "Ungueltiger Zustand, geschlossene  Betreuung ohne Verfuegung oder Vorgaengerverfuegung (" + betreuung.getId() + ')';
-			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", message, message);
+			throw new EbeguRuntimeException("getRestanspruchForVerfuegteBetreung", message);
 		}
 		restanspruchZeitabschnitte = restanspruchInitializer.createVerfuegungsZeitabschnitte(
 			verfuegungForRestanspruch.getBetreuung(), verfuegungForRestanspruch.getZeitabschnitte());

@@ -131,14 +131,13 @@ public class EWKWebService implements IEWKWebService {
 	private void handleResponseStatus(@Nonnull PersonenSucheResp response) throws PersonenSucheServiceBusinessException, PersonenSucheServiceException {
 		ReturnMessage returnMessage = response.getReturnMessage();
 		if (returnMessage == null) {
-			LOGGER.error("Die Return Message aus der Response vom EWK Service war null, dies ist unerwartet und darf nicht vorkommen");
-			throw new PersonenSucheServiceException("handleResponseStatus", "Return Message der Response muss gesetzt sein");
+			String message = "Die Return Message aus der Response vom EWK Service war null, dies ist unerwartet und darf nicht vorkommen";
+			throw new PersonenSucheServiceException("handleResponseStatus", message);
 		}
 		//wenn der Status nicht 00 oder 01 ist, ist es ein Fehler
 		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode()) && !RETURN_CODE_NO_RESULT.equals(returnMessage.getCode())) {
 			String msg = "EWK: Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
-			LOGGER.error(msg);
-			throw new PersonenSucheServiceBusinessException("handleResponseStatus", returnMessage.getCode(), returnMessage.getText());
+			throw new PersonenSucheServiceBusinessException("handleResponseStatus", returnMessage.getCode(), returnMessage.getText(), msg);
 		} else {
 			LOGGER.debug("Response indicates SUCCESS");
 		}
@@ -221,8 +220,7 @@ public class EWKWebService implements IEWKWebService {
 				LOGGER.info("PersonenSucheService Context Properties set (Endpoint, Username, Password)");
 			} catch (RuntimeException e) {
 				port = null;
-				LOGGER.error("PersonenSucheOB-Service konnte nicht initialisiert werden: ", e);
-				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Could not create service port for endpoint " + endpointURL, e);
+				throw new PersonenSucheServiceException(METHOD_NAME_INIT_PERSONEN_SUCHE, "Could not create service port PersonenSucheOB-Service for endpoint " + endpointURL, e);
 			}
 		}
 		LOGGER.info("PersonenSucheService erfolgreich initialisiert");

@@ -119,9 +119,9 @@ public class BemerkungsMerger {
 						rangesWithoutGaps.add(new DateRange(gueltigkeit.getGueltigkeit()));
 						//this should not happen since the evaluator is supposed to eliminate gaps
 					} else if (lastEndingDate.equals(gueltigkeit.getGueltigkeit().getGueltigAb()) || lastEndingDate.isAfter(gueltigkeit.getGueltigkeit().getGueltigAb())) {
-						LOG.error("The passed list of gueltigkeiten must be ordered and may not have any overlapping" +
-							" gueltigkeiten around date {}. The offending gueltigkeiten are {} and {}", lastEndingDate, rangesWithoutGaps.getLast(), gueltigkeit);
-						throw new IllegalArgumentException("The passed list of gueltigkeiten may not have any overlap");
+						String message = "The passed list of gueltigkeiten must be ordered and may not have any overlapping gueltigkeiten around date " +
+							lastEndingDate + ". The	offending gueltigkeiten are " + rangesWithoutGaps.getLast() + "  and " + gueltigkeit;
+						throw new IllegalArgumentException(message);
 					}
 
 				}

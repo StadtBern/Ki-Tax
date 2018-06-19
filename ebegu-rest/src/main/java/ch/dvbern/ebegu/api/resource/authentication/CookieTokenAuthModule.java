@@ -292,8 +292,8 @@ public class CookieTokenAuthModule extends HttpServerAuthModule {
 		try {
 			httpMsgContext.getResponse().sendError(SC_UNAUTHORIZED);
 		} catch (IOException e) {
-			LOG.error("Error when trying to send 401 back because of missing Authorization");
-			throw new IllegalStateException(e);
+			String message = "Error when trying to send 401 back because of missing Authorization";
+			throw new IllegalStateException(message, e);
 		}
 		return SEND_FAILURE;
 	}

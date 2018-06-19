@@ -95,7 +95,6 @@ public class SearchIndexServiceBean implements SearchIndexService {
 		try {
 			fullTextEntityManager.createIndexer().startAndWait();
 		} catch (InterruptedException e) {
-			LOG.error("Could not index data");
 			throw new EbeguRuntimeException("rebuildSearchIndex", "Index konnte nicht erstellt werden", e, e.getMessage());
 		}
 	}

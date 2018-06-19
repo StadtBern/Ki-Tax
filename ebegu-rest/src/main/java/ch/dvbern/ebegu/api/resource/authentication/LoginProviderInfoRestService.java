@@ -72,9 +72,8 @@ public class LoginProviderInfoRestService {
 		if (loginProviderInfoRESTService == null) {
 			String baseURL = configuration.getLoginProviderAPIUrl();
 			if (baseURL == null) {
-				final String errMsg = "Can not construct LoginConnectorService because API-URI of connector is not specified via property";
-				LOG.error(errMsg);
-				LOG.error("The required URI must be specified using the property " + EBEGU_LOGIN_PROVIDER_API_URL);
+				final String errMsg = "Can not construct LoginConnectorService because API-URI of connector is not specified via property. The required URI "
+					+ "must be specified using the property " + EBEGU_LOGIN_PROVIDER_API_URL;
 				throw new IllegalStateException(errMsg);
 			}
 			LOG.debug("Creating REST Client for URL {}", baseURL);

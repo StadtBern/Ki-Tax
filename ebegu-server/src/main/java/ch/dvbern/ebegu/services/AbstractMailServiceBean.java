@@ -98,7 +98,6 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			email.addTo(mailadress);
 			email.send();
 		} catch (final EmailException e) {
-			LOG.error("Error while sending Mail to: '" + mailadress + '\'', e);
 			throw new MailException("Error while sending Mail to: '" + mailadress + '\'', e);
 		}
 	}
@@ -130,7 +129,6 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			email.send();
 
 		} catch (final EmailException e) {
-			LOG.error("Error while sending Mail to: '" + mailadress + '\'', e);
 			throw new MailException("Error while sending Mail to: '" + mailadress + '\'', e);
 		}
 	}
@@ -156,7 +154,6 @@ public abstract class AbstractMailServiceBean extends AbstractBaseService {
 			assertPositiveIntermediate(client);
 			client.quit();
 		} catch (final Exception e) {
-			LOG.error("Error while sending Mail to: '" + mailadress + '\'', e);
 			throw new MailException("Error while sending Mail to: '" + mailadress + '\'', e);
 		} finally {
 			if (client.isConnected()) {

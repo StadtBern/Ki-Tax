@@ -46,7 +46,6 @@ public class LocalhostChecker {
 				localAddresses.add(inetAddress.getHostAddress());
 			}
 		} catch (IOException e) {
-			LOG.error("Could not find addresses for localhost ", e);
 			throw new EbeguRuntimeException("init localhost checker", "Unable to lookup local addresses", e);
 		}
 	}
@@ -55,5 +54,4 @@ public class LocalhostChecker {
 		return localAddresses.contains(localhost);
 
 	}
-
 }

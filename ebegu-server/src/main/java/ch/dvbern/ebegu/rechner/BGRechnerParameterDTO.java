@@ -92,8 +92,8 @@ public final class BGRechnerParameterDTO {
 	private int asInteger(Map<EbeguParameterKey, EbeguParameter> paramMap, EbeguParameterKey paramKey, Gesuchsperiode gesuchsperiode, Mandant mandant) {
 		EbeguParameter param = paramMap.get(paramKey);
 		if (param == null) {
-			LOG.error("Required calculator parameter '{}' could not be loaded for the given Mandant '{}', Gesuchsperiode '{}'", paramKey, mandant, gesuchsperiode);
-			throw new EbeguEntityNotFoundException("loadCalculatorParameters", ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, paramKey);
+			String message = "Required calculator parameter '" + paramKey + "' could not be loaded for the given Mandant '" + mandant + "', Gesuchsperiode '" + gesuchsperiode + "'";
+			throw new EbeguEntityNotFoundException("loadCalculatorParameters", message, ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, paramKey);
 		}
 		return param.getValueAsInteger();
 	}
@@ -101,8 +101,9 @@ public final class BGRechnerParameterDTO {
 	private BigDecimal asBigDecimal(Map<EbeguParameterKey, EbeguParameter> paramMap, EbeguParameterKey paramKey, Gesuchsperiode gesuchsperiode, Mandant mandant) {
 		EbeguParameter param = paramMap.get(paramKey);
 		if (param == null) {
-			LOG.error("Required calculator parameter '{}' could not be loaded for the given Mandant '{}', Gesuchsperiode '{}'", paramKey, mandant, gesuchsperiode);
-			throw new EbeguEntityNotFoundException("loadCalculatorParameters", ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, paramKey);
+			String message = "Required calculator parameter '" + paramKey + "' could not be loaded for the given Mandant '" + mandant + "', Gesuchsperiode "
+				+ '\'' + gesuchsperiode + '\'';
+			throw new EbeguEntityNotFoundException("loadCalculatorParameters", message, ErrorCodeEnum.ERROR_PARAMETER_NOT_FOUND, paramKey);
 		}
 		return param.getValueAsBigDecimal();
 	}
