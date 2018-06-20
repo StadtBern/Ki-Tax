@@ -35,8 +35,6 @@ import ch.dvbern.ebegu.util.Gueltigkeit;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is supposed to find the longest timeperiods for which bemerkungen in {@link VerfuegungZeitabschnitt}en exists.
@@ -53,14 +51,17 @@ import org.slf4j.LoggerFactory;
  * B: 2
  * C: 1,3
  */
-public class BemerkungsMerger {
-	private static final Logger LOG = LoggerFactory.getLogger(BemerkungsMerger.class);
+public final class BemerkungsMerger {
+
+	private BemerkungsMerger() {
+	}
 
 	/**
 	 * prints a string in the format "[dateFrom -d dateTo] bemerkungstext\n" for every zeitabschnitt in the list.
 	 * It returns a newline separated String
 	 */
 	@SuppressWarnings("SimplifyStreamApiCallChains")
+	@Nullable
 	public static String evaluateBemerkungenForVerfuegung(List<VerfuegungZeitabschnitt> zeitabschnitte) {
 		if (zeitabschnitte == null || zeitabschnitte.isEmpty()) {
 			return null;
@@ -71,7 +72,7 @@ public class BemerkungsMerger {
 
 		for (Map.Entry<String, Collection<DateRange>> stringCollectionEntry : rangesByBemerkungKey.entrySet()) {
 			stringCollectionEntry.getValue().stream()
-				.forEachOrdered(dateRange -> joiner.add("[" + dateRange.toRangeString() + "] " + stringCollectionEntry.getKey()));
+				.forEachOrdered(dateRange -> joiner.add('[' + dateRange.toRangeString() + "] " + stringCollectionEntry.getKey()));
 		}
 
 		return joiner.toString();

@@ -29,6 +29,7 @@ import ch.dvbern.ebegu.enums.GesuchDeletionCause;
 import ch.dvbern.ebegu.enums.UserRoleName;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
+import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.GESUCHSTELLER;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -48,7 +49,7 @@ public class SuperAdminServiceBean implements SuperAdminService {
 	private FallService fallService;
 
 	@Override
-	@RolesAllowed({ GESUCHSTELLER, SUPER_ADMIN, ADMIN })
+	@RolesAllowed({ GESUCHSTELLER, SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT })
 	public void removeGesuch(@Nonnull String gesuchId) {
 		gesuchService.removeGesuch(gesuchId, GesuchDeletionCause.USER);
 	}

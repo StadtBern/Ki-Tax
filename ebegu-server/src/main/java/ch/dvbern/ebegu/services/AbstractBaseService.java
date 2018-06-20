@@ -39,8 +39,6 @@ import org.apache.commons.lang3.Validate;
 import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_TAG_KITA;
 
@@ -48,8 +46,6 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_FIXBETRAG_STADT_PRO_
  * Uebergeordneter Service. Alle Services sollten von diesem Service erben. Wird verwendet um Interceptors einzuschalten
  */
 public abstract class AbstractBaseService {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBaseService.class.getSimpleName());
 
 	@Inject
 	private Persistence persistence;

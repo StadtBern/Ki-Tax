@@ -24,16 +24,12 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Heloer to check if a request originates from localhost
  */
 @ApplicationScoped
 public class LocalhostChecker {
-
-	private final Logger LOG = LoggerFactory.getLogger(LocalhostChecker.class.getSimpleName());
 
 	private Set<String> localAddresses = new HashSet<>();
 

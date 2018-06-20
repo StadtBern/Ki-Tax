@@ -15,7 +15,7 @@
 
 package ch.dvbern.ebegu.services;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 
@@ -25,6 +25,6 @@ import ch.dvbern.ebegu.entities.Gesuch;
  */
 public interface BooleanAuthorizer {
 
-	boolean hasReadAuthorization(@Nullable Gesuch gesuch);
+	boolean hasReadAuthorization(@Nonnull Gesuch gesuch);
 
 }

@@ -765,7 +765,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Optional<Gesuch> gesuchOptional = findGesuch(antragId);
 		if (gesuchOptional.isPresent()) {
 			Gesuch gesuch = gesuchOptional.get();
-			authorizer.checkWriteAuthorization(gesuch);
 			if (!isThereAnyOpenMutation(gesuch.getFall(), gesuch.getGesuchsperiode())) {
 				authorizer.checkReadAuthorization(gesuch);
 				Optional<Gesuch> gesuchForMutationOpt = getNeustesVerfuegtesGesuchFuerGesuch(gesuch.getGesuchsperiode(), gesuch.getFall(), true);
@@ -1238,7 +1237,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, ADMINISTRATOR_SCHULAMT, SUPER_ADMIN })
 	public void removeOnlineMutation(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
 		final Gesuch onlineMutation = findOnlineMutation(fall, gesuchsperiode);
@@ -1286,7 +1285,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, ADMINISTRATOR_SCHULAMT, SUPER_ADMIN })
 	public void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
 		Gesuch gesuch = findOnlineFolgegesuch(fall, gesuchsperiode);
@@ -1308,7 +1307,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	@RolesAllowed({ ADMIN, SUPER_ADMIN })
+	@RolesAllowed({ ADMIN, ADMINISTRATOR_SCHULAMT, SUPER_ADMIN })
 	public void removePapiergesuch(@Nonnull Gesuch gesuch) {
 		logDeletingOfAntrag(gesuch);
 		// Antrag muss Papier sein, und darf noch nicht verfuegen/verfuegt sein

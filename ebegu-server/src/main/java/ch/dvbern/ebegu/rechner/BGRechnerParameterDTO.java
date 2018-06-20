@@ -24,8 +24,6 @@ import ch.dvbern.ebegu.entities.Mandant;
 import ch.dvbern.ebegu.enums.EbeguParameterKey;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ABGELTUNG_PRO_TAG_KANTON;
 import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_ANZAHL_TAGE_KANTON;
@@ -45,8 +43,6 @@ import static ch.dvbern.ebegu.enums.EbeguParameterKey.PARAM_STUNDEN_PRO_TAG_TAGI
  * Diese müssen aus den EbeguParametern gelesen werden.
  */
 public final class BGRechnerParameterDTO {
-
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	private BigDecimal beitragKantonProTag;        // PARAM_ABGELTUNG_PRO_TAG_KANTON
 

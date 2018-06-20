@@ -49,8 +49,6 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.hibernate.search.query.dsl.QueryContextBuilder;
 import org.hibernate.search.query.dsl.TermMatchingContext;
 import org.hibernate.search.query.dsl.TermTermination;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -67,8 +65,6 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @Stateless
 @RolesAllowed({ SUPER_ADMIN, ADMIN })
 public class SearchIndexServiceBean implements SearchIndexService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(SearchIndexServiceBean.class);
 
 	@Nonnull
 	private static final List<SearchFilter> SEARCH_FILTER_FOR_ALL_ENTITIES =

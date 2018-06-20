@@ -59,8 +59,6 @@ import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.lib.cdipersistence.Persistence;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRole.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRole.ADMINISTRATOR_SCHULAMT;
@@ -80,8 +78,6 @@ import static ch.dvbern.ebegu.enums.UserRole.SUPER_ADMIN;
 @RequestScoped
 @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
 public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizerImpl.class);
 
 	private static final UserRole[] JA_OR_ADM_OR_SCH = { ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT };
 	private static final UserRole[] OTHER_AMT_ROLES = { REVISOR, JURIST, STEUERAMT };
@@ -519,6 +515,9 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 		}
 		Gesuch gesuch = gesuchSupplier.get();
 		UserRole userRole = principalBean.discoverMostPrivilegedRole();
+		if (userRole == null) {
+			return false;
+		}
 		if (!AntragStatus.writeAllowedForRole(userRole).contains(gesuch.getStatus())) {
 			String msg = "Cannot update Gesuch " + gesuch.getId() + " in Status " + gesuch.getStatus() + " in UserRole " + userRole;
 			throw new EbeguRuntimeException("isWriteAuthorized", ErrorCodeEnum.ERROR_INVALID_EBEGUSTATE, gesuch.getId(), msg);
@@ -596,7 +595,7 @@ public class AuthorizerImpl implements Authorizer, BooleanAuthorizer {
 	}
 
 	@Override
-	public boolean hasReadAuthorization(@Nullable Gesuch gesuch) {
+	public boolean hasReadAuthorization(@Nonnull Gesuch gesuch) {
 		return isReadAuthorized(gesuch);
 	}
 

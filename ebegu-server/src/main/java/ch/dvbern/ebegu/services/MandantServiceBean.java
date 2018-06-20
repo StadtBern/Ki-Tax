@@ -30,8 +30,6 @@ import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.lib.cdipersistence.Persistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service fuer Mandanten
@@ -40,8 +38,6 @@ import org.slf4j.LoggerFactory;
 @Local(MandantService.class)
 @PermitAll
 public class MandantServiceBean extends AbstractBaseService implements MandantService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(MandantServiceBean.class);
 
 	@Inject
 	private Persistence persistence;

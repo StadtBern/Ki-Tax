@@ -55,7 +55,6 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 	private Vorlage vorlage;
 
 	@Column(nullable = false)
-	@Nullable
 	private boolean proGesuchsperiode = true;
 
 	public EbeguVorlage() {
@@ -84,20 +83,20 @@ public class EbeguVorlage extends AbstractDateRangedEntity implements Comparable
 		this.name = name;
 	}
 
+	@Nullable
 	public Vorlage getVorlage() {
 		return vorlage;
 	}
 
-	public void setVorlage(Vorlage vorlage) {
+	public void setVorlage(@Nullable Vorlage vorlage) {
 		this.vorlage = vorlage;
 	}
 
-	@Nullable
 	public boolean isProGesuchsperiode() {
 		return proGesuchsperiode;
 	}
 
-	public void setProGesuchsperiode(@Nullable boolean proGesuchsperiode) {
+	public void setProGesuchsperiode(boolean proGesuchsperiode) {
 		this.proGesuchsperiode = proGesuchsperiode;
 	}
 

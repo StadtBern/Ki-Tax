@@ -37,8 +37,6 @@ import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.util.AntragStatusConverterUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper fuer die Statusueberpruefung in Resourcen
@@ -47,8 +45,6 @@ import org.slf4j.LoggerFactory;
 @SuppressFBWarnings({ "ImplicitArrayToString", "DMI_INVOKING_TOSTRING_ON_ARRAY" })
 @Stateless
 public class ResourceHelper {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceHelper.class);
 
 	public static final String ASSERT_GESUCH_STATUS_EQUAL = "assertGesuchStatusEqual";
 	public static final String ASSERT_BETREUUNG_STATUS_EQUAL = "assertBetreuungStatusEqual";

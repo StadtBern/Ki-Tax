@@ -88,8 +88,6 @@ public class GesuchResource {
 
 	public static final String GESUCH_ID_INVALID = "GesuchId invalid: ";
 
-	private final Logger LOG = LoggerFactory.getLogger(GesuchResource.class.getSimpleName());
-
 	@Inject
 	private GesuchService gesuchService;
 
