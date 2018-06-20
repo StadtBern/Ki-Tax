@@ -312,7 +312,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 
 	@Nonnull
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT })
 	public Collection<Betreuungsmitteilung> findAllBetreuungsmitteilungenForBetreuung(@Nonnull Betreuung betreuung) {
 		Objects.requireNonNull(betreuung, "betreuung muss gesetzt sein");
 
