@@ -1242,8 +1242,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
 		final Gesuch onlineMutation = findOnlineMutation(fall, gesuchsperiode);
 		moveBetreuungmitteilungenToPreviousAntrag(onlineMutation);
-		List<Betreuung> betreuungen = new ArrayList<>();
-		betreuungen.addAll(onlineMutation.extractAllBetreuungen());
+		List<Betreuung> betreuungen = new ArrayList<>(onlineMutation.extractAllBetreuungen());
 		superAdminService.removeGesuch(onlineMutation.getId());
 
 		mailService.sendInfoBetreuungGeloescht(betreuungen);
@@ -1289,8 +1288,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public void removeOnlineFolgegesuch(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		logDeletingOfGesuchstellerAntrag(fall, gesuchsperiode);
 		Gesuch gesuch = findOnlineFolgegesuch(fall, gesuchsperiode);
-		List<Betreuung> betreuungen = new ArrayList<>();
-		betreuungen.addAll(gesuch.extractAllBetreuungen());
+		List<Betreuung> betreuungen = new ArrayList<>(gesuch.extractAllBetreuungen());
 		superAdminService.removeGesuch(gesuch.getId());
 
 		mailService.sendInfoBetreuungGeloescht(betreuungen);
@@ -1317,8 +1315,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (gesuch.getStatus().isAnyStatusOfVerfuegtOrVefuegen()) {
 			throw new EbeguRuntimeException("removeAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED, gesuch.getStatus());
 		}
-		List<Betreuung> betreuungen = new ArrayList<>();
-		betreuungen.addAll(gesuch.extractAllBetreuungen());
+		List<Betreuung> betreuungen = new ArrayList<>(gesuch.extractAllBetreuungen());
 		// Bei Erstgesuch wird auch der Fall mitgelöscht
 		if (gesuch.getTyp() == AntragTyp.ERSTGESUCH) {
 			superAdminService.removeFall(gesuch.getFall());
@@ -1340,8 +1337,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		if (gesuch.getStatus() != AntragStatus.IN_BEARBEITUNG_GS) {
 			throw new EbeguRuntimeException("removeGesuchstellerAntrag", ErrorCodeEnum.ERROR_DELETION_ANTRAG_NOT_ALLOWED, gesuch.getStatus());
 		}
-		List<Betreuung> betreuungen = new ArrayList<>();
-		betreuungen.addAll(gesuch.extractAllBetreuungen());
+		List<Betreuung> betreuungen = new ArrayList<>(gesuch.extractAllBetreuungen());
 		superAdminService.removeGesuch(gesuch.getId());
 
 		mailService.sendInfoBetreuungGeloescht(betreuungen);

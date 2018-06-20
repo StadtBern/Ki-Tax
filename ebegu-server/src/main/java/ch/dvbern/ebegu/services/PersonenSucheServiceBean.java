@@ -43,7 +43,6 @@ import org.apache.commons.lang3.Validate;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
-import static ch.dvbern.ebegu.enums.UserRoleName.JURIST;
 import static ch.dvbern.ebegu.enums.UserRoleName.SACHBEARBEITER_JA;
 import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
@@ -53,7 +52,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
  */
 @Stateless
 @Local(PersonenSucheService.class)
-@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, JURIST })
+@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT })
 public class PersonenSucheServiceBean extends AbstractBaseService implements PersonenSucheService {
 
 	@Inject
@@ -69,8 +68,8 @@ public class PersonenSucheServiceBean extends AbstractBaseService implements Per
 	@Inject
 	private Persistence persistence;
 
-	@SuppressWarnings(value = { "PMD.UnusedPrivateMethod", "IfStatementWithIdenticalBranches" })
-	@SuppressFBWarnings(value = { "SIC_INNER_SHOULD_BE_STATIC_ANON" })
+	@SuppressWarnings({ "PMD.UnusedPrivateMethod", "IfStatementWithIdenticalBranches" })
+	@SuppressFBWarnings("SIC_INNER_SHOULD_BE_STATIC_ANON")
 	@PostConstruct
 	private void resolveService() {
 		if (config.isPersonenSucheDisabled()) {

@@ -260,7 +260,7 @@
         <div ui-view="kommentarViewPort" flex="100"></div>
     </div>
     <md-sidenav dv-show-element
-                dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesForKommentarSpalte()" class="md-sidenav-right" md-component-id="ewk" id="ewk"
+                dv-show-allowed-roles="vm.TSRoleUtil.getAdministratorJugendamtSchulamtRoles()" class="md-sidenav-right" md-component-id="ewk" id="ewk"
                 md-disable-backdrop md-whiteframe="4" md-is-open="vm.openEwkSidenav">
         <button ng-click="vm.closeSidenav('ewk')" class="dv-btn-operation" style="width:2rem; margin-left:auto;">
             <i class="fa fa-times"></i>

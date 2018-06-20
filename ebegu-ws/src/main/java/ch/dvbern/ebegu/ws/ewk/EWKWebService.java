@@ -138,9 +138,8 @@ public class EWKWebService implements IEWKWebService {
 		if (!RETURN_CODE_OKAY.equals(returnMessage.getCode()) && !RETURN_CODE_NO_RESULT.equals(returnMessage.getCode())) {
 			String msg = "EWK: Fehler bei Webservice Aufruf: " + returnMessage.getCode() + " / " + returnMessage.getText();
 			throw new PersonenSucheServiceBusinessException("handleResponseStatus", returnMessage.getCode(), returnMessage.getText(), msg);
-		} else {
-			LOGGER.debug("Response indicates SUCCESS");
 		}
+		LOGGER.debug("Response indicates SUCCESS");
 	}
 
 	/**

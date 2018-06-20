@@ -40,7 +40,6 @@ import ch.dvbern.ebegu.enums.AntragStatusDTO;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -53,8 +52,6 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Testet GesuchResource
@@ -73,13 +70,11 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	@Inject
 	private JaxBConverter converter;
 
-	private static final Logger LOG = LoggerFactory.getLogger(GesuchResourceTest.class);
-
 	/**
 	 * fuer diesen service logen wir uns immer als jemand anderes ein
 	 */
 	@Test
-	public void testFindGesuchForInstitution() throws EbeguException {
+	public void testFindGesuchForInstitution() {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 		persistUser(UserRole.SACHBEARBEITER_INSTITUTION, "sainst",
@@ -107,7 +102,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testFindGesuchForTraegerschaft() throws EbeguException {
+	public void testFindGesuchForTraegerschaft() {
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
 		changeStatusToWarten(gesuch.getKindContainers().iterator().next());
 
@@ -136,7 +131,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testFindGesuchForOtherRole() throws EbeguException {
+	public void testFindGesuchForOtherRole() {
 		persistUser(UserRole.GESUCHSTELLER, "gesuchst", null, null);
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, null);
 
@@ -156,7 +151,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testUpdateStatus() throws EbeguException {
+	public void testUpdateStatus() {
 		persistUser(UserRole.SACHBEARBEITER_JA, "saja", null, null);
 
 		final Gesuch gesuch = TestDataUtil.createAndPersistWaeltiDagmarGesuch(institutionService, persistence, LocalDate.of(1980, Month.MARCH, 25));
@@ -168,7 +163,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testAntragMutieren() throws EbeguException {
+	public void testAntragMutieren() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuch.setGueltig(true);
 		gesuch.setTimestampVerfuegt(LocalDateTime.now());
@@ -195,7 +190,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testGesuchBySTVFreigeben() throws EbeguException {
+	public void testGesuchBySTVFreigeben() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.GEPRUEFT);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGEN);
@@ -245,7 +240,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testSendGesuchToSTV_NullBemerkung() throws EbeguException {
+	public void testSendGesuchToSTV_NullBemerkung() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.GEPRUEFT);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGEN);
@@ -261,7 +256,7 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void testSendGesuchToSTV() throws EbeguException {
+	public void testSendGesuchToSTV() {
 		Gesuch gesuch = TestDataUtil.createAndPersistGesuch(persistence);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.GEPRUEFT);
 		gesuchResource.updateStatus(new JaxId(gesuch.getId()), AntragStatusDTO.VERFUEGEN);
@@ -292,9 +287,11 @@ public class GesuchResourceTest extends AbstractEbeguRestLoginTest {
 	}
 
 	private void changeStatusToWarten(KindContainer kindContainer) {
-		for (Betreuung betreuung : kindContainer.getBetreuungen()) {
-			betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
-			persistence.merge(betreuung);
+		if (kindContainer != null && kindContainer.getBetreuungen() != null) {
+			for (Betreuung betreuung : kindContainer.getBetreuungen()) {
+				betreuung.setBetreuungsstatus(Betreuungsstatus.WARTEN);
+				persistence.merge(betreuung);
+			}
 		}
 	}
 }

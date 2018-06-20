@@ -165,16 +165,16 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 		if (first.getId() == null) {
 			String message = "error while loading mandant";
 			throw new EbeguEntityNotFoundException("getFirst", message, ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND);
-		} else {
-			return first.getId();
 		}
+
+		return first.getId();
 	}
 
 	@Override
 	public JaxExternalAuthAccessElement createLoginFromIAM(@Nonnull JaxExternalAuthorisierterBenutzer jaxExtAuthUser) {
 		Validate.notNull(jaxExtAuthUser, "Passed JaxExternalAuthorisierterBenutzer may not be null");
 
-		LOG.debug("ExternalLogin System is creating Authorization for user " + jaxExtAuthUser.getUsername());
+		LOG.debug("ExternalLogin System is creating Authorization for user {}", jaxExtAuthUser.getUsername());
 		LOG.debug("Requested url {} ", this.uriInfo.getAbsolutePath());
 
 		checkLocalAccessOnly();
