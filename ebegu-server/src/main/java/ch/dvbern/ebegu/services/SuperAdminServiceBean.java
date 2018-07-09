@@ -55,7 +55,7 @@ public class SuperAdminServiceBean implements SuperAdminService {
 	}
 
 	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN })
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT })
 	public void removeFall(@Nonnull Fall fall) {
 		fallService.removeFall(fall);
 	}
