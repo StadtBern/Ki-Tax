@@ -52,12 +52,6 @@ public class JaxExternalAuthorisierterBenutzer implements Serializable {
 	@NotNull
 	private String username = null;
 
-	/**
-	 * Wiederholung von benutzer.role damit wir nicht joinen muessen
-	 */
-	@NotNull
-	private String role;
-
 	@Nullable
 	private String sessionIndex;
 
@@ -100,14 +94,6 @@ public class JaxExternalAuthorisierterBenutzer implements Serializable {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 
 	@Nullable
