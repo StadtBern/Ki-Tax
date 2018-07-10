@@ -42,12 +42,10 @@ import javax.persistence.criteria.Root;
 
 import ch.dvbern.ebegu.authentication.AuthAccessElement;
 import ch.dvbern.ebegu.authentication.AuthLoginElement;
-import ch.dvbern.ebegu.config.EbeguConfiguration;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer;
 import ch.dvbern.ebegu.entities.AuthorisierterBenutzer_;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
-import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.AuthService;
@@ -70,9 +68,6 @@ public class AuthServiceBean implements AuthService {
 
 	@Inject
 	private BenutzerService benutzerService;
-
-	@Inject
-	private EbeguConfiguration configuration;
 
 	@Inject
 	private CriteriaQueryHelper criteriaQueryHelper;
@@ -153,7 +148,6 @@ public class AuthServiceBean implements AuthService {
 						+ "(e.g. via REST call) prior to creating the AuthorisierterBenutzer entry.");
 					return new EbeguEntityNotFoundException("createLoginFromIam", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, authorisierterBenutzer.getUsername());
 				});
-			checkForSuperuserMail(authorisierterBenutzer, benutzerFromDB);
 			authorisierterBenutzer.setBenutzer(benutzerFromDB);
 			authorisierterBenutzer.setRole(benutzerFromDB.getRole());
 			entityManager.persist(authorisierterBenutzer);
@@ -170,18 +164,6 @@ public class AuthServiceBean implements AuthService {
 			existingUser.getVorname(),
 			existingUser.getEmail(),
 			existingUser.getRole());
-	}
-
-	/**
-	 * Wir haben per proeprty eine email definiert dem wir immer Super-User zuweisen
-	 */
-	@SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-	private void checkForSuperuserMail(AuthorisierterBenutzer authUser, Benutzer benutzerFromDB) {
-		String superuserMail = configuration.getSuperuserMail();
-		if (authUser.getUsername().equalsIgnoreCase(superuserMail)) {
-			authUser.setRole(UserRole.SUPER_ADMIN);
-			benutzerFromDB.setRole(UserRole.SUPER_ADMIN);
-		}
 	}
 
 	@Override

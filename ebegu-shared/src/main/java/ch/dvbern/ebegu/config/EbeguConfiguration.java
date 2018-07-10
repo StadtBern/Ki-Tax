@@ -157,9 +157,4 @@ public interface EbeguConfiguration {
 	 * Admin-Email: An diese Adresse wird z.B. die Zahlungskontrolle gesendet.
 	 */
 	String getAdministratorMail();
-
-	/**
-	 * Email, deren Benutzer die Rolle SUER_ADMIN erhaelt.
-	 */
-	String getSuperuserMail();
 }

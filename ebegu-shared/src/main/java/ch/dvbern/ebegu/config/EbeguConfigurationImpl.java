@@ -60,7 +60,6 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	private static final String EBEGU_SEND_REPORTS_AS_ATTACHEMENT = "ebegu.send.reports.as.attachement";
 	private static final String EBEGU_TESTFAELLE_ENABLED = "ebegu.testfaelle.enabled";
 	private static final String EBEGU_ADMINISTRATOR_MAIL = "ebegu.admin.mail";
-	private static final String EBEGU_SUPERUSER_MAIL = "ebegu.superuser.mail";
 
 
 	@Inject
@@ -210,10 +209,5 @@ public class EbeguConfigurationImpl extends SystemConfiguration implements Ebegu
 	@Override
 	public String getAdministratorMail() {
 		return getString(EBEGU_ADMINISTRATOR_MAIL);
-	}
-
-	@Override
-	public String getSuperuserMail() {
-		return getString(EBEGU_SUPERUSER_MAIL);
 	}
 }
