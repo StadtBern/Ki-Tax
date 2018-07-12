@@ -137,6 +137,13 @@ export class DVBenutzerController {
         return this.$translate.instant(rolePrefix() + role);
     }
 
+    public getGeaendertDurch(role: TSBerechtigungHistory): string {
+        if (role.userErstellt === 'anonymous') {
+            return 'system';
+        }
+        return role.userErstellt;
+    }
+
     saveBenutzer(): void {
         if (this.form.$valid) {
             if (this.isMoreThanGesuchstellerRole()) {
