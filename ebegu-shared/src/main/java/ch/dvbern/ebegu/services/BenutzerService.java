@@ -50,6 +50,13 @@ public interface BenutzerService {
 	Optional<Benutzer> findBenutzer(@Nonnull String username);
 
 	/**
+	 * Sucht einen Benutzer nach externalUUID: Diese Methode wird nur von den Connectoren gebraucht.
+	 * Innerhalb ebegu verwenden wir weiterhin die ID.
+	 */
+	@Nonnull
+	Optional<Benutzer> findBenutzerByExternalUUID(@Nonnull String externalUUID);
+
+	/**
 	 * Gibt alle existierenden Benutzer zurueck.
 	 *
 	 * @return Liste aller Benutzern aus der DB

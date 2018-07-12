@@ -131,6 +131,14 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Nonnull
 	@Override
 	@PermitAll
+	public Optional<Benutzer> findBenutzerByExternalUUID(@Nonnull String externalUUID) {
+		Objects.requireNonNull(externalUUID, "externalUUID muss gesetzt sein");
+		return criteriaQueryHelper.getEntityByUniqueAttribute(Benutzer.class, externalUUID, Benutzer_.externalUUID);
+	}
+
+	@Nonnull
+	@Override
+	@PermitAll
 	public Collection<Benutzer> getAllBenutzer() {
 		return new ArrayList<>(criteriaQueryHelper.getAll(Benutzer.class));
 	}
@@ -222,10 +230,17 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Override
 	@PermitAll
 	public Benutzer updateOrStoreUserFromIAM(@Nonnull Benutzer benutzer) {
-		Optional<Benutzer> foundUserOptional = this.findBenutzer(benutzer.getUsername());
+		Objects.requireNonNull(benutzer.getExternalUUID());
+		Optional<Benutzer> foundUserOptional = this.findBenutzerByExternalUUID(benutzer.getExternalUUID());
 		if (foundUserOptional.isPresent()) {
 			// Wir kennen den Benutzer schon: Es werden nur die readonly-Attribute neu von IAM uebernommen
 			Benutzer foundUser = foundUserOptional.get();
+			// Wir ueberpruefen, ob der Username sich geaendert hat
+			if (!foundUser.getUsername().equals(benutzer.getUsername())) {
+				LOG.warn("External User has new Username: ExternalUUID {}, old username {}, new username {}. Updating!",
+					benutzer.getExternalUUID(), foundUser.getUsername(), benutzer.getUsername());
+				foundUser.setUsername(benutzer.getUsername());
+			}
 			// den username ueberschreiben wir nicht!
 			foundUser.setNachname(benutzer.getNachname());
 			foundUser.setVorname(benutzer.getVorname());

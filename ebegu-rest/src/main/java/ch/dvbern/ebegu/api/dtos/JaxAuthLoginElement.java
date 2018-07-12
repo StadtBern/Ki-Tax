@@ -36,6 +36,9 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	@Nonnull
 	private String username = "";
 
+	@Nullable
+	private String externalUUID = "";
+
 	@Nonnull
 	private String password = "";
 
@@ -70,6 +73,15 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	public void setUsername(@Nonnull String username) {
 		this.username = username;
+	}
+
+	@Nullable
+	public String getExternalUUID() {
+		return externalUUID;
+	}
+
+	public void setExternalUUID(@Nullable String externalUUID) {
+		this.externalUUID = externalUUID;
 	}
 
 	@Nonnull

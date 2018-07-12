@@ -29,6 +29,7 @@ public class JaxExternalBenutzer implements Serializable {
 	private static final long serialVersionUID = -2418503680503363364L;
 
 	private String username;
+	private String externalUUID;
 	private String vorname;
 	private String nachname;
 	private String email;
@@ -56,6 +57,14 @@ public class JaxExternalBenutzer implements Serializable {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getExternalUUID() {
+		return externalUUID;
+	}
+
+	public void setExternalUUID(String externalUUID) {
+		this.externalUUID = externalUUID;
 	}
 
 	public String getVorname() {
