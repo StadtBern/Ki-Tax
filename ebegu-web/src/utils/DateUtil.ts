@@ -24,7 +24,11 @@ export default class DateUtil {
      */
     public static localDateTimeToMoment(localDateTimeString: string): Moment {
         let theMoment: Moment = moment(localDateTimeString, ['YYYY-MM-DDTHH:mm:ss.SSS', 'YYYY-MM-DDTHH:mm:ss', 'YYYY-MM-DDTHH:mm:ss.SSSZ'], true);
-        return theMoment.isValid() ? theMoment : undefined;
+        if (!theMoment.isValid()) {
+            console.warn('Trying to parse a invalid date to moment', theMoment);
+            return undefined;
+        }
+        return theMoment;
     }
 
     /**

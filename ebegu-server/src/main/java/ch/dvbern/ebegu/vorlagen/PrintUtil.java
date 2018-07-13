@@ -29,6 +29,7 @@ import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
+import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import com.google.common.base.Strings;
@@ -37,9 +38,12 @@ import org.apache.commons.lang.StringUtils;
 /**
  *
  */
-public class PrintUtil {
+public final class PrintUtil {
 
 	private static final int FALLNUMMER_MAXLAENGE = 6;
+
+	private PrintUtil() {
+	}
 
 	/**
 	 * Gibt die Korrespondenzadresse zurueck wenn vorhanden, ansonsten die aktuelle Wohnadresse wenn vorhanden, wenn keine
@@ -61,9 +65,12 @@ public class PrintUtil {
 			// Sonst suchen wir die aktuelle Wohnadresse. Die ist keine KORRESPONDENZADRESSE und das aktuelle Datum liegt innerhalb ihrer Gueltigkeit
 			final LocalDate now = LocalDate.now();
 			for (GesuchstellerAdresseContainer gesuchstellerAdresse : adressen) {
+				DateRange gueltigkeit = gesuchstellerAdresse.extractGueltigkeit();
 				if (!gesuchstellerAdresse.extractIsKorrespondenzAdresse()
-					&& !gesuchstellerAdresse.extractGueltigkeit().getGueltigAb().isAfter(now)
-					&& !gesuchstellerAdresse.extractGueltigkeit().getGueltigBis().isBefore(now)) {
+					&& gesuchstellerAdresse.getGesuchstellerAdresseJA() != null // Adressen aus dem GS-Container interessieren uns nicht
+					&& gueltigkeit != null
+					&& !gueltigkeit.getGueltigAb().isAfter(now)
+					&& !gueltigkeit.getGueltigBis().isBefore(now)) {
 					return Optional.of(gesuchstellerAdresse);
 				}
 			}
@@ -95,16 +102,13 @@ public class PrintUtil {
 	 * @return GesuchstellerName
 	 */
 	public static String getGesuchstellerName(Gesuch gesuch) {
-
 		StringBuilder name = new StringBuilder();
 		Optional<GesuchstellerContainer> gesuchsteller = extractGesuchsteller1(gesuch);
-		if (gesuchsteller.isPresent()) {
-			name.append(gesuchsteller.get().extractFullName());
-		}
+		gesuchsteller.ifPresent(gesuchstellerContainer -> name.append(gesuchstellerContainer.extractFullName()));
 		if (gesuch.getGesuchsteller2() != null) {
 			Optional<GesuchstellerContainer> gesuchsteller2 = extractGesuchsteller2(gesuch);
-			if (gesuchsteller.isPresent()) {
-				name.append("\n");
+			if (gesuchsteller2.isPresent()) {
+				name.append('\n');
 				name.append(gesuchsteller2.get().extractFullName());
 			}
 		}
@@ -116,16 +120,18 @@ public class PrintUtil {
 	 */
 
 	public static String getGesuchstellerStrasse(Gesuch gesuch) {
-
 		final Optional<GesuchstellerContainer> gesuchsteller1 = extractGesuchsteller1(gesuch);
 		if (gesuchsteller1.isPresent()) {
 			Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = getGesuchstellerAdresse(gesuchsteller1.get());
 			if (gesuchstellerAdresse.isPresent()) {
 				final GesuchstellerAdresseContainer gsAdresseCont = gesuchstellerAdresse.get();
-				if (gsAdresseCont.extractHausnummer() != null) {
-					return gsAdresseCont.extractStrasse() + " " + gsAdresseCont.extractHausnummer();
-				} else {
-					return gsAdresseCont.extractStrasse();
+				String strasse = gsAdresseCont.extractStrasse();
+				if (strasse != null) {
+					if (gsAdresseCont.extractHausnummer() != null) {
+						return strasse + ' ' + gsAdresseCont.extractHausnummer();
+					} else {
+						return strasse;
+					}
 				}
 			}
 		}
@@ -176,6 +182,7 @@ public class PrintUtil {
 	 * @return GesuchstellerName
 	 */
 
+	@Nullable
 	public static String getOrganisation(Gesuch gesuch) {
 		Optional<GesuchstellerContainer> gesuchsteller = extractGesuchsteller1(gesuch);
 		if (gesuchsteller.isPresent()) {

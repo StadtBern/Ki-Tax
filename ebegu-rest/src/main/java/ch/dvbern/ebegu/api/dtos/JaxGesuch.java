@@ -32,6 +32,7 @@ import ch.dvbern.ebegu.enums.AntragTyp;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
@@ -114,7 +115,7 @@ public class JaxGesuch extends JaxAbstractDTO {
 	private LocalDate datumGewarntFehlendeQuittung;
 
 	@Nullable
-	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	@XmlJavaTypeAdapter(LocalDateTimeXMLConverter.class)
 	private LocalDateTime timestampVerfuegt;
 
 	private boolean gueltig;
