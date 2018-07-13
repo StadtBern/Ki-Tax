@@ -137,6 +137,9 @@ export class DVBenutzerController {
         return this.$translate.instant(rolePrefix() + role);
     }
 
+    /**
+     * Anonymous doesn't give any useful information to the user. For this reason we show system instead of anonymous
+     */
     public getGeaendertDurch(role: TSBerechtigungHistory): string {
         if (role.userErstellt === 'anonymous') {
             return 'system';
