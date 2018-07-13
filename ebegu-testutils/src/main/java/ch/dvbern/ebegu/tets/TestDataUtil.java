@@ -165,6 +165,7 @@ public final class TestDataUtil {
 	public static final LocalDate STICHTAG_EKV_1_GUELTIG = STICHTAG_EKV_1.plusMonths(1);
 	public static final LocalDate STICHTAG_EKV_2 = LocalDate.of(PERIODE_JAHR_2, Month.APRIL, 1);
 	public static final LocalDate STICHTAG_EKV_2_GUELTIG = STICHTAG_EKV_2.plusMonths(1);
+	public static final String TEST_STRASSE = "Nussbaumstrasse";
 
 	private TestDataUtil() {
 	}
@@ -176,9 +177,16 @@ public final class TestDataUtil {
 		return gsAdressCont;
 	}
 
+	public static GesuchstellerAdresseContainer createDefaultGesuchstellerAdresseContainerGS(GesuchstellerContainer gsContainer) {
+		final GesuchstellerAdresseContainer gsAdressCont = new GesuchstellerAdresseContainer();
+		gsAdressCont.setGesuchstellerContainer(gsContainer);
+		gsAdressCont.setGesuchstellerAdresseGS(createDefaultGesuchstellerAdresse());
+		return gsAdressCont;
+	}
+
 	public static GesuchstellerAdresse createDefaultGesuchstellerAdresse() {
 		GesuchstellerAdresse gesuchstellerAdresse = new GesuchstellerAdresse();
-		gesuchstellerAdresse.setStrasse("Nussbaumstrasse");
+		gesuchstellerAdresse.setStrasse(TEST_STRASSE);
 		gesuchstellerAdresse.setHausnummer("21");
 		gesuchstellerAdresse.setZusatzzeile("c/o Uwe Untermieter");
 		gesuchstellerAdresse.setPlz("3014");
