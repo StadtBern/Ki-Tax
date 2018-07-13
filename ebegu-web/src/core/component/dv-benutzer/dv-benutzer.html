@@ -368,7 +368,7 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="row in displayedCollection" st-select-row="row">
-                            <td ng-bind="row.userErstellt"></td>
+                            <td ng-bind="vm.getGeaendertDurch(row)"></td>
                             <td ng-bind="row.timestampErstellt | amDateFormat : 'DD.MM.YYYY HH:mm'"></td>
                             <td ng-bind="vm.getTranslatedRole(row.role)"></td>
                             <td ng-bind="row.gueltigkeit.gueltigAb | amDateFormat : 'DD.MM.YYYY'"></td>
