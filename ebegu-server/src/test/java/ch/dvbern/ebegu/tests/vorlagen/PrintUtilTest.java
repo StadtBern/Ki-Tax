@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.entities.AdresseTyp;
 import ch.dvbern.ebegu.entities.Gesuch;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
 import ch.dvbern.ebegu.entities.GesuchstellerAdresseContainer;
 import ch.dvbern.ebegu.entities.GesuchstellerContainer;
 import ch.dvbern.ebegu.tets.TestDataUtil;
@@ -66,13 +67,19 @@ public class PrintUtilTest {
 		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
 		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		final GesuchstellerAdresseContainer umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
+		Assert.assertNotNull(umzugsadresse.getGesuchstellerAdresseJA());
 		umzugsadresse.getGesuchstellerAdresseJA().setStrasse("newStrasse");
 		gesuchsteller.addAdresse(umzugsadresse);
 
 		//update Gueltigkeiten
 		final LocalDate now = LocalDate.now();
-		gesuchsteller.getAdressen().get(0).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
-		gesuchsteller.getAdressen().get(1).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
+		final GesuchstellerAdresseContainer firstAdresse = gesuchsteller.getAdressen().get(0);
+		Assert.assertNotNull(firstAdresse.getGesuchstellerAdresseJA());
+		firstAdresse.getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
+
+		final GesuchstellerAdresse secondAdresse = gesuchsteller.getAdressen().get(1).getGesuchstellerAdresseJA();
+		Assert.assertNotNull(secondAdresse);
+		secondAdresse.setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
 
 		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
@@ -116,6 +123,7 @@ public class PrintUtilTest {
 		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
 		final GesuchstellerAdresseContainer korrespondenzadresse = createKorrespondenzadresse(gesuchsteller);
 		final GesuchstellerAdresseContainer umzugsadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
+		Assert.assertNotNull(umzugsadresse.getGesuchstellerAdresseJA());
 		umzugsadresse.getGesuchstellerAdresseJA().setStrasse("newStrasse");
 		gesuchsteller.addAdresse(umzugsadresse);
 
@@ -125,8 +133,14 @@ public class PrintUtilTest {
 			.filter(gesuchstellerAdresse -> !gesuchstellerAdresse.extractIsKorrespondenzAdresse())
 			.sorted(Comparator.comparing(o -> o.extractGueltigkeit().getGueltigAb()))
 			.collect(Collectors.toList());
-		wohnAdressen.get(0).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
-		wohnAdressen.get(1).getGesuchstellerAdresseJA().setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
+
+		final GesuchstellerAdresse firstAdresse = wohnAdressen.get(0).getGesuchstellerAdresseJA();
+		Assert.assertNotNull(firstAdresse);
+		firstAdresse.setGueltigkeit(new DateRange(now.minusMonths(5), now.minusDays(1))); // before now
+
+		final GesuchstellerAdresse secondAdresse = wohnAdressen.get(1).getGesuchstellerAdresseJA();
+		Assert.assertNotNull(secondAdresse);
+		secondAdresse.setGueltigkeit(new DateRange(now, now.plusMonths(2))); // now liegt in dieser Periode
 
 		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
 
@@ -135,11 +149,39 @@ public class PrintUtilTest {
 		Assert.assertEquals("korrespondezStrasse", gesuchstellerAdresse.get().extractStrasse());
 	}
 
+	/**
+	 * Wenn im GSContainer eine Korrespondenzadresse gesetzt ist aber im JAContainer diese entfernt wird, sollte die Wohnadresse
+	 * aus dem JAContainer und nicht die Korrespondenzadresse aus dem GSContainer genomen werden.
+	 */
+	@Test
+	public void testGetKorrespondenzAdresseGSContainer() {
+		final Gesuch gesuch = TestDataUtil.createDefaultGesuch();
+		final GesuchstellerContainer gesuchsteller = TestDataUtil.createDefaultGesuchstellerContainer(gesuch);
+		final GesuchstellerAdresseContainer korrespondenzadresse = createKorrespondenzadresseInGSContainer(gesuchsteller);
+
+		final Optional<GesuchstellerAdresseContainer> gesuchstellerAdresse = PrintUtil.getGesuchstellerAdresse(gesuchsteller);
+
+		Assert.assertTrue(gesuchstellerAdresse.isPresent());
+		Assert.assertNotEquals(korrespondenzadresse, gesuchstellerAdresse.get());
+		Assert.assertEquals(TestDataUtil.TEST_STRASSE, gesuchstellerAdresse.get().extractStrasse());
+	}
+
+
 	@Nonnull
 	private GesuchstellerAdresseContainer createKorrespondenzadresse(GesuchstellerContainer gesuchsteller) {
 		final GesuchstellerAdresseContainer korrespondenzadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainer(gesuchsteller);
+		Assert.assertNotNull(korrespondenzadresse.getGesuchstellerAdresseJA());
 		korrespondenzadresse.getGesuchstellerAdresseJA().setStrasse("korrespondezStrasse");
 		korrespondenzadresse.getGesuchstellerAdresseJA().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
+		gesuchsteller.addAdresse(korrespondenzadresse);
+		return korrespondenzadresse;
+	}
+
+	@Nonnull
+	private GesuchstellerAdresseContainer createKorrespondenzadresseInGSContainer(GesuchstellerContainer gesuchsteller) {
+		final GesuchstellerAdresseContainer korrespondenzadresse = TestDataUtil.createDefaultGesuchstellerAdresseContainerGS(gesuchsteller);
+		korrespondenzadresse.getGesuchstellerAdresseGS().setStrasse("korrespondezStrasseGS");
+		korrespondenzadresse.getGesuchstellerAdresseGS().setAdresseTyp(AdresseTyp.KORRESPONDENZADRESSE);
 		gesuchsteller.addAdresse(korrespondenzadresse);
 		return korrespondenzadresse;
 	}

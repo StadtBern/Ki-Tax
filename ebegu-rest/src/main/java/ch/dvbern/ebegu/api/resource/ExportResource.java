@@ -93,10 +93,11 @@ public class ExportResource {
 	@Path("/meta/xsd")
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
-	public String getXmlSchemaString() throws JAXBException, IOException {
+	public Response getXmlSchemaString() throws JAXBException, IOException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(VerfuegungenExportDTO.class);
 		EbeguSchemaOutputResolver sor = new EbeguSchemaOutputResolver();
 		jaxbContext.generateSchema(sor);
-		return sor.getSchema();
+		String schema = sor.getSchema();
+		return Response.ok(schema).build();
 	}
 }
