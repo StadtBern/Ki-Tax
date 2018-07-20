@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 import javax.activation.MimeType;
@@ -192,10 +195,10 @@ public class FileSaverServiceBean implements FileSaverService {
 	}
 
 	private void deleteFileIfTokenExpired(Path path) {
-		long l = path.toFile().lastModified();
-		long now = System.currentTimeMillis();
-		if (Constants.MAX_LONGER_TEMP_DOWNLOAD_AGE_MINUTES < now-l) {
-			LOG.info("Deleting File {}",  path.getFileName());
+		LocalDateTime deleteBefore = LocalDateTime.now().minusMinutes(Constants.MAX_LONGER_TEMP_DOWNLOAD_AGE_MINUTES);
+		LocalDateTime lastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(path.toFile().lastModified()), ZoneId.systemDefault());
+		if (lastModified.isBefore(deleteBefore)) {
+			LOG.info("Deleting File {}, lastModified on {}",  path.getFileName(), lastModified);
 			try {
 				Files.delete(path);
 			} catch (IOException e) {
