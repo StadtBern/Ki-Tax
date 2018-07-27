@@ -9,7 +9,7 @@
 <#-- @ftlvariable name="configuration" type="ch.dvbern.ebegu.config.EbeguConfiguration" -->
 From: ${configuration.senderAddress}
 To: ${institution.name} <${empfaengerMail}>
-Subject: <@base64Header>${institution.name}: Ki-Tax - Betreuung verfügt</@base64Header>
+Subject: <@base64Header>${institution.name}: Ki-Tax – Betreuung verfügt</@base64Header>
 Content-Type: text/html;charset=utf-8
 
 <html>
@@ -17,7 +17,7 @@ Content-Type: text/html;charset=utf-8
 ${templateConfiguration.mailCss}
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title>Ki-Tax - Betreuung verfügt</title>
+	<title>Ki-Tax – Betreuung verfügt</title>
 
 </head>
 

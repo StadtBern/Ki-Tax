@@ -747,7 +747,7 @@
     "EKVI_MONAT_DES_EREIGNISSES_1_HELP": "Bitte wählen Sie in der Drop-down-Liste den Monat, in dem sich Ihr Einkommen verschlechtert hat.",
     "EKVI_MONAT_DES_EREIGNISSES_2_HELP": "Bitte wählen Sie in der Drop-down-Liste den Monat, in dem sich Ihr Einkommen verschlechtert hat. Hat sich Ihr Einkommen bereits im letzten Jahr verschlechtert, wählen Sie bitte «Vorjahr». Ihre Einkommensverschlechterung wird dann ab Januar berücksichtigt.",
     "EKVI_GRUND_DES_EREIGNISSES": "Grund des Ereignisses",
-    "EKVI_ZUSAETZLICHE_FRAGEN": "Zusätzliche Fragen für die Einkommensberschlechterung zum Jahr {{basisjahr}}",
+    "EKVI_ZUSAETZLICHE_FRAGEN": "Zusätzliche Fragen für die Einkommensverschlechterung zum Jahr {{basisjahr}}",
     "EKVI_EINKOMMENSVERSCHLECHTERUNG_FUER_BASISJAHR": "Einkommensverschlechterung {{gesuchsteller}} {{basisjahr}}",
     "EKVI_NETTOLOHN_JANUARY": "Nettoeinkommen Januar ",
     "EKVI_NETTOLOHN_FEBRUARY": "Nettoeinkommen Februar",

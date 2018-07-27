@@ -6,7 +6,7 @@
 <#-- @ftlvariable name="gesuchsperiode" type="ch.dvbern.ebegu.entities.Gesuchsperiode" -->
 From: ${configuration.senderAddress}
 To: ${gesuchsteller.fullName} <${empfaengerMail}>
-Subject: <@base64Header>Ki-Tax - Neue Gesuchsperiode freigeschaltet</@base64Header>
+Subject: <@base64Header>Ki-Tax – Neue Gesuchsperiode freigeschaltet</@base64Header>
 Content-Type: text/html;charset=utf-8
 
 <html>
@@ -14,7 +14,7 @@ Content-Type: text/html;charset=utf-8
 ${templateConfiguration.mailCss}
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title>Ki-Tax - Neue Gesuchsperiode freigeschaltet</title>
+	<title>Ki-Tax – Neue Gesuchsperiode freigeschaltet</title>
 </head>
 
 <body>
