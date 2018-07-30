@@ -170,7 +170,7 @@ public class AuthResource {
 			}
 			// Achtung: Damit wird der bereits vorhandene Benutzer wieder mit den Daten aus dem LocalLogin überschrieben!
 			// Dies ist aber gewünschtes Verhalten: Wenn wir uns mit dem Admin-Link einloggen, wollen wir immer Admin sein.
-			benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer));
+			benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(loginElement, benutzer), false);
 
 			Optional<AuthAccessElement> accessElement = authService.login(login);
 			if (!accessElement.isPresent()) {

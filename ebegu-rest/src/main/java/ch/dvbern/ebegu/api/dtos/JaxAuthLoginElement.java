@@ -181,7 +181,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 			return false;
 		}
 		for (int i = 0; i < thisSorted.size(); i++) {
-			if (thisSorted.get(i).compareTo(otherSorted.get(i)) != 0) {
+			if (!thisSorted.get(i).isSame(otherSorted.get(i))) {
 				return false;
 			}
 		}

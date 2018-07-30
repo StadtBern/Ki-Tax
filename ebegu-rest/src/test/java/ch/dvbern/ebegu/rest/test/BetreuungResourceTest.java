@@ -169,7 +169,7 @@ public class BetreuungResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		Mandant persistedMandant = persistence.persist(converter.mandantToEntity(TestJaxDataUtil.createTestMandant(), new Mandant()));
 		jaxGesuch.getFall().getVerantwortlicher().setMandant(converter.mandantToJAX(persistedMandant));
-		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(jaxGesuch.getFall().getVerantwortlicher(), new Benutzer()));
+		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(jaxGesuch.getFall().getVerantwortlicher(), new Benutzer()), false);
 		JaxFall returnedFall = fallResource.saveFall(jaxGesuch.getFall(), uri, null);
 		jaxGesuch.setGesuchsperiode(saveGesuchsperiodeInStatusAktiv(jaxGesuch.getGesuchsperiode()));
 		jaxGesuch.setFall(returnedFall);

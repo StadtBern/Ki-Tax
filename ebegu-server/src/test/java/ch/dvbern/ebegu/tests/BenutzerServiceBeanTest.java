@@ -84,7 +84,7 @@ public class BenutzerServiceBeanTest extends AbstractEbeguLoginTest {
 		secondBerechtigung.setRole(UserRole.SACHBEARBEITER_JA);
 		secondBerechtigung.getGueltigkeit().setGueltigAb(AB_ZWEITE_BERECHTIGUNG);
 		benutzer.getBerechtigungen().add(secondBerechtigung);
-		benutzer = benutzerService.saveBenutzer(benutzer, false);
+		benutzer = benutzerService.saveBenutzer(benutzer, true);
 
 		berechtigungen = benutzer.getBerechtigungen();
 		Assert.assertNotNull(berechtigungen);
