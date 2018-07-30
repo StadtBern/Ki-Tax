@@ -101,7 +101,7 @@ export default class UserRS implements IEntityRS {
 
     public saveBenutzerBerechtigungen(user: TSUser): IPromise<TSUser> {
         let userRest = this.ebeguRestUtil.userToRestObject({}, user);
-        return this.http.put(this.serviceURL + '/save/', userRest, {
+        return this.http.put(this.serviceURL + '/saveBenutzerBerechtigungen/', userRest, {
             headers: {
                 'Content-Type': 'application/json'
             }

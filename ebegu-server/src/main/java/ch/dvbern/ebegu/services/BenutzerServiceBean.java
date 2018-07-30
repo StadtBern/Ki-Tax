@@ -112,12 +112,8 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@PermitAll
 	public Benutzer saveBenutzerBerechtigungen(@Nonnull Benutzer benutzer, boolean currentBerechtigungChanged) {
 		Objects.requireNonNull(benutzer);
-		if (benutzer.isNew()) {
-			return persistence.persist(benutzer);
-		} else {
-			prepareBenutzerForSave(benutzer, currentBerechtigungChanged);
-			return persistence.merge(benutzer);
-		}
+		prepareBenutzerForSave(benutzer, currentBerechtigungChanged);
+		return persistence.merge(benutzer);
 	}
 
 	@Nonnull
@@ -127,9 +123,8 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		Objects.requireNonNull(benutzer);
 		if (benutzer.isNew()) {
 			return persistence.persist(benutzer);
-		} else {
-			return persistence.merge(benutzer);
 		}
+		return persistence.merge(benutzer);
 	}
 
 	@Nonnull
