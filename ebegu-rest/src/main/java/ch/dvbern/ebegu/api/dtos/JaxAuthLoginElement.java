@@ -58,7 +58,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	private boolean gesperrt;
 
-	@Nonnull
+	@Nullable
 	private JaxBerechtigung currentBerechtigung;
 
 	@Nonnull
@@ -136,7 +136,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 		this.gesperrt = gesperrt;
 	}
 
-	@Nonnull
+	@Nullable
 	public JaxBerechtigung getCurrentBerechtigung() {
 		return currentBerechtigung;
 	}

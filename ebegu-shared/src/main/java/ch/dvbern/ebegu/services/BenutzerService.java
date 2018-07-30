@@ -41,7 +41,16 @@ public interface BenutzerService {
 	 * @return Die aktualisierte Benutzer
 	 */
 	@Nonnull
-	Benutzer saveBenutzer(@Nonnull Benutzer benutzer, boolean berechtigungenChanged);
+	Benutzer saveBenutzerBerechtigungen(@Nonnull Benutzer benutzer, boolean currentBerechtigungChanged);
+
+	/**
+	 * Aktualisiert den Benutzer in der DB or erstellt ihn wenn er noch nicht existiert.
+	 *
+	 * @param benutzer die Benutzer als DTO
+	 * @return Die aktualisierte Benutzer
+	 */
+	@Nonnull
+	Benutzer saveBenutzer(@Nonnull Benutzer benutzer);
 
 	/**
 	 * @param username PK (id) des Benutzers

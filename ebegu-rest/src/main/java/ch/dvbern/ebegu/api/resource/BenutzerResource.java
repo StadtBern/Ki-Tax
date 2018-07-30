@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ import javax.ws.rs.core.UriInfo;
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxAuthLoginElement;
 import ch.dvbern.ebegu.api.dtos.JaxBenutzerSearchresultDTO;
+import ch.dvbern.ebegu.api.dtos.JaxBerechtigung;
 import ch.dvbern.ebegu.api.dtos.JaxBerechtigungHistory;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.BenutzerTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.PaginationDTO;
@@ -221,17 +223,33 @@ public class BenutzerResource {
 		Optional<Benutzer> benutzerOptional = benutzerService.findBenutzer(username);
 		Benutzer mergedBenutzer = null;
 		if (benutzerOptional.isPresent()) {
-			boolean berechtigungenChanged = hasBerechtigungChanged(benutzerJax, benutzerOptional.get());
-			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, benutzerOptional.get()), berechtigungenChanged);
+			Benutzer benutzerOld = benutzerOptional.get();
+			boolean currentBerechtigungChanged = hasCurrentBerechtigungChanged(benutzerJax, benutzerOld);
+			mergedBenutzer = benutzerService.saveBenutzerBerechtigungen(converter.authLoginElementToBenutzer(benutzerJax, benutzerOld), currentBerechtigungChanged);
 		} else {
-			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, new Benutzer()), false);
+			mergedBenutzer = benutzerService.saveBenutzerBerechtigungen(converter.authLoginElementToBenutzer(benutzerJax, new Benutzer()), false);
 		}
 		return converter.benutzerToAuthLoginElement(mergedBenutzer);
 	}
 
-	private boolean hasBerechtigungChanged(@Nonnull JaxAuthLoginElement benutzerJax, @Nonnull Benutzer benutzer) {
-		JaxAuthLoginElement benutzerNew = converter.benutzerToAuthLoginElement(benutzer);
-		return benutzerJax.isSame(benutzerNew);
+	private boolean hasCurrentBerechtigungChanged(@Nonnull JaxAuthLoginElement jaxBenutzerNew, @Nonnull Benutzer benutzerOld) {
+		JaxAuthLoginElement jaxBenutzerOld = converter.benutzerToAuthLoginElement(benutzerOld);
+		setCurrentBerechtigung(jaxBenutzerOld);
+		setCurrentBerechtigung(jaxBenutzerNew);
+		Objects.requireNonNull(jaxBenutzerOld.getCurrentBerechtigung());
+		Objects.requireNonNull(jaxBenutzerNew.getCurrentBerechtigung());
+		return !jaxBenutzerOld.getCurrentBerechtigung().isSame(jaxBenutzerNew.getCurrentBerechtigung());
+	}
+
+	private void setCurrentBerechtigung(@Nonnull JaxAuthLoginElement benutzer) {
+		if (benutzer.getCurrentBerechtigung() == null) {
+			for (JaxBerechtigung berechtigung : benutzer.getBerechtigungen()) {
+				if (berechtigung.isGueltig()) {
+					benutzer.setCurrentBerechtigung(berechtigung);
+					return;
+				}
+			}
+		}
 	}
 
 	@ApiOperation(value = "Gibt alle BerechtigungHistory Einträge des übergebenen Benutzers zurück",

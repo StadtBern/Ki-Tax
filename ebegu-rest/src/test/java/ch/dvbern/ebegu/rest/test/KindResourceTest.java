@@ -77,7 +77,7 @@ public class KindResourceTest extends AbstractEbeguRestLoginTest {
 		JaxGesuch jaxGesuch = TestJaxDataUtil.createTestJaxGesuch();
 		Mandant persistedMandant = persistence.persist(converter.mandantToEntity(TestJaxDataUtil.createTestMandant(), new Mandant()));
 		jaxGesuch.getFall().getVerantwortlicher().setMandant(converter.mandantToJAX(persistedMandant));
-		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(jaxGesuch.getFall().getVerantwortlicher(), new Benutzer()), false);
+		benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(jaxGesuch.getFall().getVerantwortlicher(), new Benutzer()));
 		JaxFall returnedFall = fallResource.saveFall(jaxGesuch.getFall(), uri, null);
 		JaxGesuchsperiode returnedGesuchsperiode = saveGesuchsperiodeInStatusAktiv(jaxGesuch.getGesuchsperiode());
 		jaxGesuch.setFall(returnedFall);

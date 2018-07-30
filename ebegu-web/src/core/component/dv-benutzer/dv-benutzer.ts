@@ -147,7 +147,7 @@ export class DVBenutzerController {
         return role.userErstellt;
     }
 
-    saveBenutzer(): void {
+    saveBenutzerBerechtigungen(): void {
         if (this.form.$valid) {
             if (this.isMoreThanGesuchstellerRole()) {
                 this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
