@@ -14,11 +14,8 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
-import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -166,25 +163,5 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	@Nullable
 	public JaxTraegerschaft getTraegerschaft() {
 		return getCurrentBerechtigung().getTraegerschaft();
-	}
-
-	public boolean isSame(@Nonnull JaxAuthLoginElement other) {
-		List<JaxBerechtigung> thisSorted = this.getBerechtigungen()
-			.stream()
-			.sorted(Comparator.comparing(JaxBerechtigung::getGueltigAb).thenComparing(JaxBerechtigung::getRole))
-			.collect(Collectors.toList());
-		List<JaxBerechtigung> otherSorted = other.getBerechtigungen()
-			.stream()
-			.sorted(Comparator.comparing(JaxBerechtigung::getGueltigAb).thenComparing(JaxBerechtigung::getRole))
-			.collect(Collectors.toList());
-		if (thisSorted.size() != otherSorted.size()) {
-			return false;
-		}
-		for (int i = 0; i < thisSorted.size(); i++) {
-			if (!thisSorted.get(i).isSame(otherSorted.get(i))) {
-				return false;
-			}
-		}
-		return true;
 	}
 }
