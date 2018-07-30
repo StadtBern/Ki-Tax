@@ -214,18 +214,24 @@ public class BenutzerResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
-	public JaxAuthLoginElement saveBenutzer(
+	public JaxAuthLoginElement saveBenutzerBerechtigungen(
 		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
 		String username = benutzerJax.getUsername();
 		Optional<Benutzer> benutzerOptional = benutzerService.findBenutzer(username);
 		Benutzer mergedBenutzer = null;
 		if (benutzerOptional.isPresent()) {
-			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, benutzerOptional.get()));
+			boolean berechtigungenChanged = hasBerechtigungChanged(benutzerJax, benutzerOptional.get());
+			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, benutzerOptional.get()), berechtigungenChanged);
 		} else {
-			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, new Benutzer()));
+			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, new Benutzer()), false);
 		}
 		return converter.benutzerToAuthLoginElement(mergedBenutzer);
+	}
+
+	private boolean hasBerechtigungChanged(@Nonnull JaxAuthLoginElement benutzerJax, @Nonnull Benutzer benutzer) {
+		JaxAuthLoginElement benutzerNew = converter.benutzerToAuthLoginElement(benutzer);
+		return benutzerJax.isSame(benutzerNew);
 	}
 
 	@ApiOperation(value = "Gibt alle BerechtigungHistory Einträge des übergebenen Benutzers zurück",

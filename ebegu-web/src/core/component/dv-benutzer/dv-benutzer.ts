@@ -200,7 +200,7 @@ export class DVBenutzerController {
         // Die (separat behandelte) aktuelle Berechtigung wieder zur Liste hinzufügen
         this.selectedUser.berechtigungen = this._futureBerechtigungen;
         this.selectedUser.berechtigungen.unshift(this._currentBerechtigung);
-        this.userRS.saveBenutzer(this.selectedUser).then((changedUser: TSUser) => {
+        this.userRS.saveBenutzerBerechtigungen(this.selectedUser).then((changedUser: TSUser) => {
             this.navigateBackToUsersList();
         }).catch(reason => {
             this.initSelectedUser();

@@ -14,6 +14,8 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -63,5 +65,45 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 
 	public void setInstitution(@Nullable JaxInstitution institution) {
 		this.institution = institution;
+	}
+
+//	@Override
+//	public int compareTo(@Nonnull JaxAbstractDTO o) {
+//		if (o instanceof JaxBerechtigung) {
+//			JaxBerechtigung jaxBerechtigung = (JaxBerechtigung) o;
+//			CompareToBuilder builder = new CompareToBuilder();
+//			builder.append(this.getGueltigAb(), jaxBerechtigung.getGueltigAb());
+//			builder.append(this.getId(), jaxBerechtigung.getId());
+//			return builder.toComparison();
+//		}
+//		return -1;
+//	}
+
+	public boolean isSame(@Nonnull JaxBerechtigung other) {
+
+		return false;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof JaxBerechtigung)) {
+			return false;
+		}
+		if (!super.equals(o)) {
+			return false;
+		}
+		JaxBerechtigung that = (JaxBerechtigung) o;
+		return role == that.role &&
+			Objects.equals(traegerschaft, that.traegerschaft) &&
+			Objects.equals(institution, that.institution);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(super.hashCode(), role, traegerschaft, institution);
 	}
 }

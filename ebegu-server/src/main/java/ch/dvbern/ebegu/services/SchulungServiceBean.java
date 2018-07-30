@@ -320,7 +320,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		benutzer.setEmail(GESUCHSTELLER_VORNAME.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
-		return benutzerService.saveBenutzer(benutzer);
+		return benutzerService.saveBenutzer(benutzer, false);
 	}
 
 	@Nonnull
@@ -346,7 +346,7 @@ public class SchulungServiceBean extends AbstractBaseService implements Schulung
 		benutzer.setEmail(vorname.toLowerCase(Locale.GERMAN) + '.' + name.toLowerCase(Locale.GERMAN) + EXAMPLE_COM);
 		benutzer.setUsername(username);
 		benutzer.setMandant(mandant);
-		return benutzerService.saveBenutzer(benutzer);
+		return benutzerService.saveBenutzer(benutzer, false);
 	}
 
 	@Nonnull

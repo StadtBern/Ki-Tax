@@ -34,13 +34,14 @@ import org.apache.commons.lang3.tuple.Pair;
 public interface BenutzerService {
 
 	/**
-	 * Aktualisiert den Benutzer in der DB or erstellt ihn wenn er noch nicht existiert
+	 * Aktualisiert den Benutzer in der DB or erstellt ihn wenn er noch nicht existiert.
+	 * Falls die Berechtigungen geändert haben, werden diese aktualisiert und der Benutzer ausgeloggt.
 	 *
 	 * @param benutzer die Benutzer als DTO
 	 * @return Die aktualisierte Benutzer
 	 */
 	@Nonnull
-	Benutzer saveBenutzer(@Nonnull Benutzer benutzer);
+	Benutzer saveBenutzer(@Nonnull Benutzer benutzer, boolean berechtigungenChanged);
 
 	/**
 	 * @param username PK (id) des Benutzers

@@ -110,12 +110,14 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Nonnull
 	@Override
 	@PermitAll
-	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer) {
+	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer, boolean berechtigungenChanged) {
 		Objects.requireNonNull(benutzer);
 		if (benutzer.isNew()) {
 			return persistence.persist(benutzer);
 		} else {
-			prepareBenutzerForSave(benutzer);
+			if (berechtigungenChanged) {
+				prepareBenutzerForSave(benutzer);
+			}
 			return persistence.merge(benutzer);
 		}
 	}
@@ -230,7 +232,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			foundUser.setNachname(benutzer.getNachname());
 			foundUser.setVorname(benutzer.getVorname());
 			foundUser.setEmail(benutzer.getEmail());
-			return saveBenutzer(foundUser);
+			return saveBenutzer(foundUser, false);
 		} else {
 			// Wir kennen den Benutzer noch nicht: Wir uebernehmen alles, setzen aber grundsätzlich die Rolle auf GESUCHSTELLER
 			Berechtigung berechtigung = new Berechtigung();
@@ -240,7 +242,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			berechtigung.setBenutzer(benutzer);
 			benutzer.getBerechtigungen().clear();
 			benutzer.getBerechtigungen().add(berechtigung);
-			return saveBenutzer(benutzer);
+			return saveBenutzer(benutzer, false);
 		}
 	}
 
