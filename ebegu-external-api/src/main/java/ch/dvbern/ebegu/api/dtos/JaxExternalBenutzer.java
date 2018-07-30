@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.api.dtos;
 
 import java.io.Serializable;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -29,6 +30,7 @@ public class JaxExternalBenutzer implements Serializable {
 	private static final long serialVersionUID = -2418503680503363364L;
 
 	private String username;
+	@Nullable
 	private String externalUUID;
 	private String vorname;
 	private String nachname;
@@ -59,11 +61,12 @@ public class JaxExternalBenutzer implements Serializable {
 		this.username = username;
 	}
 
+	@Nullable
 	public String getExternalUUID() {
 		return externalUUID;
 	}
 
-	public void setExternalUUID(String externalUUID) {
+	public void setExternalUUID(@Nullable String externalUUID) {
 		this.externalUUID = externalUUID;
 	}
 

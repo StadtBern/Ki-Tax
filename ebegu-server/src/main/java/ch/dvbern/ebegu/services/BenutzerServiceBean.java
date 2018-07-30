@@ -232,6 +232,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	public Benutzer updateOrStoreUserFromIAM(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer.getExternalUUID());
 		Optional<Benutzer> foundUserOptional = this.findBenutzerByExternalUUID(benutzer.getExternalUUID());
+
 		if (foundUserOptional.isPresent()) {
 			// Wir kennen den Benutzer schon: Es werden nur die readonly-Attribute neu von IAM uebernommen
 			Benutzer foundUser = foundUserOptional.get();
@@ -245,18 +246,20 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 			foundUser.setNachname(benutzer.getNachname());
 			foundUser.setVorname(benutzer.getVorname());
 			foundUser.setEmail(benutzer.getEmail());
+
 			return saveBenutzer(foundUser);
-		} else {
-			// Wir kennen den Benutzer noch nicht: Wir uebernehmen alles, setzen aber grundsätzlich die Rolle auf GESUCHSTELLER
-			Berechtigung berechtigung = new Berechtigung();
-			berechtigung.setRole(UserRole.GESUCHSTELLER);
-			berechtigung.setInstitution(null);
-			berechtigung.setTraegerschaft(null);
-			berechtigung.setBenutzer(benutzer);
-			benutzer.getBerechtigungen().clear();
-			benutzer.getBerechtigungen().add(berechtigung);
-			return saveBenutzer(benutzer);
 		}
+
+		// Wir kennen den Benutzer noch nicht: Wir uebernehmen alles, setzen aber grundsätzlich die Rolle auf GESUCHSTELLER
+		Berechtigung berechtigung = new Berechtigung();
+		berechtigung.setRole(UserRole.GESUCHSTELLER);
+		berechtigung.setInstitution(null);
+		berechtigung.setTraegerschaft(null);
+		berechtigung.setBenutzer(benutzer);
+		benutzer.getBerechtigungen().clear();
+		benutzer.getBerechtigungen().add(berechtigung);
+
+		return saveBenutzer(benutzer);
 	}
 
 	@Nonnull
@@ -273,13 +276,9 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	}
 
 	private void logSperreBenutzer(@Nonnull Benutzer benutzer, int deletedAuthBenutzer) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Setze Benutzer auf GESPERRT: ").append(benutzer.getUsername());
-		sb.append(" / ");
-		sb.append("Eingeloggt: ").append(principalBean.getBenutzer().getUsername());
-		sb.append(" / ");
-		sb.append("Lösche ").append(deletedAuthBenutzer).append(" Eintraege aus der AuthorisierteBenutzer Tabelle");
-		LOG.info(sb.toString());
+		LOG.info("Setze Benutzer auf GESPERRT: {} / Eingeloggt: {} / Lösche {} Eintraege aus der AuthorisierteBenutzer Tabelle",
+			benutzer.getUsername(),
+			principalBean.getBenutzer().getUsername(), deletedAuthBenutzer);
 	}
 
 	@Nonnull
@@ -294,11 +293,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	}
 
 	private void logReaktivierenBenutzer(Benutzer benutzerFromDB) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Reaktiviere Benutzer: ").append(benutzerFromDB.getUsername());
-		sb.append(" / ");
-		sb.append("Eingeloggt: ").append(principalBean.getBenutzer().getUsername());
-		LOG.info(sb.toString());
+		LOG.info("Reaktiviere Benutzer: {} / Eingeloggt: {}", benutzerFromDB.getUsername(), principalBean.getBenutzer().getUsername());
 	}
 
 	private void prepareBenutzerForSave(@Nonnull Benutzer benutzer) {
