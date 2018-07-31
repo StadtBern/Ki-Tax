@@ -110,14 +110,21 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 	@Nonnull
 	@Override
 	@PermitAll
+	public Benutzer saveBenutzerBerechtigungen(@Nonnull Benutzer benutzer, boolean currentBerechtigungChanged) {
+		Objects.requireNonNull(benutzer);
+		prepareBenutzerForSave(benutzer, currentBerechtigungChanged);
+		return persistence.merge(benutzer);
+	}
+
+	@Nonnull
+	@Override
+	@PermitAll
 	public Benutzer saveBenutzer(@Nonnull Benutzer benutzer) {
 		Objects.requireNonNull(benutzer);
 		if (benutzer.isNew()) {
 			return persistence.persist(benutzer);
-		} else {
-			prepareBenutzerForSave(benutzer);
-			return persistence.merge(benutzer);
 		}
+		return persistence.merge(benutzer);
 	}
 
 	@Nonnull
@@ -286,7 +293,7 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		LOG.info(sb.toString());
 	}
 
-	private void prepareBenutzerForSave(@Nonnull Benutzer benutzer) {
+	private void prepareBenutzerForSave(@Nonnull Benutzer benutzer, boolean currentBerechtigungChanged) {
 		List<Berechtigung> sorted = new LinkedList<>();
 		sorted.addAll(benutzer.getBerechtigungen());
 		sorted.sort(Comparator.comparing(o -> o.getGueltigkeit().getGueltigAb()));
@@ -306,7 +313,11 @@ public class BenutzerServiceBean extends AbstractBaseService implements Benutzer
 		for (Berechtigung berechtigung : sorted) {
 			prepareBerechtigungForSave(berechtigung);
 		}
-		authService.logoutAndDeleteAuthorisierteBenutzerForUser(benutzer.getUsername());
+		// Ausloggen nur, wenn die aktuelle Berechtigung geändert hat
+		if (currentBerechtigungChanged) {
+			LOG.info("Aktuelle Berechtigung des Benutzers {} hat geändert, Benutzer wird ausgeloggt", benutzer.getUsername());
+			authService.logoutAndDeleteAuthorisierteBenutzerForUser(benutzer.getUsername());
+		}
 	}
 
 	private void prepareBerechtigungForSave(@Nonnull Berechtigung berechtigung) {
