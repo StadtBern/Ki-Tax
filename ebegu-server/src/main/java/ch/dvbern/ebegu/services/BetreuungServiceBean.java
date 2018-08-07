@@ -363,6 +363,49 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	}
 
 	@Override
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	@Nonnull
+	public Optional<Betreuung> findGueltigeBetreuungByBGNummer(@Nonnull String bgNummer) {
+		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
+		final int kindNummer = getKindNummerFromBGNummer(bgNummer);
+		final int yearFromBGNummer = getYearFromBGNummer(bgNummer);
+		// der letzte Tag im Jahr, von der BetreuungsId sollte immer zur richtigen Gesuchsperiode zählen.
+		final Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(LocalDate.ofYearDay(yearFromBGNummer, 365));
+		Gesuchsperiode gesuchsperiode;
+		if (gesuchsperiodeOptional.isPresent()) {
+			gesuchsperiode = gesuchsperiodeOptional.get();
+		} else {
+			return Optional.empty();
+		}
+		final long fallnummer = getFallnummerFromBGNummer(bgNummer);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Betreuung> query = cb.createQuery(Betreuung.class);
+
+		Root<Betreuung> root = query.from(Betreuung.class);
+		final Join<Betreuung, KindContainer> kindjoin = root.join(Betreuung_.kind, JoinType.LEFT);
+		final Join<KindContainer, Gesuch> kindContainerGesuchJoin = kindjoin.join(KindContainer_.gesuch, JoinType.LEFT);
+		final Join<Gesuch, Fall> gesuchFallJoin = kindContainerGesuchJoin.join(Gesuch_.fall, JoinType.LEFT);
+
+		Predicate predBetreuungNummer = cb.equal(root.get(Betreuung_.betreuungNummer), betreuungNummer);
+		Predicate predGueltig = cb.equal(root.get(Betreuung_.gueltig), Boolean.TRUE);
+		Predicate predKindNummer = cb.equal(kindjoin.get(KindContainer_.kindNummer), kindNummer);
+		Predicate predFallNummer = cb.equal(gesuchFallJoin.get(Fall_.fallNummer), fallnummer);
+		Predicate predGesuchsperiode = cb.equal(kindContainerGesuchJoin.get(Gesuch_.gesuchsperiode), gesuchsperiode);
+
+		List<Predicate> predicates = new ArrayList<>();
+		predicates.add(predFallNummer);
+		predicates.add(predGesuchsperiode);
+		predicates.add(predKindNummer);
+		predicates.add(predBetreuungNummer);
+		predicates.add(predGueltig);
+
+		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+		Betreuung resultOrNull = persistence.getCriteriaSingleResult(query);
+		return Optional.ofNullable(resultOrNull);
+	}
+
+	@Override
 	public Long getFallnummerFromBGNummer(String bgNummer) {
 		//17.000120.1.1 -> 120 (long)
 		return Long.valueOf(COMPILE.matcher(bgNummer.substring(3, 9)).replaceFirst(""));

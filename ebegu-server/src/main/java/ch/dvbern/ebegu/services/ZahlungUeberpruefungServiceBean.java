@@ -41,9 +41,9 @@ import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.entities.Verfuegung;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.entities.Zahlungsposition;
+import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
@@ -90,6 +90,9 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 
 	@Inject
 	private EbeguConfiguration ebeguConfiguration;
+
+	@Inject
+	private BetreuungService betreuungService;
 
 
 	private Map<String, List<Zahlungsposition>> zahlungenIstMap = null;
@@ -157,6 +160,13 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 	}
 
 	private void pruefeZahlungenSollFuerGesuch(@Nonnull Gesuch gesuch, @Nonnull LocalDateTime datumLetzteZahlung) {
+		if (gesuch.getStatus() == AntragStatus.NUR_SCHULAMT) {
+			return;
+		}
+		if (gesuch.getTimestampVerfuegt() == null) {
+			LOGGER.error("timestampVerfuegt ist null beim Auszahlen: {} - {}", gesuch.getId(), gesuch.getJahrAndFallnummer());
+			return;
+		}
 		// Nur Gesuche, die VOR der letzten Zahlung verfuegt wurden, sind relevant
 		if (gesuch.getTimestampVerfuegt().isBefore(datumLetzteZahlung)) {
 			LocalDate dateAusbezahltBis = datumLetzteZahlung.toLocalDate().with(TemporalAdjusters.lastDayOfMonth());
@@ -170,9 +180,10 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 		// Nur die "gueltige" Betreuung beachten und nur, wenn es KITA ist
 		if (betreuung.isAngebotKita()) {
 			if (!betreuung.isGueltig()) {
-				Optional<Verfuegung> vorgaengerVerfuegung = verfuegungService.findVorgaengerVerfuegung(betreuung);
-				if (vorgaengerVerfuegung.isPresent()) {
-					betreuung = vorgaengerVerfuegung.get().getBetreuung();
+				// Es gibt eine spätere Verfügung, deren Gesuch aber noch nicht (komplett) verfügt ist
+				Optional<Betreuung> gueltigeBetreuungOptional = betreuungService.findGueltigeBetreuungByBGNummer(betreuung.getBGNummer());
+				if (gueltigeBetreuungOptional.isPresent()) {
+					betreuung = gueltigeBetreuungOptional.get();
 				}
 			}
 			// Jetzt kann es immer noch sein, dass es zwar die gueltige Verfuegung, aber mit NICHT_EINTRETEN ist

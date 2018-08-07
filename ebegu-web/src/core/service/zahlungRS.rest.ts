@@ -95,8 +95,17 @@ export default class ZahlungRS {
                     datumGeneriert: DateUtil.momentToLocalDate(datumGeneriert)
                 }
             }).then((httpresponse: any) => {
-            this.log.debug('PARSING Zahlungsauftrag REST object ', httpresponse.data);
-            return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), httpresponse.data);
+                this.log.debug('PARSING Zahlungsauftrag REST object ', httpresponse.data);
+                // Direkt die Zahlungspruefung durchfuehren
+                this.pruefeZahlungen();
+                return this.ebeguRestUtil.parseZahlungsauftrag(new TSZahlungsauftrag(), httpresponse.data);
+        });
+    }
+
+    public pruefeZahlungen(): void {
+        this.log.debug('Zahlungspruefung ausloesen...');
+        this.http.get(this.serviceURL + '/pruefen').then(() => {
+            this.log.debug('... Zahlungspruefung durchgefuehrt ');
         });
     }
 

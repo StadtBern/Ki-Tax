@@ -100,6 +100,12 @@ public interface BetreuungService {
 	List<Betreuung> findNewestBetreuungByBGNummer(@Nonnull String bgNummer);
 
 	/**
+	 * Gibt die aktuell gültige Betreuung für die übergebene BG Nummer zurück (z.B. 18.000116.1.2)
+	 * Achtung: Diese kann sich auf einem noch nicht verfügten Gesuch befinden! (VERFUEGEN)
+	 */
+	Optional<Betreuung> findGueltigeBetreuungByBGNummer(@Nonnull String bgNummer);
+
+	/**
 	 * Extract Fallnummer form bgNummer
 	 * @return Extracted Fallnummer
 	 */

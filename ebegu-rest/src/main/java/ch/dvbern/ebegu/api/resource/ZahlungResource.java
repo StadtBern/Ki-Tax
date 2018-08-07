@@ -216,6 +216,18 @@ public class ZahlungResource {
 		return converter.zahlungsauftragToJAX(zahlungsauftrag, false);
 	}
 
+	@ApiOperation("Ueberprueft die Zahlungen")
+	@Nonnull
+	@GET
+	@Path("/pruefen")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
+	public Response pruefeZahlungen() {
+		zahlungService.zahlungenKontrollieren();
+		return Response.ok().build();
+	}
+
 	@ApiOperation(value = "Aktualisiert einen Zahlungsauftrag", response = JaxZahlungsauftrag.class)
 	@Nullable
 	@GET
