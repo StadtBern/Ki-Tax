@@ -74,9 +74,6 @@ public class ZahlungUeberpruefungServiceBean extends AbstractBaseService {
 	private CriteriaQueryHelper criteriaQueryHelper;
 
 	@Inject
-	private VerfuegungService verfuegungService;
-
-	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
 
 	@Inject
