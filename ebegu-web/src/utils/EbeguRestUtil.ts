@@ -1637,6 +1637,7 @@ export default class EbeguRestUtil {
     public userToRestObject(user: any, userTS: TSUser): any {
         if (userTS) {
             user.username = userTS.username;
+            user.externalUUID = userTS.externalUUID;
             user.password = userTS.password;
             user.nachname = userTS.nachname;
             user.vorname = userTS.vorname;
@@ -1657,6 +1658,7 @@ export default class EbeguRestUtil {
     public parseUser(userTS: TSUser, userFromServer: any): TSUser {
         if (userFromServer) {
             userTS.username = userFromServer.username;
+            userTS.externalUUID = userFromServer.externalUUID;
             userTS.password = userFromServer.password;
             userTS.nachname = userFromServer.nachname;
             userTS.vorname = userFromServer.vorname;

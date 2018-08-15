@@ -41,6 +41,7 @@ import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.UserRole;
 import ch.dvbern.ebegu.listener.BenutzerChangedEntityListener;
+import ch.dvbern.ebegu.util.Constants;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -53,8 +54,14 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 @Entity
 @EntityListeners(BenutzerChangedEntityListener.class)
 @Table(
-	uniqueConstraints = @UniqueConstraint(columnNames = "username", name = "UK_username"),
-	indexes = @Index(columnList = "username", name = "IX_benutzer_username")
+	uniqueConstraints = {
+		@UniqueConstraint(columnNames = "username", name = "UK_username"),
+		@UniqueConstraint(columnNames = "externalUUID", name = "UK_externalUUID")
+	},
+	indexes = {
+		@Index(columnList = "username", name = "IX_benutzer_username"),
+		@Index(columnList = "externalUUID", name = "IX_benutzer_externalUUID")
+	}
 )
 @Audited
 @Cacheable
@@ -67,6 +74,11 @@ public class Benutzer extends AbstractEntity {
 	@Column(nullable = false)
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	private String username = null;
+
+	@Nullable
+	@Column(nullable = true, length = Constants.UUID_LENGTH)
+	@Size(max = Constants.UUID_LENGTH)
+	private String externalUUID = null;
 
 	@NotNull
 	@Column(nullable = false)
@@ -108,6 +120,15 @@ public class Benutzer extends AbstractEntity {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	@Nullable
+	public String getExternalUUID() {
+		return externalUUID;
+	}
+
+	public void setExternalUUID(@Nullable String externalUUID) {
+		this.externalUUID = externalUUID;
 	}
 
 	public String getNachname() {

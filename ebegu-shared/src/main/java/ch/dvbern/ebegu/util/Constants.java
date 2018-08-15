@@ -25,64 +25,68 @@ import ch.dvbern.ebegu.types.DateRange;
 /**
  * Interface fuer Konstanten.
  */
-public interface Constants {
+public final class Constants {
 
-	int DB_DEFAULT_MAX_LENGTH = 255;
-	int DB_TEXTAREA_LENGTH = 4000;
-	int DB_DEFAULT_SHORT_LENGTH = 100;
+	public static final int DB_DEFAULT_MAX_LENGTH = 255;
+	public static final int DB_TEXTAREA_LENGTH = 4000;
+	public static final int DB_DEFAULT_SHORT_LENGTH = 100;
 
-	int UUID_LENGTH = 36;
-	int PLZ_LENGTH = 4;
+	public static final int UUID_LENGTH = 36;
 
-	int LOGIN_TIMEOUT_SECONDS = 60 * 60; //aktuell 1h
+	public static final int LOGIN_TIMEOUT_SECONDS = 60 * 60; //aktuell 1h
 
-	int ABWESENHEIT_DAYS_LIMIT = 30;
+	public static final int ABWESENHEIT_DAYS_LIMIT = 30;
 
-	int MAX_TIMEOUT_MINUTES = 360; // minutes
-	int STATISTIK_TIMEOUT_MINUTES = 180; // minutes
+	public static final int MAX_TIMEOUT_MINUTES = 360; // minutes
+	public static final int STATISTIK_TIMEOUT_MINUTES = 180; // minutes
 
-	Locale DEFAULT_LOCALE = new Locale("de", "CH");
+	public static final Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
-	String DATA = "Data";
-	String REGEX_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";
-	String REGEX_TELEFON = "(0|\\+41|0041)[ ]*[\\d]{2}[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
-	String REGEX_TELEFON_MOBILE = "(0|\\+41|0041)[ ]*(74|75|76|77|78|79)[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
-	String PATTERN_DATE = "dd.MM.yyyy";
-	String PATTERN_FILENAME_DATE_TIME = "dd.MM.yyyy_HH.mm.ss";
-	DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_DATE);
-	DateTimeFormatter FILENAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_FILENAME_DATE_TIME);
-	DateTimeFormatter SQL_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	public static final String DATA = "Data";
+	public static final String REGEX_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";
+	public static final String REGEX_TELEFON = "(0|\\+41|0041)[ ]*[\\d]{2}[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
+	public static final String REGEX_TELEFON_MOBILE = "(0|\\+41|0041)[ ]*(74|75|76|77|78|79)[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
+	public static final String PATTERN_DATE = "dd.MM.yyyy";
+	public static final String PATTERN_FILENAME_DATE_TIME = "dd.MM.yyyy_HH.mm.ss";
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_DATE);
+	public static final DateTimeFormatter FILENAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(Constants.PATTERN_FILENAME_DATE_TIME);
 
-	DateTimeFormatter SQL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	public static final DateTimeFormatter SQL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
-	LocalDate END_OF_TIME = LocalDate.of(9999, 12, 31);
-	LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
+	public static final String SERVER_MESSAGE_BUNDLE_NAME = "ch.dvbern.ebegu.i18n.server-messages";
+	public static final LocalDate END_OF_TIME = LocalDate.of(9999, 12, 31);
+	public static final LocalDate START_OF_TIME = LocalDate.of(1000, 1, 1);
 
-	LocalDate GESUCHSPERIODE_17_18_AB = LocalDate.of(2017, 8, 1);
-	LocalDate GESUCHSPERIODE_17_18_BIS = LocalDate.of(2018, 7, 31);
-	DateRange GESUCHSPERIODE_17_18 = new DateRange(Constants.GESUCHSPERIODE_17_18_AB, Constants.GESUCHSPERIODE_17_18_BIS);
+	public static final LocalDate GESUCHSPERIODE_17_18_AB = LocalDate.of(2017, 8, 1);
+	public static final LocalDate GESUCHSPERIODE_17_18_BIS = LocalDate.of(2018, 7, 31);
+	public static final DateRange GESUCHSPERIODE_17_18 = new DateRange(Constants.GESUCHSPERIODE_17_18_AB, Constants.GESUCHSPERIODE_17_18_BIS);
 
-	LocalDate GESUCHSPERIODE_18_19_AB = LocalDate.of(2018, 8, 1);
-	LocalDate GESUCHSPERIODE_18_19_BIS = LocalDate.of(2019, 7, 31);
-	DateRange GESUCHSPERIODE_18_19 = new DateRange(Constants.GESUCHSPERIODE_18_19_AB, Constants.GESUCHSPERIODE_18_19_BIS);
+	public static final LocalDate GESUCHSPERIODE_18_19_AB = LocalDate.of(2018, 8, 1);
+	public static final LocalDate GESUCHSPERIODE_18_19_BIS = LocalDate.of(2019, 7, 31);
+	public static final DateRange GESUCHSPERIODE_18_19 = new DateRange(Constants.GESUCHSPERIODE_18_19_AB, Constants.GESUCHSPERIODE_18_19_BIS);
 
-	LocalDateTime START_OF_DATETIME = LocalDateTime.of(1000, 1, 1, 0, 0, 0);
+	public static final LocalDateTime START_OF_DATETIME = LocalDateTime.of(1000, 1, 1, 0, 0, 0);
 
-	DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
+	public static final DateRange DEFAULT_GUELTIGKEIT = new DateRange(Constants.START_OF_TIME, Constants.END_OF_TIME);
 
-	long MAX_SHORT_TEMP_DOWNLOAD_AGE_MINUTES = 3L;
-	long MAX_LONGER_TEMP_DOWNLOAD_AGE_MINUTES = 1440L; //24 * 60
-	int FALLNUMMER_LENGTH = 6;
-	long MAX_LUCENE_QUERY_RUNTIME = 500L;
+	public static final long MAX_SHORT_TEMP_DOWNLOAD_AGE_MINUTES = 3L;
+	public static final long MAX_LONGER_TEMP_DOWNLOAD_AGE_MINUTES = 1440L; //24 * 60
+	public static final int FALLNUMMER_LENGTH = 6;
+	public static final long MAX_LUCENE_QUERY_RUNTIME = 500L;
 
-	int MAX_LUCENE_QUICKSEARCH_RESULTS = 25; // hier gibt es ein Problem, wenn wir fuer keines der Resultate berechtigt sind wird unser resultset leer sein auf client
+	public static final int MAX_LUCENE_QUICKSEARCH_RESULTS = 25; // hier gibt es ein Problem, wenn wir fuer keines der Resultate berechtigt sind wird unser resultset leer sein auf client
 
-	String DEFAULT_MANDANT_ID = "e3736eb8-6eef-40ef-9e52-96ab48d8f220";
-	String AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS = "NO_REFRESH";
-	String PATH_DESIGNATOR_NO_TOKEN_REFRESH = "notokenrefresh";
+	public static final String AUTH_TOKEN_SUFFIX_FOR_NO_TOKEN_REFRESH_REQUESTS = "NO_REFRESH";
+	public static final String PATH_DESIGNATOR_NO_TOKEN_REFRESH = "notokenrefresh";
 
-	String TEMP_REPORT_FOLDERNAME = "tempReports";
+	public static final String TEMP_REPORT_FOLDERNAME = "tempReports";
 
-	String SYSTEM_USER_USERNAME = "System";
+	public static final String SYSTEM_USER_USERNAME = "System";
+
+	private Constants() {
+		//this prevents even the native class from
+		//calling this ctor as well :
+		throw new AssertionError();
+	}
+
 }

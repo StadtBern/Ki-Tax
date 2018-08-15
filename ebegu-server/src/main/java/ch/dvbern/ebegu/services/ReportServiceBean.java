@@ -1351,6 +1351,10 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			row.setVorname(benutzer.getVorname());
 			row.setEmail(benutzer.getEmail());
 			row.setRole(ServerMessageUtil.translateEnumValue(benutzer.getRole()));
+			LocalDate gueltigAb = benutzer.getCurrentBerechtigung().getGueltigkeit().getGueltigAb();
+			if (gueltigAb.isAfter(Constants.START_OF_TIME)) {
+				row.setRoleGueltigAb(gueltigAb);
+			}
 			LocalDate gueltigBis = benutzer.getCurrentBerechtigung().getGueltigkeit().getGueltigBis();
 			if (gueltigBis.isBefore(Constants.END_OF_TIME)) {
 				row.setRoleGueltigBis(gueltigBis);

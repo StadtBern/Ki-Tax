@@ -27,6 +27,8 @@ public class BenutzerDataRow {
 	private String email;
 	private String role;
 	@Nullable
+	private LocalDate roleGueltigAb;
+	@Nullable
 	private LocalDate roleGueltigBis;
 	@Nullable
 	private String institution;
@@ -82,6 +84,15 @@ public class BenutzerDataRow {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	@Nullable
+	public LocalDate getRoleGueltigAb() {
+		return roleGueltigAb;
+	}
+
+	public void setRoleGueltigAb(@Nullable LocalDate roleGueltigAb) {
+		this.roleGueltigAb = roleGueltigAb;
 	}
 
 	@Nullable

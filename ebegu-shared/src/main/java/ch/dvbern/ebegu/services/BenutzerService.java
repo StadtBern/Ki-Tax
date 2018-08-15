@@ -34,7 +34,17 @@ import org.apache.commons.lang3.tuple.Pair;
 public interface BenutzerService {
 
 	/**
-	 * Aktualisiert den Benutzer in der DB or erstellt ihn wenn er noch nicht existiert
+	 * Aktualisiert den Benutzer in der DB or erstellt ihn wenn er noch nicht existiert.
+	 * Falls die Berechtigungen geändert haben, werden diese aktualisiert und der Benutzer ausgeloggt.
+	 *
+	 * @param benutzer die Benutzer als DTO
+	 * @return Die aktualisierte Benutzer
+	 */
+	@Nonnull
+	Benutzer saveBenutzerBerechtigungen(@Nonnull Benutzer benutzer, boolean currentBerechtigungChanged);
+
+	/**
+	 * Aktualisiert den Benutzer in der DB or erstellt ihn wenn er noch nicht existiert.
 	 *
 	 * @param benutzer die Benutzer als DTO
 	 * @return Die aktualisierte Benutzer
@@ -48,6 +58,13 @@ public interface BenutzerService {
 	 */
 	@Nonnull
 	Optional<Benutzer> findBenutzer(@Nonnull String username);
+
+	/**
+	 * Sucht einen Benutzer nach externalUUID: Diese Methode wird nur von den Connectoren gebraucht.
+	 * Innerhalb ebegu verwenden wir weiterhin die ID.
+	 */
+	@Nonnull
+	Optional<Benutzer> findBenutzerByExternalUUID(@Nonnull String externalUUID);
 
 	/**
 	 * Gibt alle existierenden Benutzer zurueck.

@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -210,23 +211,33 @@ public class BenutzerResource {
 	@ApiOperation(value = "Updates a Benutzer in the database", response = JaxAuthLoginElement.class)
 	@Nullable
 	@PUT
-	@Path("/save")
+	@Path("/saveBenutzerBerechtigungen")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT})
-	public JaxAuthLoginElement saveBenutzer(
-		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax, @Context UriInfo uriInfo, @Context HttpServletResponse response) {
+	public JaxAuthLoginElement saveBenutzerBerechtigungen(
+		@Nonnull @NotNull @Valid JaxAuthLoginElement benutzerJax,
+		@Context UriInfo uriInfo, @Context HttpServletResponse response) {
 
 		String username = benutzerJax.getUsername();
-		Optional<Benutzer> benutzerOptional = benutzerService.findBenutzer(username);
-		Benutzer mergedBenutzer = null;
-		if (benutzerOptional.isPresent()) {
-			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, benutzerOptional.get()));
-		} else {
-			mergedBenutzer = benutzerService.saveBenutzer(converter.authLoginElementToBenutzer(benutzerJax, new Benutzer()));
-		}
+		Benutzer benutzer = benutzerService.findBenutzer(username)
+			.orElseThrow(() -> new EbeguEntityNotFoundException("saveBenutzerBerechtigungen", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, username));
+
+		boolean currentBerechtigungChanged = hasCurrentBerechtigungChanged(benutzerJax, benutzer);
+		Benutzer mergedBenutzer = benutzerService.saveBenutzerBerechtigungen(converter.authLoginElementToBenutzer(benutzerJax, benutzer), currentBerechtigungChanged);
+
 		return converter.benutzerToAuthLoginElement(mergedBenutzer);
 	}
+
+	private boolean hasCurrentBerechtigungChanged(@Nonnull JaxAuthLoginElement jaxBenutzerNew, @Nonnull Benutzer benutzerOld) {
+		JaxAuthLoginElement jaxBenutzerOld = converter.benutzerToAuthLoginElement(benutzerOld);
+		jaxBenutzerOld.evaluateCurrentBerechtigung();
+		jaxBenutzerNew.evaluateCurrentBerechtigung();
+		Objects.requireNonNull(jaxBenutzerOld.getCurrentBerechtigung());
+		Objects.requireNonNull(jaxBenutzerNew.getCurrentBerechtigung());
+		return !jaxBenutzerOld.getCurrentBerechtigung().isSame(jaxBenutzerNew.getCurrentBerechtigung());
+	}
+
 
 	@ApiOperation(value = "Gibt alle BerechtigungHistory Einträge des übergebenen Benutzers zurück",
 		responseContainer = "List", response = JaxBerechtigungHistory.class)

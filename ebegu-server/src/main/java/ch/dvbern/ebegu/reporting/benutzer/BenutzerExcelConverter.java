@@ -53,6 +53,7 @@ public class BenutzerExcelConverter implements ExcelConverter {
 			excelRowGroup.addValue(MergeFieldBenutzer.username, dataRow.getUsername());
 			excelRowGroup.addValue(MergeFieldBenutzer.email, dataRow.getEmail());
 			excelRowGroup.addValue(MergeFieldBenutzer.role, dataRow.getRole());
+			excelRowGroup.addValue(MergeFieldBenutzer.roleGueltigAb, dataRow.getRoleGueltigAb());
 			excelRowGroup.addValue(MergeFieldBenutzer.roleGueltigBis, dataRow.getRoleGueltigBis());
 			excelRowGroup.addValue(MergeFieldBenutzer.institution, dataRow.getInstitution());
 			excelRowGroup.addValue(MergeFieldBenutzer.traegerschaft, dataRow.getTraegerschaft());

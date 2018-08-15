@@ -36,6 +36,9 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	@Nonnull
 	private String username = "";
 
+	@Nullable
+	private String externalUUID = "";
+
 	@Nonnull
 	private String password = "";
 
@@ -55,7 +58,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	private boolean gesperrt;
 
-	@Nonnull
+	@Nullable
 	private JaxBerechtigung currentBerechtigung;
 
 	@Nonnull
@@ -70,6 +73,15 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	public void setUsername(@Nonnull String username) {
 		this.username = username;
+	}
+
+	@Nullable
+	public String getExternalUUID() {
+		return externalUUID;
+	}
+
+	public void setExternalUUID(@Nullable String externalUUID) {
+		this.externalUUID = externalUUID;
 	}
 
 	@Nonnull
@@ -133,7 +145,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 		this.gesperrt = gesperrt;
 	}
 
-	@Nonnull
+	@Nullable
 	public JaxBerechtigung getCurrentBerechtigung() {
 		return currentBerechtigung;
 	}
@@ -163,5 +175,19 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	@Nullable
 	public JaxTraegerschaft getTraegerschaft() {
 		return getCurrentBerechtigung().getTraegerschaft();
+	}
+
+	/**
+	 * evaluates current berechtigung and sets it to the object
+	 */
+	public void evaluateCurrentBerechtigung() {
+		if (getCurrentBerechtigung() == null) {
+			for (JaxBerechtigung berechtigung : getBerechtigungen()) {
+				if (berechtigung.isGueltig()) {
+					setCurrentBerechtigung(berechtigung);
+					return;
+				}
+			}
+		}
 	}
 }

@@ -115,6 +115,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 
 		Benutzer user = new Benutzer();
 		user.setUsername(benutzer.getUsername());
+		user.setExternalUUID(benutzer.getExternalUUID());
 		user.setEmail(benutzer.getEmail());
 		user.setNachname(benutzer.getNachname());
 		user.setVorname(benutzer.getVorname());
@@ -140,6 +141,7 @@ public class LoginConnectorResource implements ILoginConnectorResource {
 	private JaxExternalBenutzer convertBenutzerToJax(Benutzer storedUser) {
 		JaxExternalBenutzer jaxExternalBenutzer = new JaxExternalBenutzer();
 		jaxExternalBenutzer.setUsername(storedUser.getUsername());
+		jaxExternalBenutzer.setExternalUUID(storedUser.getExternalUUID());
 		jaxExternalBenutzer.setEmail(storedUser.getEmail());
 		jaxExternalBenutzer.setNachname(storedUser.getNachname());
 		jaxExternalBenutzer.setVorname(storedUser.getVorname());

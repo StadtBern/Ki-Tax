@@ -27,6 +27,7 @@ export default class TSUser {
     private _nachname: string;
     private _vorname: string;
     private _username: string;
+    private _externalUUID: string;
     private _password: string;
     private _email: string;
     private _mandant: TSMandant;
@@ -39,10 +40,11 @@ export default class TSUser {
 
     constructor(vorname?: string, nachname?: string, username?: string, password?: string, email?: string,
                 mandant?: TSMandant, role?: TSRole, traegerschaft?: TSTraegerschaft, institution?: TSInstitution,
-                amt?: TSAmt, gesperrt?: boolean) {
+                amt?: TSAmt, gesperrt?: boolean, externalUUID?: string) {
         this._vorname = vorname;
         this._nachname = nachname;
         this._username = username;
+        this._externalUUID = externalUUID;
         this._password = password;
         this._email = email;
         this._mandant = mandant;
@@ -78,6 +80,14 @@ export default class TSUser {
 
     set username(value: string) {
         this._username = value;
+    }
+
+    public get externalUUID(): string {
+        return this._externalUUID;
+    }
+
+    public set externalUUID(value: string) {
+        this._externalUUID = value;
     }
 
     get password(): string {

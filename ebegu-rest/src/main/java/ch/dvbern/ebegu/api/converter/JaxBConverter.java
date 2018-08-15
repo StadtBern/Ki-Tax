@@ -2303,6 +2303,7 @@ public class JaxBConverter {
 
 	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement jaxLoginElement, Benutzer benutzer) {
 		benutzer.setUsername(jaxLoginElement.getUsername());
+		benutzer.setExternalUUID(jaxLoginElement.getExternalUUID());
 		benutzer.setEmail(jaxLoginElement.getEmail());
 		benutzer.setNachname(jaxLoginElement.getNachname());
 		benutzer.setVorname(jaxLoginElement.getVorname());
@@ -2359,6 +2360,7 @@ public class JaxBConverter {
 			jaxLoginElement.setMandant(mandantToJAX(benutzer.getMandant()));
 		}
 		jaxLoginElement.setUsername(benutzer.getUsername());
+		jaxLoginElement.setExternalUUID(benutzer.getExternalUUID());
 		jaxLoginElement.setGesperrt(benutzer.getGesperrt());
 		jaxLoginElement.setCurrentBerechtigung(berechtigungToJax(benutzer.getCurrentBerechtigung()));
 		// Berechtigungen
