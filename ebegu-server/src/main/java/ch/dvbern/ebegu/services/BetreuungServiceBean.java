@@ -366,17 +366,16 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 	@RolesAllowed({SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA})
 	@Nonnull
 	public Optional<Betreuung> findGueltigeBetreuungByBGNummer(@Nonnull String bgNummer) {
-		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
-		final int kindNummer = getKindNummerFromBGNummer(bgNummer);
 		final int yearFromBGNummer = getYearFromBGNummer(bgNummer);
 		// der letzte Tag im Jahr, von der BetreuungsId sollte immer zur richtigen Gesuchsperiode zählen.
 		final Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.getGesuchsperiodeAm(LocalDate.ofYearDay(yearFromBGNummer, 365));
-		Gesuchsperiode gesuchsperiode;
-		if (gesuchsperiodeOptional.isPresent()) {
-			gesuchsperiode = gesuchsperiodeOptional.get();
-		} else {
+		if (!gesuchsperiodeOptional.isPresent()) {
 			return Optional.empty();
 		}
+
+		final Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.get();
+		final int betreuungNummer = getBetreuungNummerFromBGNummer(bgNummer);
+		final int kindNummer = getKindNummerFromBGNummer(bgNummer);
 		final long fallnummer = getFallnummerFromBGNummer(bgNummer);
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -401,6 +400,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		predicates.add(predGueltig);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(cb, predicates));
+
 		Betreuung resultOrNull = persistence.getCriteriaSingleResult(query);
 		return Optional.ofNullable(resultOrNull);
 	}
