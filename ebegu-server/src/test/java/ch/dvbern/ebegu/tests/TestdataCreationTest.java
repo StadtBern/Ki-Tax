@@ -35,6 +35,7 @@ import ch.dvbern.ebegu.util.testdata.AnmeldungConfig;
 import ch.dvbern.ebegu.util.testdata.ErstgesuchConfig;
 import ch.dvbern.ebegu.util.testdata.MutationConfig;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +45,7 @@ import org.junit.runner.RunWith;
  */
 @SuppressWarnings({ "LocalVariableNamingConvention", "InstanceMethodNamingConvention", "InstanceVariableNamingConvention" })
 @RunWith(Arquillian.class)
+@UsingDataSet("datasets/mandant-dataset.xml")
 public class TestdataCreationTest extends AbstractTestdataCreationTest {
 
 	@Inject
@@ -80,7 +82,7 @@ public class TestdataCreationTest extends AbstractTestdataCreationTest {
 		Gesuch erstgesuch = testdataCreationService.createErstgesuch(config);
 		Assert.assertNotNull(erstgesuch);
 		Assert.assertNotNull(erstgesuch.getGesuchsperiode());
-		Assert.assertEquals(TestDataUtil.createCurrentGesuchsperiode().getBasisJahrPlus1(), erstgesuch.getGesuchsperiode().getBasisJahrPlus1());
+		Assert.assertEquals(2017, erstgesuch.getGesuchsperiode().getBasisJahrPlus1());
 	}
 
 	@Test
