@@ -204,6 +204,7 @@ import ch.dvbern.ebegu.util.MathUtil;
 import ch.dvbern.ebegu.util.StreamsUtil;
 import ch.dvbern.lib.date.DateConvertUtils;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
+import com.google.common.base.Strings;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -2303,7 +2304,9 @@ public class JaxBConverter {
 
 	public Benutzer authLoginElementToBenutzer(JaxAuthLoginElement jaxLoginElement, Benutzer benutzer) {
 		benutzer.setUsername(jaxLoginElement.getUsername());
-		benutzer.setExternalUUID(jaxLoginElement.getExternalUUID());
+		benutzer.setExternalUUID(
+			Strings.isNullOrEmpty(jaxLoginElement.getExternalUUID()) ? null : jaxLoginElement.getExternalUUID()
+		);
 		benutzer.setEmail(jaxLoginElement.getEmail());
 		benutzer.setNachname(jaxLoginElement.getNachname());
 		benutzer.setVorname(jaxLoginElement.getVorname());
