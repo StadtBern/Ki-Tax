@@ -98,12 +98,12 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	public void getAllEbeguParameterByDateTest() {
 		Assert.assertNotNull(parameterService);
 		createAndPersistParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA, Constants.GESUCHSPERIODE_17_18);
-		Collection<EbeguParameter> allEbeguParameterByDate = parameterService.getAllEbeguParameterByDate(LocalDate.now());
+		Collection<EbeguParameter> allEbeguParameterByDate = parameterService.getAllEbeguParameterByDate(LocalDate.of(2018, Month.MARCH, 1));
 		Assert.assertEquals(1, allEbeguParameterByDate.size());
 	}
 
 	@Test
-	public void saveEbeguParameter() throws Exception {
+	public void saveEbeguParameter() {
 		// Noch keine Params
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Optional<EbeguParameter> currentParameterOptional = parameterService.getEbeguParameterByKeyAndDate(EbeguParameterServiceTest.PARAM_KEY, LocalDate.now());
@@ -127,7 +127,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void getEbeguParameterByGesuchsperiode() throws Exception {
+	public void getEbeguParameterByGesuchsperiode() {
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertTrue(allParameter.isEmpty());
 
@@ -142,7 +142,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void getEbeguParameterByJahr() throws Exception {
+	public void getEbeguParameterByJahr() {
 		Collection<EbeguParameter> allParameter = parameterService.getAllEbeguParameter();
 		Assert.assertTrue(allParameter.isEmpty());
 
@@ -236,7 +236,7 @@ public class EbeguParameterServiceTest extends AbstractEbeguLoginTest {
 	}
 
 	@Test
-	public void getEbeguParameterByKeyAndDate() throws Exception {
+	public void getEbeguParameterByKeyAndDate() {
 		EbeguParameter param1 = TestDataUtil.createDefaultEbeguParameter(EbeguParameterKey.PARAM_ANZAL_TAGE_MAX_KITA);
 		parameterService.saveEbeguParameter(param1);
 

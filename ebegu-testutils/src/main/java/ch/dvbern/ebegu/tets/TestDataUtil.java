@@ -351,7 +351,7 @@ public final class TestDataUtil {
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		instStammdaten.setGueltigkeit(new DateRange());
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.TAGESSCHULE);
 		instStammdaten.setInstitution(institution);
 		instStammdaten.setAdresse(createDefaultAdresse());
@@ -363,7 +363,7 @@ public final class TestDataUtil {
 		instStammdaten.setIban(new IBAN(iban));
 		instStammdaten.setOeffnungsstunden(BigDecimal.valueOf(24));
 		instStammdaten.setOeffnungstage(BigDecimal.valueOf(365));
-		instStammdaten.setGueltigkeit(new DateRange());
+		instStammdaten.setGueltigkeit(Constants.DEFAULT_GUELTIGKEIT);
 		instStammdaten.setBetreuungsangebotTyp(BetreuungsangebotTyp.FERIENINSEL);
 		instStammdaten.setInstitution(institution);
 		instStammdaten.setAdresse(createDefaultAdresse());

@@ -120,7 +120,7 @@ public class JaxBConverterTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void gesuchSpeichernDarfGesuchsperiodeNichtUpdaten() throws Exception {
+	public void gesuchSpeichernDarfGesuchsperiodeNichtUpdaten() {
 		Gesuchsperiode gesuchsperiode = criteriaQueryHelper.getAll(Gesuchsperiode.class).iterator().next();
 		Assert.assertEquals(GesuchsperiodeStatus.AKTIV, gesuchsperiode.getStatus());
 
@@ -137,7 +137,7 @@ public class JaxBConverterTest extends AbstractEbeguRestLoginTest {
 	}
 
 	@Test
-	public void institutionSpeichernDarfMandantUndTraegerschaftNichtUpdaten() throws Exception {
+	public void institutionSpeichernDarfMandantUndTraegerschaftNichtUpdaten() {
 		Mandant mandant = criteriaQueryHelper.getAll(Mandant.class).iterator().next();
 		Traegerschaft traegerschaft = TestDataUtil.createDefaultTraegerschaft();
 		traegerschaft = persistence.persist(traegerschaft);
