@@ -147,7 +147,7 @@ export class DVBenutzerController {
         return role.userErstellt;
     }
 
-    saveBenutzer(): void {
+    saveBenutzerBerechtigungen(): void {
         if (this.form.$valid) {
             if (this.isMoreThanGesuchstellerRole()) {
                 this.dvDialog.showRemoveDialog(removeDialogTemplate, this.form, RemoveDialogController, {
@@ -200,9 +200,9 @@ export class DVBenutzerController {
         // Die (separat behandelte) aktuelle Berechtigung wieder zur Liste hinzufügen
         this.selectedUser.berechtigungen = this._futureBerechtigungen;
         this.selectedUser.berechtigungen.unshift(this._currentBerechtigung);
-        this.userRS.saveBenutzer(this.selectedUser).then((changedUser: TSUser) => {
+        this.userRS.saveBenutzerBerechtigungen(this.selectedUser).then(() => {
             this.navigateBackToUsersList();
-        }).catch(reason => {
+        }).catch(() => {
             this.initSelectedUser();
         });
     }

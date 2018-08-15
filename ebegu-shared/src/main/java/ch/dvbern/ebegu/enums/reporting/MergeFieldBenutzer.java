@@ -40,6 +40,7 @@ public enum MergeFieldBenutzer implements MergeFieldProvider {
 	nachname(new SimpleMergeField<>("nachname", STRING_CONVERTER)),
 	email(new SimpleMergeField<>("email", STRING_CONVERTER)),
 	role(new SimpleMergeField<>("role", STRING_CONVERTER)),
+	roleGueltigAb(new SimpleMergeField<>("roleGueltigAb", DATE_CONVERTER)),
 	roleGueltigBis(new SimpleMergeField<>("roleGueltigBis", DATE_CONVERTER)),
 	institution(new SimpleMergeField<>("institution", STRING_CONVERTER)),
 	traegerschaft(new SimpleMergeField<>("traegerschaft", STRING_CONVERTER)),

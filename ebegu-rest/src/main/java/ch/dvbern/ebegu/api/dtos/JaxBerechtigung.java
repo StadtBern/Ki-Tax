@@ -14,11 +14,16 @@
  */
 package ch.dvbern.ebegu.api.dtos;
 
+import java.time.LocalDate;
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import ch.dvbern.ebegu.enums.UserRole;
+import ch.dvbern.ebegu.types.DateRange;
+import ch.dvbern.ebegu.util.Constants;
 
 /**
  * Wrapper DTO fuer eine Berechtigung
@@ -63,5 +68,21 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 
 	public void setInstitution(@Nullable JaxInstitution institution) {
 		this.institution = institution;
+	}
+
+	public boolean isSame(@Nonnull JaxBerechtigung that) {
+		if (this == that) {
+			return true;
+		}
+		return role == that.role &&
+			Objects.equals(traegerschaft, that.traegerschaft) &&
+			Objects.equals(institution, that.institution);
+	}
+
+	public boolean isGueltig() {
+		LocalDate dateFrom = getGueltigAb() != null ? getGueltigAb() : Constants.START_OF_TIME;
+		LocalDate dateUntil = getGueltigBis() != null ? getGueltigBis() : Constants.END_OF_TIME;
+		DateRange dateRange = new DateRange(dateFrom, dateUntil);
+		return dateRange.contains(LocalDate.now());
 	}
 }

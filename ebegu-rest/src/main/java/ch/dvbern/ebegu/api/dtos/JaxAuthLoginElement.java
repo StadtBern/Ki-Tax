@@ -58,7 +58,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 
 	private boolean gesperrt;
 
-	@Nonnull
+	@Nullable
 	private JaxBerechtigung currentBerechtigung;
 
 	@Nonnull
@@ -145,7 +145,7 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 		this.gesperrt = gesperrt;
 	}
 
-	@Nonnull
+	@Nullable
 	public JaxBerechtigung getCurrentBerechtigung() {
 		return currentBerechtigung;
 	}
@@ -175,5 +175,19 @@ public class JaxAuthLoginElement extends JaxAbstractDTO {
 	@Nullable
 	public JaxTraegerschaft getTraegerschaft() {
 		return getCurrentBerechtigung().getTraegerschaft();
+	}
+
+	/**
+	 * evaluates current berechtigung and sets it to the object
+	 */
+	public void evaluateCurrentBerechtigung() {
+		if (getCurrentBerechtigung() == null) {
+			for (JaxBerechtigung berechtigung : getBerechtigungen()) {
+				if (berechtigung.isGueltig()) {
+					setCurrentBerechtigung(berechtigung);
+					return;
+				}
+			}
+		}
 	}
 }
