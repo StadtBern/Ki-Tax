@@ -120,12 +120,12 @@ public abstract class AbstractEntity implements Serializable {
 
 	// Wert darf nicht leer sein, aber kein @NotNull, da Wert erst im @PrePersist gesetzt
 	// wir verwenden hier die Hibernate spezifische Annotation, weil diese vererbt wird
-	@Size(max = Constants.UUID_LENGTH)
-	@Column(nullable = false, length = Constants.UUID_LENGTH)
+	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String userErstellt;
 
-	@Size(max = Constants.UUID_LENGTH)
-	@Column(nullable = false, length = Constants.UUID_LENGTH)
+	@Size(max = Constants.DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = false, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String userMutiert;
 
 	@Column(nullable = true, length = Constants.UUID_LENGTH)
