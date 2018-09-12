@@ -17,6 +17,9 @@ package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -39,17 +42,19 @@ import ch.dvbern.ebegu.util.EbeguUtil;
 public class FamiliensituationDokumente extends AbstractDokumente<Familiensituation, Familiensituation> {
 
 	@Override
-	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
-		add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, gesuch.extractFamiliensituationErstgesuch(), gesuch.extractFamiliensituation(),
-			null, null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
-
+	public void getAllDokumente(@Nonnull Gesuch gesuch, @Nonnull Set<DokumentGrund> anlageVerzeichnis) {
+		Familiensituation famsitErstgesuch = gesuch.extractFamiliensituationErstgesuch();
+		if (famsitErstgesuch != null) {
+			add(getDokument(DokumentTyp.NACHWEIS_TRENNUNG, famsitErstgesuch, gesuch.extractFamiliensituation(),
+				null, null, null, DokumentGrundTyp.FAMILIENSITUATION), anlageVerzeichnis);
+		}
 		// dieses Dokument gehoert eigentlich zur FinSit aber muss hier hinzugefuegt werden, da es Daten aus der Familiensituation benoetigt
 		add(getDokument(DokumentTyp.UNTERSTUETZUNGSBESTAETIGUNG, gesuch.extractFamiliensituation(),
 			null, null, null, DokumentGrundTyp.FINANZIELLESITUATION), anlageVerzeichnis);
 	}
 
 	@Override
-	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Familiensituation familiensituation) {
+	public boolean isDokumentNeeded(@Nonnull DokumentTyp dokumentTyp, @Nullable Familiensituation familiensituation) {
 		if (familiensituation == null) {
 			return false;
 		}
@@ -63,7 +68,7 @@ public class FamiliensituationDokumente extends AbstractDokumente<Familiensituat
 
 	@SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
 	@Override
-	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Familiensituation familiensituationErstgesuch, Familiensituation familiensituationMutation) {
+	public boolean isDokumentNeeded(@Nonnull DokumentTyp dokumentTyp, Familiensituation familiensituationErstgesuch, Familiensituation familiensituationMutation) {
 		if (familiensituationErstgesuch == null || familiensituationMutation == null) {
 			return false;
 		}

@@ -114,6 +114,7 @@ export default class WizardStepManager {
         this.allowedSteps.push(TSWizardStepName.KINDER);
         this.allowedSteps.push(TSWizardStepName.FINANZIELLE_SITUATION);
         this.allowedSteps.push(TSWizardStepName.EINKOMMENSVERSCHLECHTERUNG);
+        this.allowedSteps.push(TSWizardStepName.DOKUMENTE);
     }
 
     private setAllAllowedSteps(): void {

@@ -17,6 +17,9 @@ package ch.dvbern.ebegu.rules.anlageverzeichnis;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Kind;
@@ -41,7 +44,7 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
 public class KindDokumente extends AbstractDokumente<Kind, Object> {
 
 	@Override
-	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
+	public void getAllDokumente(@Nonnull Gesuch gesuch, @Nonnull Set<DokumentGrund> anlageVerzeichnis) {
 
 		final Set<KindContainer> kindContainers = gesuch.getKindContainers();
 		if (kindContainers == null || kindContainers.isEmpty()) {
@@ -60,7 +63,7 @@ public class KindDokumente extends AbstractDokumente<Kind, Object> {
 	}
 
 	@Override
-	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, Kind kind) {
+	public boolean isDokumentNeeded(@Nonnull DokumentTyp dokumentTyp, @Nullable Kind kind) {
 		if (kind != null) {
 			switch (dokumentTyp) {
 			case FACHSTELLENBEST_SOZ:

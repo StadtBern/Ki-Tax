@@ -18,6 +18,8 @@ package ch.dvbern.ebegu.rules.anlageverzeichnis;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Einkommensverschlechterung;
@@ -59,7 +61,7 @@ import ch.dvbern.ebegu.enums.DokumentTyp;
 public class EinkommensverschlechterungDokumente extends AbstractFinanzielleSituationDokumente {
 
 	@Override
-	public void getAllDokumente(Gesuch gesuch, Set<DokumentGrund> anlageVerzeichnis) {
+	public void getAllDokumente(@Nonnull Gesuch gesuch, @Nonnull Set<DokumentGrund> anlageVerzeichnis) {
 
 		final boolean gemeinsam = gesuch.extractFamiliensituation() != null &&
 			gesuch.extractFamiliensituation().getGemeinsameSteuererklaerung() != null &&

@@ -18,6 +18,9 @@ package ch.dvbern.ebegu.rules.anlageverzeichnis;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.AbstractFinanzielleSituation;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.enums.DokumentGrundPersonType;
@@ -69,7 +72,7 @@ abstract class AbstractFinanzielleSituationDokumente extends AbstractDokumente<A
 	}
 
 	@Override
-	public boolean isDokumentNeeded(DokumentTyp dokumentTyp, AbstractFinanzielleSituation abstractFinanzielleSituation) {
+	public boolean isDokumentNeeded(@Nonnull DokumentTyp dokumentTyp, @Nullable AbstractFinanzielleSituation abstractFinanzielleSituation) {
 		if (abstractFinanzielleSituation != null) {
 			switch (dokumentTyp) {
 			case STEUERVERANLAGUNG:

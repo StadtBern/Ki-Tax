@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.api.resource;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -37,8 +38,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang3.Validate;
-
 import ch.dvbern.ebegu.api.converter.JaxBConverter;
 import ch.dvbern.ebegu.api.dtos.JaxDokument;
 import ch.dvbern.ebegu.api.dtos.JaxDokumentGrund;
@@ -50,13 +49,11 @@ import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.enums.DokumentGrundTyp;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
-import ch.dvbern.ebegu.errors.EbeguException;
 import ch.dvbern.ebegu.rules.anlageverzeichnis.DokumentenverzeichnisEvaluator;
 import ch.dvbern.ebegu.services.DokumentGrundService;
 import ch.dvbern.ebegu.services.FileSaverService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.util.DokumenteUtil;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -92,14 +89,14 @@ public class DokumenteResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxDokumente getDokumente(
-		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId) throws EbeguException {
+		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId) {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
-			//TODO reviewer addSonstige und addPapiergesuch sollte moeglichwerweise hier nicht zu den needed hinzugefuegt werden... weil sie ja eigentlich nicht needed sind und nur auf dem GUI angezeigt werden sollen
 			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
-			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
+			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded);
+			dokumentenverzeichnisEvaluator.addFreigabequittung(dokumentGrundsNeeded);
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch.get());
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
@@ -116,12 +113,13 @@ public class DokumenteResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public JaxDokumente getDokumente(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
-		@Nonnull @NotNull @PathParam("dokumentGrundTyp") DokumentGrundTyp dokumentGrundTyp) throws EbeguException {
+		@Nonnull @NotNull @PathParam("dokumentGrundTyp") DokumentGrundTyp dokumentGrundTyp) {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
-			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded, gesuch.get());
+			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded);
+			dokumentenverzeichnisEvaluator.addFreigabequittung(dokumentGrundsNeeded);
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
@@ -137,9 +135,9 @@ public class DokumenteResource {
 	public JaxDokumentGrund updateDokumentGrund(
 		@Nonnull @NotNull @Valid JaxDokumentGrund dokumentGrundJAXP,
 		@Context UriInfo uriInfo,
-		@Context HttpServletResponse response) throws EbeguException {
+		@Context HttpServletResponse response) {
 
-		Validate.notNull(dokumentGrundJAXP.getId());
+		Objects.requireNonNull(dokumentGrundJAXP.getId());
 		Optional<DokumentGrund> dokumentGrundOptional = dokumentGrundService.findDokumentGrund(dokumentGrundJAXP.getId());
 		DokumentGrund dokumentGrundFromDB = dokumentGrundOptional.orElseThrow(() -> new EbeguEntityNotFoundException("update", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, dokumentGrundJAXP.getId()));
 		// beim DokumentGrund mit dem DokumentGrundTyp SONSTIGE_NACHWEISE oder PAPIERGESUCH  soll das needed-Flag (transient)
@@ -170,8 +168,8 @@ public class DokumenteResource {
 	 * Gibt Liste von Dokumenten zurück, welche auf der DB vorhanden sind auf dem jaxB Objekt jedoch nicht mehr.
 	 */
 	private Set<Dokument> findDokumentToRemove(JaxDokumentGrund dokumentGrundJAXP, DokumentGrund dokumentGrundFromDB) {
-		Validate.notNull(dokumentGrundFromDB.getDokumente());
-		Validate.notNull(dokumentGrundJAXP.getDokumente());
+		Objects.requireNonNull(dokumentGrundFromDB.getDokumente());
+		Objects.requireNonNull(dokumentGrundJAXP.getDokumente());
 
 		Set<Dokument> dokumentsToRemove = new HashSet<>();
 		for (Dokument dokument : dokumentGrundFromDB.getDokumente()) {

@@ -104,7 +104,7 @@ public class EbeguUtil {
 	/**
 	 * Returns true if both list are null or if they have the same number of elements
 	 */
-	public static boolean areListsSameSize(Set<Dokument> dokumente, Set<Dokument> otherDokumente) {
+	public static boolean areListsSameSize(@Nullable Set<Dokument> dokumente, @Nullable Set<Dokument> otherDokumente) {
 		if (dokumente == null && otherDokumente == null) {
 			return true;
 		}

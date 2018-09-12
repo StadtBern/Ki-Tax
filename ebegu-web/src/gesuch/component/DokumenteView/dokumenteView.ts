@@ -54,6 +54,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
     dokumenteKinder: TSDokumentGrund[] = [];
     dokumenteSonst: TSDokumentGrund[] = [];
     dokumentePapiergesuch: TSDokumentGrund[] = [];
+    dokumenteFreigabequittung: TSDokumentGrund[] = [];
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
         'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService', '$scope', '$timeout'];
@@ -80,6 +81,7 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
                     this.searchDokumente(promiseValue, this.dokumenteKinder, TSDokumentGrundTyp.KINDER);
                     this.searchDokumente(promiseValue, this.dokumenteSonst, TSDokumentGrundTyp.SONSTIGE_NACHWEISE);
                     this.searchDokumente(promiseValue, this.dokumentePapiergesuch, TSDokumentGrundTyp.PAPIERGESUCH);
+                    this.searchDokumente(promiseValue, this.dokumenteFreigabequittung, TSDokumentGrundTyp.FREIGABEQUITTUNG);
                 });
         } else {
             this.$log.debug('No gesuch für dokumente');
@@ -181,3 +183,4 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
         this.gesuchModelManager.updateGesuch();
     }
 }
+

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -99,7 +100,7 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 		this.needed = !DokumentGrundTyp.isSonstigeOrPapiergesuch(dokumentGrundTyp);
 	}
 
-	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, @Nullable String tag,
+	public DokumentGrund(@Nonnull DokumentGrundTyp dokumentGrundTyp, @Nullable String tag,
 		@Nullable DokumentGrundPersonType personType, @Nullable Integer personNumber) {
 		this.dokumentGrundTyp = dokumentGrundTyp;
 		this.needed = !DokumentGrundTyp.isSonstigeOrPapiergesuch(dokumentGrundTyp);
@@ -108,14 +109,14 @@ public class DokumentGrund extends AbstractEntity implements Comparable<Dokument
 		this.personNumber = personNumber;
 	}
 
-	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, DokumentTyp dokumentTyp) {
+	public DokumentGrund(@Nonnull DokumentGrundTyp dokumentGrundTyp, @Nonnull DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
 	}
 
-	public DokumentGrund(DokumentGrundTyp dokumentGrundTyp, String tag,
-		DokumentGrundPersonType personType, Integer personNumber, DokumentTyp dokumentTyp) {
+	public DokumentGrund(@Nonnull DokumentGrundTyp dokumentGrundTyp, @Nullable String tag,
+		@Nullable DokumentGrundPersonType personType, @Nullable Integer personNumber, @Nonnull DokumentTyp dokumentTyp) {
 		this(dokumentGrundTyp, tag, personType, personNumber);
 		this.dokumente = new HashSet<>();
 		this.dokumentTyp = dokumentTyp;
