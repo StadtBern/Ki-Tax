@@ -35,6 +35,6 @@ export function getTSTSDokumentTypValues(): Array<TSDokumentGrundTyp> {
         TSDokumentGrundTyp.EINKOMMENSVERSCHLECHTERUNG,
         TSDokumentGrundTyp.SONSTIGE_NACHWEISE,
         TSDokumentGrundTyp.PAPIERGESUCH,
-       	TSDokumentGrundTyp.FREIGABEQUITTUNG,
+        TSDokumentGrundTyp.FREIGABEQUITTUNG,
     ];
 }
