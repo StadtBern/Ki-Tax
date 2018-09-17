@@ -67,13 +67,13 @@ public class ExportConverter {
 		verfuegungDTO.setBetreuung(createBetreuungExportDTOFromBetreuung(verfuegung.getBetreuung()));
 		// Verrechnete Zeitabschnitte
 		List<ZeitabschnittExportDTO> zeitabschnitte = verfuegung.getZeitabschnitte().stream()
-			.filter(abschnitt -> !abschnitt.getZahlungsstatus().isIgnoriertIgnorierend())
+			.filter(abschnitt -> !abschnitt.getZahlungsstatus().isIgnoriert())
 			.map(this::createZeitabschnittExportDTOFromZeitabschnitt)
 			.collect(Collectors.toList());
 		verfuegungDTO.setZeitabschnitte(zeitabschnitte);
 		// Ignorierte Zeitabschnitte
 		List<ZeitabschnittExportDTO> zeitabschnitteIgnoriert = verfuegung.getZeitabschnitte().stream()
-			.filter(abschnitt -> abschnitt.getZahlungsstatus().isIgnoriertIgnorierend())
+			.filter(abschnitt -> abschnitt.getZahlungsstatus().isIgnoriert())
 			.map(this::createZeitabschnittExportDTOFromZeitabschnitt)
 			.collect(Collectors.toList());
 		verfuegungDTO.setIgnorierteZeitabschnitte(zeitabschnitteIgnoriert);
