@@ -79,7 +79,7 @@
                     </dv-dokumente-list>
                 </div>
 
-                <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllGemeindeAbhAmtRoles()">
+                <div dv-show-element dv-show-allowed-roles="vm.TSRoleUtil.getAllRolesForKommentarSpalte()">
                     <dv-dokumente-list dokumente="vm.dokumenteFreigabequittung" table-id="dokumenteFreigabequittung"
                                        table-title="DOK_FREIGABEQUITTUNG"
                                        on-upload-done="vm.addUploadedDokuments(dokument, vm.dokumenteFreigabequittung)"
@@ -89,7 +89,6 @@
                 </div>
 
                 <!-- -------------------------------------------Navigation--------------------------------------------  -->
-
 
                 <div class="nav-row-dokumente">
 

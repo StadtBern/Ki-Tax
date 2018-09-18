@@ -21,7 +21,7 @@ import TSWizardStep from '../../models/TSWizardStep';
 import WizardStepRS from './WizardStepRS.rest';
 import {TSWizardStepStatus} from '../../models/enums/TSWizardStepStatus';
 import {TSAntragTyp} from '../../models/enums/TSAntragTyp';
-import {isAnyStatusOfVerfuegt, isAtLeastFreigegeben, TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {isAnyStatusOfVerfuegt, isAtLeastFreigegeben} from '../../models/enums/TSAntragStatus';
 import TSGesuch from '../../models/TSGesuch';
 import {TSRoleUtil} from '../../utils/TSRoleUtil';
 import {TSAuthEvent} from '../../models/enums/TSAuthEvent';

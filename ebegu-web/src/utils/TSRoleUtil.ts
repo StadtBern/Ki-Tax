@@ -125,10 +125,6 @@ export class TSRoleUtil {
         );
     }
 
-    public static getAllGemeindeAbhAmtRoles(): Array<TSRole> {
-        return [TSRole.SUPER_ADMIN, TSRole.ADMIN, TSRole.SACHBEARBEITER_JA, TSRole.JURIST, TSRole.REVISOR, TSRole.ADMINISTRATOR_SCHULAMT, TSRole.SCHULAMT, TSRole.STEUERAMT];
-    }
-
     public static getAllButAdministratorAmtRole(): Array<TSRole> {
         return getTSRoleValues().filter(element =>
             element !== TSRole.SACHBEARBEITER_JA &&

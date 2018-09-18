@@ -183,4 +183,3 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
         this.gesuchModelManager.updateGesuch();
     }
 }
-

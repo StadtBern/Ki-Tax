@@ -120,6 +120,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 		}
 	}
 
+	@SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
 	@Override
 	public boolean isDokumentNeeded(@Nonnull DokumentTyp dokumentTyp, Erwerbspensum erwerbspensum, LocalDate periodenstart) {
 		if (erwerbspensum != null) {
@@ -136,6 +137,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 		return false;
 	}
 
+	@SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
 	@Override
 	public boolean isDokumentNeeded(@Nonnull DokumentTyp dokumentTyp, @Nullable Erwerbspensum erwerbspensum) {
 		if (erwerbspensum != null) {
