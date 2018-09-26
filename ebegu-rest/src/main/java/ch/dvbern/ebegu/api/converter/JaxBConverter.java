@@ -910,7 +910,6 @@ public class JaxBConverter {
 		antrag.setGeprueftSTV(antragJAXP.isGeprueftSTV());
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setFinSitStatus(antragJAXP.getFinSitStatus());
-		antrag.setGueltig(antragJAXP.isGueltig());
 		antrag.setDokumenteHochgeladen(antragJAXP.isDokumenteHochgeladen());
 		return antrag;
 	}
@@ -1787,7 +1786,6 @@ public class JaxBConverter {
 		betreuung.setBetreuungNummer(betreuungJAXP.getBetreuungNummer());
 		betreuung.setBetreuungMutiert(betreuungJAXP.getBetreuungMutiert());
 		betreuung.setAbwesenheitMutiert(betreuungJAXP.getAbwesenheitMutiert());
-		betreuung.setGueltig(betreuungJAXP.isGueltig());
 		betreuung.setAnmeldungMutationZustand(betreuungJAXP.getAnmeldungMutationZustand());
 		betreuung.setKeineDetailinformationen(betreuungJAXP.isKeineDetailinformationen());
 		if (betreuungJAXP.getBelegungTagesschule() != null) {
