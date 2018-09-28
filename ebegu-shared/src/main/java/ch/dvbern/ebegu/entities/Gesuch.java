@@ -766,7 +766,8 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		folgegesuch.setDatumGewarntNichtFreigegeben(null);
 		folgegesuch.setDatumGewarntFehlendeQuittung(null);
 		folgegesuch.setTimestampVerfuegt(null);
-		folgegesuch.setGueltig(false);
+		// null instead of false because of UK_Constraint UK_gueltiges_gesuch
+		folgegesuch.setGueltig(null);
 		folgegesuch.setDokumenteHochgeladen(false);
 		return folgegesuch;
 	}
