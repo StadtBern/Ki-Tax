@@ -38,7 +38,9 @@
                                            for="vm.form.eintrittsdatum.$error"></dv-error-messages>
                     </div>
                     <!-- Planklasse -->
-                    <div class="col-sm-12 dv-input-container-small">
+                    <div class="col-sm-12 dv-input-container-small"
+                         dv-show-element
+                         dv-show-allowed-roles="vm.isGesuchstellerRole()">
                         <dv-input-container class="form-group">
                             <label class="md-no-float" data-translate="PLANKLASSE" for="planklasse_ID"></label>
                             <input aria-describedby="vorname_ID-error" id="planKlasse_ID" type="text" name="planKlasse"

@@ -27,6 +27,7 @@ import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
 import TSModulTagesschule from '../../../models/TSModulTagesschule';
 import DateUtil from '../../../utils/DateUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import {IBetreuungStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -79,7 +80,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     /* @ngInject */
     constructor($state: IStateService, gesuchModelManager: GesuchModelManager, ebeguUtil: EbeguUtil, CONSTANTS: any,
                 $scope: IScope, berechnungsManager: BerechnungsManager, errorService: ErrorService,
-                authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
+                private authServiceRS: AuthServiceRS, wizardStepManager: WizardStepManager, $stateParams: IBetreuungStateParams,
                 mitteilungRS: MitteilungRS, dvDialog: DvDialog, $log: ILogService,
                 $timeout: ITimeoutService, $translate: ITranslateService) {
 
@@ -234,5 +235,9 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
      */
     public getBetreuungModel(): TSBetreuung {
         return this.betreuung;
+    }
+
+    public isGesuchstellerRole(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerRoles());
     }
 }
