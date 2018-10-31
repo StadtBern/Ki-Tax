@@ -16,18 +16,23 @@
 package ch.dvbern.ebegu.entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
+
+import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
  * Entity for the Belegung of the Tageschulangebote in a Betreuung.
@@ -49,6 +54,11 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Column(nullable = false)
 	private LocalDate eintrittsdatum;
 
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@NotNull
+	@Column(nullable = false)
+	private String planKlasse;
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
@@ -62,7 +72,9 @@ public class BelegungTagesschule extends AbstractEntity {
 		if (!(other instanceof BelegungTagesschule)) {
 			return false;
 		}
-		return true;
+		BelegungTagesschule otherBelegungTS = (BelegungTagesschule) other;
+		return Objects.equals(getPlanKlasse(), otherBelegungTS.getPlanKlasse()) &&
+			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum());
 	}
 
 	@NotNull
@@ -74,19 +86,29 @@ public class BelegungTagesschule extends AbstractEntity {
 		this.moduleTagesschule = module;
 	}
 
-	@NotNull
+	@Nonnull
 	public LocalDate getEintrittsdatum() {
 		return eintrittsdatum;
 	}
 
-	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
+	public void setEintrittsdatum(@Nonnull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
+	}
+
+	@Nonnull
+	public String getPlanKlasse() {
+		return planKlasse;
+	}
+
+	public void setPlanKlasse(@Nonnull String planKlasse) {
+		this.planKlasse = planKlasse;
 	}
 
 	@Nonnull
 	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
 		super.copyForMutation(mutation);
-		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
+		mutation.setEintrittsdatum(this.getEintrittsdatum());
+		mutation.setPlanKlasse(this.getPlanKlasse());
 
 		// Don't copy them, because it's a ManyToMany realation
 		mutation.getModuleTagesschule().clear();

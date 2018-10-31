@@ -43,6 +43,8 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eintrittsdatum;
 
+	@NotNull
+	private String planKlasse;
 
 	public List<JaxModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
@@ -59,5 +61,14 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
+	}
+
+	@NotNull
+	public String getPlanKlasse() {
+		return this.planKlasse;
+	}
+
+	public void setPlanKlasse(@NotNull String planKlasse) {
+		this.planKlasse = planKlasse;
 	}
 }
