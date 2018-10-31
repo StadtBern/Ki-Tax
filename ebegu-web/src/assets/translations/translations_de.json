@@ -645,6 +645,7 @@
     "KORRESPONDENZADR_HELP": "Auf Wunsch kann die Korrespondenz an eine andere Adresse geschickt werden, z.B. an einen Vormund oder an den Sozialdienst.",
     "RECHNUNGSADR_HELP": "Dieses Feld müssen Sie nur ausfüllen, wenn Sie Ihr Kind für die Tagesschule bzw. die Ferieninsel anmelden.",
     "GESUCH": "Gesuch",
+    "PERIODE": "Periode",
     "ERSTGESUCH": "Gesuch",
     "ERNEUERUNGSGESUCH": "Gesuch",
     "MUTATION": "Mutation",
