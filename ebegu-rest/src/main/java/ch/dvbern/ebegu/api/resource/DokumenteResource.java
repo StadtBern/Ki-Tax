@@ -94,9 +94,7 @@ public class DokumenteResource {
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
-			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
-			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded);
-			dokumentenverzeichnisEvaluator.addFreigabequittung(dokumentGrundsNeeded);
+			dokumentenverzeichnisEvaluator.addOptionalDokumentGruendeByType(dokumentGrundsNeeded);
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch.get());
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
@@ -118,6 +116,8 @@ public class DokumenteResource {
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
+
+			dokumentenverzeichnisEvaluator.addOptionalDokumentGruendeByType(dokumentGrundsNeeded, dokumentGrundTyp);
 
 			Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService
 				.findAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
