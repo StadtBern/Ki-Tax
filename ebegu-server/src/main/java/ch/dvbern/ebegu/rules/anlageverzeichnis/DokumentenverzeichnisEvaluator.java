@@ -74,7 +74,7 @@ public class DokumentenverzeichnisEvaluator {
 	 * Fuegt alle Dokumente zum Set, welche nicht zwingend sind und daher nicht in der Method calculate() hinzugefuegt
 	 * werden
 	 */
-	public void addOptionalDokumentGruendeByType(Set<DokumentGrund> dokumentGrunds) {
+	public void addOptionalDokumentGruende(Set<DokumentGrund> dokumentGrunds) {
 		addSonstige(dokumentGrunds);
 		addPapiergesuch(dokumentGrunds);
 		addFreigabequittung(dokumentGrunds);
