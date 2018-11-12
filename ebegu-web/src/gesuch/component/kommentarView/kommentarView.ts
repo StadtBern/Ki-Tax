@@ -81,11 +81,12 @@ export class KommentarViewController {
         return this.dokumenteRS.getDokumenteByTypeCached(
             this.getGesuch(), TSDokumentGrundTyp.PAPIERGESUCH, this.globalCacheService.getCache(TSCacheTyp.EBEGU_DOCUMENT))
             .then((promiseValue: TSDokumenteDTO) => {
-
+                // it could also has no Papiergesuch at all
                 if (promiseValue.dokumentGruende.length === 1) {
                     this.dokumentePapiergesuch = promiseValue.dokumentGruende[0];
-                } else {
-                    console.log('Falsche anzahl Dokumente');
+                } else if (promiseValue.dokumentGruende.length > 1) {
+                    this.$log.error('Falsche anzahl Dokumente beim Laden vom Papiergesuch. Es sollte 1 sein, ist aber ' +
+                        promiseValue.dokumentGruende.length);
                 }
                 return promiseValue;
             });
