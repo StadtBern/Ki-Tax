@@ -66,6 +66,7 @@
                             </form></tab-body>
                     </dv-accordion-tab>
                 </div>
+
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','ADMINISTRATOR_SCHULAMT', 'SCHULAMT']">
                     <dv-accordion-tab tabid="gesuch_zeitraum">
@@ -221,6 +222,7 @@
                         </tab-body>
                     </dv-accordion-tab>
                 </div>
+
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
                     <dv-accordion-tab tabid="gesuchsteller">
@@ -252,6 +254,7 @@
                         </tab-body>
                     </dv-accordion-tab>
                 </div>
+
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR','SACHBEARBEITER_INSTITUTION','SACHBEARBEITER_TRAEGERSCHAFT']">
                     <dv-accordion-tab tabid="kanton">
@@ -294,6 +297,7 @@
                         </tab-body>
                     </dv-accordion-tab>
                 </div>
+
                 <div dv-show-element
                      dv-show-allowed-roles="['SACHBEARBEITER_JA','ADMIN','SUPER_ADMIN','REVISOR']">
                     <dv-accordion-tab tabid="mitarbeiterinnen">
@@ -411,6 +415,113 @@
                                         <dv-loading-button type="submit">
                                             <span data-translate="GENERIEREN"></span>
                                         </dv-loading-button>
+                                    </div>
+                                </div>
+                            </form>
+                        </tab-body>
+                    </dv-accordion-tab>
+                </div>
+
+                <div dv-show-element
+                     dv-show-allowed-roles="['SUPER_ADMIN','ADMIN','SCHULAMT_ADMINISTRATOR']">
+                    <dv-accordion-tab tabid="massenversand">
+                        <tab-title data-translate="MASSENVERSAND"></tab-title>
+                        <tab-body>
+                            <form name="massenversand"
+                                  ng-submit="vm.generateStatistik(massenversand, 'MASSENVERSAND')"
+                                  novalidate>
+
+                                <!-- Datum von/bis, Gesuchsperiode -->
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="von_massenversand" data-translate="VON"></label>
+                                            <dv-datepicker name="von_massenversand"
+                                                           ng-model="vm.statistikParameter.von" ng-required="true"
+                                                           class="input-element"
+                                                           no-future dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="massenversand.von_massenversand.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="bis_massenversand" data-translate="BIS"></label>
+                                            <dv-datepicker name="bis_massenversand" id="bis_massenversand"
+                                                           ng-model="vm.statistikParameter.bis" ng-required="true"
+                                                           class="input-element"
+                                                           no-future dv-min-date="vm.minDate" dv-max-date="vm.maxDate">
+                                            </dv-datepicker>
+                                            <dv-error-messages for="massenversand.bis_massenversand.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <div class="form-group">
+                                            <label class="md-no-float" for="periode_massenversand"
+                                                   data-translate="GESUCHSPERIODEN"></label>
+                                            <div class="dv-select-style">
+                                                <select name="periode_massenversand" id="periode_massenversand"
+                                                        ng-model="vm.statistikParameter.gesuchsperiode"
+                                                        ng-options="gesuchsperiode.id as gesuchsperiode.gesuchsperiodeString for gesuchsperiode in vm.gesuchsperioden | orderBy: 'name'"
+                                                        class="form-control">
+                                                    <option value="">Keine</option>
+                                                </select>
+                                                <dv-error-messages for="massenversand.periode_massenversand.$error"
+                                                                   class="error"></dv-error-messages>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3 statistik-button">
+                                        <dv-loading-button type="submit">
+                                            <span data-translate="GENERIEREN"></span>
+                                        </dv-loading-button>
+                                    </div>
+                                </div>
+								<!-- Selektionskriterien -->
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" data-translate="MASSENVERSAND_GESUCHE"></label>
+                                            <md-checkbox name="bgGesuche" ng-model="vm.statistikParameter.bgGesuche"
+                                                         aria-label="MASSENVERSAND_BG_GESUCHE" class="input-element ">
+                                                <span data-translate="MASSENVERSAND_BG_GESUCHE"></span>
+                                            </md-checkbox>
+                                            <md-checkbox name="bgGesuche" ng-model="vm.statistikParameter.mischGesuche"
+                                                         aria-label="MASSENVERSAND_MISCH_GESUCHE" class="input-element">
+                                                <span data-translate="MASSENVERSAND_MISCH_GESUCHE"></span>
+                                            </md-checkbox>
+                                            <md-checkbox name="bgGesuche" ng-model="vm.statistikParameter.tsGesuche"
+                                                         aria-label="MASSENVERSAND_TS_GESUCHE" class="input-element">
+                                                <span data-translate="MASSENVERSAND_TS_GESUCHE"></span>
+                                            </md-checkbox>
+                                        </dv-input-container>
+                                        <div class="dv-error-messages">
+                                            <span data-translate="MASSENVERSAND_ERROR_NICHTS_AUSGEWAEHLT" ng-show="vm.flagShowErrorNoGesuchSelected"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="ohneFolgegesuche" data-translate="MASSENVERSAND_WEITERE_ANGABEN"></label>
+                                            <md-checkbox id="ohneFolgegesuche" name="ohneFolgegesuche" ng-model="vm.statistikParameter.ohneFolgegesuche"
+                                                         aria-label="MASSENVERSAND_OHNE_FOLGEGESUCHE"class="input-element">
+                                                <span data-translate="MASSENVERSAND_OHNE_FOLGEGESUCHE"></span>
+                                            </md-checkbox>
+                                        </dv-input-container>
+                                    </div>
+                                </div>
+								<!-- Text zum Speichern -->
+                                <div class="row">
+                                    <div class="col-xs-9">
+                                        <dv-input-container class="form-group">
+                                            <label class="md-no-float" for="text_massenversand" data-translate="MASSENVERSAND_TEXT"></label>
+                                            <input aria-describedby="text_massenversand-error" id="text_massenversand" type="text" name="text_massenversand"
+                                                   ng-model="vm.statistikParameter.text"
+                                                   dv-max-length class="form-control">
+                                            <dv-error-messages for="massenversand.text_massenversand.$error"
+                                                               class="error"></dv-error-messages>
+                                        </dv-input-container>
                                     </div>
                                 </div>
                             </form>

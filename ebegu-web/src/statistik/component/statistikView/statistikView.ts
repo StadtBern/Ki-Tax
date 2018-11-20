@@ -57,6 +57,7 @@ export class StatistikViewController {
     private minDate: Moment;
     private userjobs: Array<TSWorkJob>;
     private allJobs: Array<TSBatchJobInformation>;
+    private flagShowErrorNoGesuchSelected: boolean = false;
 
     static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportAsyncRS', 'DownloadRS', 'BatchJobRS',
         'ErrorService', '$translate', '$interval'];
@@ -102,7 +103,7 @@ export class StatistikViewController {
     }
 
     public generateStatistik(form: IFormController, type?: TSStatistikParameterType): void {
-        if (form.$valid) {
+        if (this.isMassenversandValid(type) && form.$valid) {
             let tmpType = (<any>TSStatistikParameterType)[type];
             tmpType ? this.$log.debug('Statistik Type: ' + tmpType) : this.$log.debug('default, Type not recognized');
             this.$log.debug('Validated Form: ' + form.$name);
@@ -215,6 +216,9 @@ export class StatistikViewController {
                         this.$log.warn('gesuchsperiode muss gewählt sein');
                     }
                     break;
+                case TSStatistikParameterType.MASSENVERSAND:
+                    this.$log.info('Erstelle Massenversand');
+                    break;
                 default:
                     this.$log.debug('default, Type not recognized');
                     break;
@@ -260,5 +264,15 @@ export class StatistikViewController {
             }));
             this.allJobs = res;
         });
+    }
+
+    private isMassenversandValid(type?: TSStatistikParameterType): boolean {
+        if (type === TSStatistikParameterType.MASSENVERSAND) {
+            this.flagShowErrorNoGesuchSelected = (
+                !this.statistikParameter.bgGesuche
+                && !this.statistikParameter.mischGesuche
+                && !this.statistikParameter.tsGesuche);
+        }
+        return !this.flagShowErrorNoGesuchSelected;
     }
 }
