@@ -15,28 +15,32 @@
 
 import {IComponentOptions, IIntervalService} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import TSStatistikParameter from '../../../models/TSStatistikParameter';
-import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import {TSRole} from '../../../models/enums/TSRole';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import * as moment from 'moment';
-import DateUtil from '../../../utils/DateUtil';
-import {ReportAsyncRS} from '../../../core/service/reportAsyncRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import BatchJobRS from '../../../core/service/batchRS.rest';
-import TSWorkJob from '../../../models/TSWorkJob';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {ReportAsyncRS} from '../../../core/service/reportAsyncRS.rest';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import {TSRole} from '../../../models/enums/TSRole';
+import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
 import TSBatchJobInformation from '../../../models/TSBatchJobInformation';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSStatistikParameter from '../../../models/TSStatistikParameter';
+import TSWorkJob from '../../../models/TSWorkJob';
+import DateUtil from '../../../utils/DateUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IFormController = angular.IFormController;
 import ILogService = angular.ILogService;
-import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
+import Moment = moment.Moment;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
+
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
 export class StatistikViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -46,6 +50,7 @@ export class StatistikViewComponentConfig implements IComponentOptions {
 }
 
 export class StatistikViewController {
+
     private polling: angular.IPromise<any>;
     private _statistikParameter: TSStatistikParameter;
     private _gesuchsperioden: Array<TSGesuchsperiode>;
@@ -60,11 +65,11 @@ export class StatistikViewController {
     private flagShowErrorNoGesuchSelected: boolean = false;
 
     static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportAsyncRS', 'DownloadRS', 'BatchJobRS',
-        'ErrorService', '$translate', '$interval'];
+        'ErrorService', '$translate', '$interval', 'DvDialog'];
 
     constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService,
         private reportAsyncRS: ReportAsyncRS, private downloadRS: DownloadRS, private bachJobRS: BatchJobRS, private errorService: ErrorService,
-        private $translate: ITranslateService, private $interval: IIntervalService) {
+        private $translate: ITranslateService, private $interval: IIntervalService, private dvDialog: DvDialog) {
     }
 
     $onInit() {
@@ -217,13 +222,28 @@ export class StatistikViewController {
                     }
                     break;
                 case TSStatistikParameterType.MASSENVERSAND:
-                    this.$log.info('Erstelle Massenversand');
+                    if (this.statistikParameter.text) {
+                        this.dvDialog.showRemoveDialog(removeDialogTemplate, undefined, RemoveDialogController, {
+                            title: this.$translate.instant('MASSENVERSAND_ERSTELLEN_CONFIRM_TITLE'),
+                            deleteText: this.$translate.instant('MASSENVERSAND_ERSTELLEN_CONFIRM_INFO'),
+                            parentController: undefined,
+                            elementID: undefined
+                        }).then(() => {   //User confirmed removal
+                            this.createMassenversand();
+                        });
+                    } else {
+                        this.createMassenversand();
+                    }
                     break;
                 default:
                     this.$log.debug('default, Type not recognized');
                     break;
             }
         }
+    }
+
+    private createMassenversand(): void {
+        this.$log.info('Erstelle Massenversand');
     }
 
     private informReportGenerationStarted(batchExecutionId: string) {
