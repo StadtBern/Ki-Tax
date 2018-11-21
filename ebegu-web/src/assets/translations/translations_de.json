@@ -1266,6 +1266,7 @@
     "ReportType_gesuchStichtag": "Gesuche nach Stichtag",
     "ReportType_zahlungperiode": "Zahlungen nach Periode",
     "ReportType_benutzer": "Registrierte Benutzer",
+    "ReportType_massenversand": "Kontaktdaten für Serienbriefe",
     "BatchJobStatus_REQUESTED": "Statistik angefordert",
     "BatchJobStatus_RUNNING": "Statistik wird erstellt",
     "BatchJobStatus_FINISHED": "Bereit zum Download",

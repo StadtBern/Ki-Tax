@@ -34,13 +34,26 @@ public interface WorkjobService {
 	@Nonnull
 	Workjob saveWorkjob(@Nonnull Workjob workJob);
 
-	@Nonnull
+	@Nullable
 	Workjob findWorkjobByWorkjobID(@Nonnull String workJobId);
 
-	@Nonnull
+	@Nullable
 	Workjob findWorkjobByExecutionId(@Nonnull Long executionId);
 
 	void removeOldWorkjobs();
+
+	@Nonnull
+	Workjob createNewReporting(
+		@Nonnull Workjob workJob,
+		@Nonnull ReportVorlage vorlage,
+		@Nullable LocalDate datumVon,
+		@Nullable LocalDate datumBis,
+		@Nullable String gesuchPeriodIdParam,
+		boolean inklBgGesuche,
+		boolean inklMischGesuche,
+		boolean inklTsGesuche,
+		boolean ohneErneuerungsgesuch,
+		@Nullable String text);
 
 	@Nonnull
 	Workjob createNewReporting(@Nonnull Workjob workJob,
@@ -66,8 +79,6 @@ public interface WorkjobService {
 
 	/**
 	 * update query that changes state
-	 * @param executionId
-	 * @param status
 	 */
 	void changeStateOfWorkjob(long executionId,@Nonnull BatchJobStatus status);
 

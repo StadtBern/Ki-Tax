@@ -244,6 +244,21 @@ export class StatistikViewController {
 
     private createMassenversand(): void {
         this.$log.info('Erstelle Massenversand');
+        this.reportAsyncRS.getMassenversandReportExcel(
+            this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+            this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+            this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null,
+            this._statistikParameter.bgGesuche,
+            this._statistikParameter.mischGesuche,
+            this._statistikParameter.tsGesuche,
+            this._statistikParameter.ohneFolgegesuche,
+            this._statistikParameter.text)
+            .then((batchExecutionId: string) => {
+                this.informReportGenerationStarted(batchExecutionId);
+            })
+            .catch(() => {
+                this.$log.error('An error occurred downloading the document, closing download window.');
+            });
     }
 
     private informReportGenerationStarted(batchExecutionId: string) {

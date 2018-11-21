@@ -44,6 +44,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,12 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SCHULAMT;
 import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 import static ch.dvbern.ebegu.enums.WorkJobConstants.DATE_FROM_PARAM;
 import static ch.dvbern.ebegu.enums.WorkJobConstants.DATE_TO_PARAM;
+import static ch.dvbern.ebegu.enums.WorkJobConstants.INKL_BG_GESUCHE;
+import static ch.dvbern.ebegu.enums.WorkJobConstants.INKL_MISCH_GESUCHE;
+import static ch.dvbern.ebegu.enums.WorkJobConstants.INKL_TS_GESUCHE;
+import static ch.dvbern.ebegu.enums.WorkJobConstants.OHNE_ERNEUERUNGSGESUCHE;
 import static ch.dvbern.ebegu.enums.WorkJobConstants.REPORT_VORLAGE_TYPE_PARAM;
+import static ch.dvbern.ebegu.enums.WorkJobConstants.TEXT;
 
 /**
  * Data Acess Object Bean zum zugriff auf Workjoben in der DB
@@ -140,7 +146,18 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
 		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
-	public Workjob createNewReporting(@Nonnull Workjob workJob, @Nonnull ReportVorlage vorlage, @Nullable LocalDate datumVon, @Nullable LocalDate datumBis, @Nullable String gesuchPeriodIdParam) {
+	public Workjob createNewReporting(
+		@Nonnull Workjob workJob,
+		@Nonnull ReportVorlage vorlage,
+		@Nullable LocalDate datumVon,
+		@Nullable LocalDate datumBis,
+		@Nullable String gesuchPeriodIdParam,
+		boolean inklBgGesuche,
+		boolean inklMischGesuche,
+		boolean inklTsGesuche,
+		boolean ohneErneuerungsgesuch,
+		@Nullable String text) {
+
 		checkIfJobCreationAllowed(workJob, vorlage);
 
 		JobOperator jobOperator = BatchRuntime.getJobOperator();
@@ -156,6 +173,13 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 			jobParameters.setProperty(DATE_TO_PARAM, datumBisString);
 		}
 
+		jobParameters.setProperty(INKL_BG_GESUCHE, String.valueOf(inklBgGesuche));
+		jobParameters.setProperty(INKL_MISCH_GESUCHE, String.valueOf(inklMischGesuche));
+		jobParameters.setProperty(INKL_TS_GESUCHE, String.valueOf(inklTsGesuche));
+		jobParameters.setProperty(OHNE_ERNEUERUNGSGESUCHE, String.valueOf(ohneErneuerungsgesuch));
+		if (StringUtils.isNotEmpty(text)) {
+			jobParameters.setProperty(TEXT, text);
+		}
 		jobParameters.setProperty(REPORT_VORLAGE_TYPE_PARAM, vorlage.name());
 
 		setPropertyIfPresent(jobParameters, WorkJobConstants.GESUCH_PERIODE_ID_PARAM, gesuchPeriodIdParam);
@@ -180,7 +204,14 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		LOG.debug("Startet GesuchStichttagStatistik with executionId {}", executionId);
 
 		return workJob;
+	}
 
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
+		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
+	public Workjob createNewReporting(@Nonnull Workjob workJob, @Nonnull ReportVorlage vorlage, @Nullable LocalDate datumVon, @Nullable LocalDate datumBis, @Nullable String gesuchPeriodIdParam) {
+		return createNewReporting(workJob, vorlage, datumVon, datumBis, gesuchPeriodIdParam, false, false, false, false, null);
 	}
 
 	private void setPropertyIfPresent(@Nonnull Properties jobParameters, @Nonnull String paramName, @Nullable String paramValue) {

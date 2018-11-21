@@ -33,6 +33,7 @@ import javax.inject.Named;
 import ch.dvbern.ebegu.enums.WorkJobConstants;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.errors.MergeDocException;
+import ch.dvbern.ebegu.reporting.ReportMassenversandService;
 import ch.dvbern.ebegu.reporting.ReportService;
 import ch.dvbern.ebegu.util.DateUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
@@ -52,6 +53,9 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 
 	@Inject
 	private ReportService reportService;
+
+	@Inject
+	private ReportMassenversandService reportMassenversandService;
 
 	@Inject
 	private JobContext jobCtx;
@@ -89,7 +93,6 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 		LocalDate dateTo = DateUtil.parseStringToDateOrReturnNow(datumToStichtag);
 		final String gesuchPeriodeID = getParameters().getProperty(WorkJobConstants.GESUCH_PERIODE_ID_PARAM);
 		final String zahlungsauftragId = getParameters().getProperty(WorkJobConstants.ZAHLUNGSAUFTRAG_ID_PARAM);
-
 		return generateReport(workJobType, dateFrom, dateTo, gesuchPeriodeID, zahlungsauftragId);
 	}
 
@@ -136,6 +139,22 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 		}
 		case VORLAGE_REPORT_GESUCHSTELLER: {
 			final UploadFileInfo uploadFileInfo = this.reportService.generateExcelReportGesuchsteller(dateFrom);
+			return uploadFileInfo;
+		}
+		case VORLAGE_REPORT_MASSENVERSAND: {
+			boolean inklBgGesuche = Boolean.valueOf(getParameters().getProperty(WorkJobConstants.INKL_BG_GESUCHE));
+			boolean inklMischGesuche = Boolean.valueOf(getParameters().getProperty(WorkJobConstants.INKL_MISCH_GESUCHE));
+			boolean inklTsGesuche = Boolean.valueOf(getParameters().getProperty(WorkJobConstants.INKL_TS_GESUCHE));
+			boolean ohneFolgegesuche = Boolean.valueOf(getParameters().getProperty(WorkJobConstants.OHNE_ERNEUERUNGSGESUCHE));
+			final String text = getParameters().getProperty(WorkJobConstants.TEXT);
+			UploadFileInfo uploadFileInfo = reportMassenversandService.generateExcelReportMassenversand(dateFrom,
+				dateTo,
+				gesuchPeriodeID,
+				inklBgGesuche,
+				inklMischGesuche,
+				inklTsGesuche,
+				ohneFolgegesuche,
+				text);
 			return uploadFileInfo;
 		}
 		}

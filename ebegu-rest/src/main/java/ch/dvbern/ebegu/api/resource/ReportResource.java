@@ -207,7 +207,7 @@ public class ReportResource {
 	public Response getZahlungsauftragReportExcel(
 		@QueryParam("zahlungsauftragID") @Nonnull @Valid JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws ExcelMergeException, EbeguRuntimeException {
 
 		Validate.notNull(jaxId);
 		String ip = downloadResource.getIP(request);
@@ -231,7 +231,7 @@ public class ReportResource {
 	public Response getZahlungReportExcel(
 		@QueryParam("zahlungID") @Nonnull @Valid JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws ExcelMergeException, EbeguRuntimeException {
 
 		Validate.notNull(jaxId);
 		String ip = downloadResource.getIP(request);
@@ -255,7 +255,7 @@ public class ReportResource {
 	public Response getZahlungPeridoReportExcel(
 		@QueryParam("gesuchsperiodeID") @Nonnull @Valid JaxId jaxId,
 		@Context HttpServletRequest request, @Context UriInfo uriInfo)
-		throws ExcelMergeException, MergeDocException, URISyntaxException, IOException, EbeguRuntimeException {
+		throws ExcelMergeException, EbeguRuntimeException {
 
 		Validate.notNull(jaxId);
 		String ip = downloadResource.getIP(request);
