@@ -20,9 +20,11 @@ package ch.dvbern.ebegu.tests;
 import java.time.LocalDate;
 
 import ch.dvbern.ebegu.mocks.FileSaverServiceMock;
+import ch.dvbern.ebegu.mocks.GesuchsperiodeServiceMock;
 import ch.dvbern.ebegu.mocks.ReportMassenversandServiceMock;
 import ch.dvbern.ebegu.reporting.ReportMassenversandService;
 import ch.dvbern.ebegu.services.FileSaverService;
+import ch.dvbern.ebegu.services.GesuchsperiodeService;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import de.akquinet.jbosscc.needle.annotation.InjectIntoMany;
 import de.akquinet.jbosscc.needle.annotation.ObjectUnderTest;
@@ -44,18 +46,21 @@ public class ReportMassenversandServiceBeanTest {
 	@InjectIntoMany
 	private FileSaverService fileSaverService = new FileSaverServiceMock();
 
+	@InjectIntoMany
+	private GesuchsperiodeService gesuchsperiodeService = new GesuchsperiodeServiceMock();
+
 
 	@Test
 	public void generateExcelReportMassenversand() throws Exception {
 
 		UploadFileInfo uploadFileInfo = reportService.generateExcelReportMassenversand(LocalDate.now(),
 			LocalDate.now().plusDays(10),
-			null,
+			"2018/19",
 			true,
 			true,
 			true,
 			true,
-			"Test");
+			"Erinnerungsbrief Erneuerungsgesuch");
 
 		assertNotNull(uploadFileInfo.getBytes());
 	}

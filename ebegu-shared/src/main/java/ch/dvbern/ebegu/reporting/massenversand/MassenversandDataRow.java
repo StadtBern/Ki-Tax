@@ -39,7 +39,7 @@ public class MassenversandDataRow {
 
 	private String adresse;
 
-	private String inreichungsart;
+	private String einreichungsart;
 	private String status;
 	private String typ;
 
@@ -134,12 +134,12 @@ public class MassenversandDataRow {
 		this.adresse = adresse;
 	}
 
-	public String getInreichungsart() {
-		return inreichungsart;
+	public String getEinreichungsart() {
+		return einreichungsart;
 	}
 
-	public void setInreichungsart(String inreichungsart) {
-		this.inreichungsart = inreichungsart;
+	public void setEinreichungsart(String einreichungsart) {
+		this.einreichungsart = einreichungsart;
 	}
 
 	public String getStatus() {

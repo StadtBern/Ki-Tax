@@ -17,6 +17,8 @@
 
 package ch.dvbern.ebegu.reporting.massenversand;
 
+import java.time.LocalDate;
+
 /**
  * DTO fuer ein Kind einer Familie eines Massenversands
  */
@@ -24,7 +26,7 @@ public class MassenversandRepeatKindDataCol {
 
 	private String kindName;
 	private String kindVorname;
-	private String kindGeburtsdatum;
+	private LocalDate kindGeburtsdatum;
 	private String kindDubletten;
 	private String kindInstitutionKita;
 	private String kindInstitutionTagi;
@@ -50,11 +52,11 @@ public class MassenversandRepeatKindDataCol {
 		this.kindVorname = kindVorname;
 	}
 
-	public String getKindGeburtsdatum() {
+	public LocalDate getKindGeburtsdatum() {
 		return kindGeburtsdatum;
 	}
 
-	public void setKindGeburtsdatum(String kindGeburtsdatum) {
+	public void setKindGeburtsdatum(LocalDate kindGeburtsdatum) {
 		this.kindGeburtsdatum = kindGeburtsdatum;
 	}
 

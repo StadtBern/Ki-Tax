@@ -16,6 +16,8 @@
  */
 package ch.dvbern.ebegu.enums.reporting;
 
+import java.time.LocalDate;
+
 import javax.annotation.Nonnull;
 
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
@@ -59,7 +61,7 @@ public enum MergeFieldMassenversand implements MergeFieldProvider {
 
 	kindName(new RepeatValMergeField<String>("kindName", STRING_CONVERTER)),
 	kindVorname(new RepeatValMergeField<String>("kindVorname", STRING_CONVERTER)),
-	kindGeburtsdatum(new RepeatValMergeField<String>("kindGeburtsdatum", STRING_CONVERTER)),
+	kindGeburtsdatum(new RepeatValMergeField<LocalDate>("kindGeburtsdatum", DATE_CONVERTER)),
 	kindDubletten(new RepeatValMergeField<String>("kindDubletten", STRING_CONVERTER)),
 	kindInstitutionKita(new RepeatValMergeField<String>("kindInstitutionKita", STRING_CONVERTER)),
 	kindInstitutionTagi(new RepeatValMergeField<String>("kindInstitutionTagi", STRING_CONVERTER)),

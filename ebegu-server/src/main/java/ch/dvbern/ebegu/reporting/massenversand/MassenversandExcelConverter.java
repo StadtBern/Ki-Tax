@@ -37,7 +37,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class MassenversandExcelConverter implements ExcelConverter {
 
 	public static final String EMPTY_STRING = "";
-	private static final int MAX_KIND_COLS_IN_TEMPLATE = 3; //TODO (hefr) erweitern auf 10
+	private static final int MAX_KIND_COLS_IN_TEMPLATE = 10;
 
 	@Override
 	public void applyAutoSize(@Nonnull Sheet sheet) {
@@ -73,14 +73,33 @@ public class MassenversandExcelConverter implements ExcelConverter {
 
 		data.forEach(dataRow -> {
 			ExcelMergerDTO fallRowGroup = sheet.createGroup(MergeFieldMassenversand.repeatRow);
+			fallRowGroup.addValue(MergeFieldMassenversand.gesuchsperiode, dataRow.getGesuchsperiode());
+			fallRowGroup.addValue(MergeFieldMassenversand.fall, dataRow.getFall());
 			fallRowGroup.addValue(MergeFieldMassenversand.gs1Name, dataRow.getGs1Name());
 			fallRowGroup.addValue(MergeFieldMassenversand.gs1Vorname, dataRow.getGs1Vorname());
 			fallRowGroup.addValue(MergeFieldMassenversand.gs1PersonId, dataRow.getGs1PersonId());
 			fallRowGroup.addValue(MergeFieldMassenversand.gs1Mail, dataRow.getGs1Mail());
+			fallRowGroup.addValue(MergeFieldMassenversand.gs2Name, dataRow.getGs2Name());
+			fallRowGroup.addValue(MergeFieldMassenversand.gs2Vorname, dataRow.getGs2Vorname());
+			fallRowGroup.addValue(MergeFieldMassenversand.gs2PersonId, dataRow.getGs2PersonId());
+			fallRowGroup.addValue(MergeFieldMassenversand.gs2Mail, dataRow.getGs2Mail());
+			fallRowGroup.addValue(MergeFieldMassenversand.adresse, dataRow.getAdresse());
+			fallRowGroup.addValue(MergeFieldMassenversand.einreichungsart, dataRow.getEinreichungsart());
+			fallRowGroup.addValue(MergeFieldMassenversand.status, dataRow.getStatus());
+			fallRowGroup.addValue(MergeFieldMassenversand.typ, dataRow.getTyp());
 
 			dataRow.getKinderCols().forEach(kindCol -> {
 				fallRowGroup.addValue(MergeFieldMassenversand.kindName, kindCol.getKindName());
 				fallRowGroup.addValue(MergeFieldMassenversand.kindVorname, kindCol.getKindVorname());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindGeburtsdatum, kindCol.getKindGeburtsdatum());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindDubletten, kindCol.getKindDubletten());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindInstitutionKita, kindCol.getKindInstitutionKita());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindInstitutionTagi, kindCol.getKindInstitutionTagi());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindInstitutionTeKleinkind, kindCol.getKindInstitutionTeKleinkind());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindInstitutionTeSchulkind, kindCol.getKindInstitutionTeSchulkind());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindInstitutionTagesschule, kindCol.getKindInstitutionTagesschule());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindInstitutionFerieninsel, kindCol.getKindInstitutionFerieninsel());
+				fallRowGroup.addValue(MergeFieldMassenversand.kindInstitutionenWeitere, kindCol.getKindInstitutionenWeitere());
 			});
 		});
 

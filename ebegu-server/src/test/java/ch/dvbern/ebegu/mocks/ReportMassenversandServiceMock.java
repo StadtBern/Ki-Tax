@@ -24,6 +24,9 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import ch.dvbern.ebegu.enums.AntragStatus;
+import ch.dvbern.ebegu.enums.AntragTyp;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.reporting.massenversand.MassenversandDataRow;
 import ch.dvbern.ebegu.reporting.massenversand.MassenversandRepeatKindDataCol;
 import ch.dvbern.ebegu.services.ReportMassenversandServiceBean;
@@ -58,17 +61,38 @@ public class ReportMassenversandServiceMock extends ReportMassenversandServiceBe
 	}
 
 	private MassenversandDataRow fakeFall(String gs1Name, String gs1Vorname) {
-		MassenversandDataRow fall1 = new MassenversandDataRow();
-		fall1.setGs1Vorname(gs1Vorname);
-		fall1.setGs1Name(gs1Name);
-		fall1.setKinderCols(new ArrayList<>());
-		return fall1;
+		MassenversandDataRow fall = new MassenversandDataRow();
+		fall.setGesuchsperiode("2018/19");
+		fall.setFall("001");
+		fall.setGs1Vorname(gs1Vorname);
+		fall.setGs1Name(gs1Name);
+		fall.setGs1PersonId("123456");
+		fall.setGs1Mail("gesuchsteller1@mailbucket.dvbern.ch");
+		fall.setGs2Name("Partner");
+		fall.setGs2Vorname("Paul");
+		fall.setGs2PersonId("234567");
+		fall.setGs2Mail("gesuchsteller2@mailbucket.dvbern.ch");
+		fall.setAdresse("DV Bern AG\nNussbaumstrasse 21\n3006 Bern");
+		fall.setKinderCols(new ArrayList<>());
+		fall.setEinreichungsart(Eingangsart.ONLINE.name());
+		fall.setStatus(AntragStatus.IN_BEARBEITUNG_JA.name());
+		fall.setTyp(AntragTyp.ERSTGESUCH.name());
+		return fall;
 	}
 
 	private MassenversandRepeatKindDataCol fakeKind(String kindName, String kindVorname) {
-		MassenversandRepeatKindDataCol kind1_1 = new MassenversandRepeatKindDataCol();
-		kind1_1.setKindName(kindName);
-		kind1_1.setKindVorname(kindVorname);
-		return kind1_1;
+		MassenversandRepeatKindDataCol kind = new MassenversandRepeatKindDataCol();
+		kind.setKindName(kindName);
+		kind.setKindVorname(kindVorname);
+		kind.setKindGeburtsdatum(LocalDate.now());
+		kind.setKindDubletten("100, 101, 102");
+		kind.setKindInstitutionKita("Brünnen");
+		kind.setKindInstitutionTagi("Aaregg");
+		kind.setKindInstitutionTeKleinkind("LeoLea");
+		kind.setKindInstitutionTeSchulkind("LeoLea");
+		kind.setKindInstitutionTagesschule("Tagesschule Manuel");
+		kind.setKindInstitutionFerieninsel("Guarda");
+		kind.setKindInstitutionenWeitere("Firlefanz, Brunnmatt");
+		return kind;
 	}
 }
