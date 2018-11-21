@@ -47,7 +47,8 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Valid
 	@SortNatural
 	@ManyToMany
-	// es darf nicht cascadeAll sein, da sonst die Module geloescht werden, wenn die Belegung geloescht wird, obwohl das Modul eigentlich zur Institutione gehoert
+	// es darf nicht cascadeAll sein, da sonst die Module geloescht werden, wenn die Belegung geloescht wird, obwohl das Modul eigentlich zur Institutione
+	// gehoert
 	private Set<ModulTagesschule> moduleTagesschule = new TreeSet<>();
 
 	@NotNull
@@ -55,8 +56,8 @@ public class BelegungTagesschule extends AbstractEntity {
 	private LocalDate eintrittsdatum;
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
-	@NotNull
-	@Column(nullable = false)
+	@Nullable
+	@Column()
 	private String planKlasse;
 
 	@Override
@@ -77,12 +78,12 @@ public class BelegungTagesschule extends AbstractEntity {
 			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum());
 	}
 
-	@NotNull
+	@Nonnull
 	public Set<ModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(@NotNull Set<ModulTagesschule> module) {
+	public void setModuleTagesschule(@Nonnull Set<ModulTagesschule> module) {
 		this.moduleTagesschule = module;
 	}
 
@@ -95,19 +96,19 @@ public class BelegungTagesschule extends AbstractEntity {
 		this.eintrittsdatum = eintrittsdatum;
 	}
 
-	@Nonnull
+	@Nullable
 	public String getPlanKlasse() {
 		return planKlasse;
 	}
 
-	public void setPlanKlasse(@Nonnull String planKlasse) {
+	public void setPlanKlasse(@Nullable String planKlasse) {
 		this.planKlasse = planKlasse;
 	}
 
 	@Nonnull
 	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
 		super.copyForMutation(mutation);
-		mutation.setEintrittsdatum(this.getEintrittsdatum());
+		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
 		mutation.setPlanKlasse(this.getPlanKlasse());
 
 		// Don't copy them, because it's a ManyToMany realation
