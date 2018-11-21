@@ -44,6 +44,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -82,6 +83,8 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten_;
 import ch.dvbern.ebegu.entities.Institution_;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.KindContainer_;
+import ch.dvbern.ebegu.entities.Massenversand;
+import ch.dvbern.ebegu.entities.Massenversand_;
 import ch.dvbern.ebegu.entities.WizardStep;
 import ch.dvbern.ebegu.enums.AnmeldungMutationZustand;
 import ch.dvbern.ebegu.enums.AntragStatus;
@@ -105,6 +108,7 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
@@ -1567,6 +1571,35 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		final AntragStatusHistory lastStatusChange = antragStatusHistoryService.findLastStatusChangeBeforePruefungSTV(gesuch);
 		gesuch.setStatus(lastStatusChange.getStatus());
 		return updateGesuch(gesuch, true, null);
+	}
+
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public Massenversand createMassenversand(@Nonnull Massenversand massenversand) {
+		return persistence.persist(massenversand);
+	}
+
+	@Override
+	@PermitAll
+	public List<String> getMassenversandTexteForGesuch(@Nonnull String gesuchId) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Massenversand> query = cb.createQuery(Massenversand.class);
+
+		Root<Massenversand> root = query.from(Massenversand.class);
+		ListJoin<Massenversand, Gesuch> gesuche = root.join(Massenversand_.gesuche);
+
+		Predicate predicate = cb.equal(gesuche.get(Gesuch_.id), gesuchId);
+		query.where(predicate);
+		query.select(root);
+		query.orderBy(cb.desc(root.get(Gesuch_.timestampErstellt)));
+
+		List<String> result = new ArrayList<>();
+		List<Massenversand> massenversaende = persistence.getCriteriaResults(query);
+		for (Massenversand versand : massenversaende) {
+			Objects.requireNonNull(versand.getTimestampErstellt());
+			result.add(Constants.DATE_FORMATTER.format(versand.getTimestampErstellt()) + ": " + versand.getText());
+		}
+		return result;
 	}
 
 	private void createFinSitDokument(Gesuch persistedGesuch, String methodname) {

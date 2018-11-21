@@ -30,6 +30,7 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Massenversand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchDeletionCause;
@@ -404,4 +405,14 @@ public interface GesuchService {
 	 * Schliesst die Pruefung STV ab und setzt den Status auf den Status, den das Gesuch vor der Pruefung hatte
 	 */
 	Gesuch stvPruefungAbschliessen(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Speichert einen Massenversand in der Datenbank
+	 */
+	Massenversand createMassenversand(@Nonnull Massenversand massenversand);
+
+	/**
+	 * Gibt die Texte aller Massenversände zurück, welche zum übergebenen Gesuch verschickt wurden
+	 */
+	List<String> getMassenversandTexteForGesuch(@Nonnull String gesuchId);
 }
