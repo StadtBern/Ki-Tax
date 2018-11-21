@@ -255,4 +255,12 @@ export default class GesuchRS implements IEntityRS {
                 return response.data;
             });
     }
+
+    public getMassenversandTexteForGesuch(gesuchID: string): IPromise<string[]> {
+        return this.http.get(this.serviceURL + '/massenversand/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                this.$log.debug('PARSING antragDTO REST object ', response.data);
+                return response.data;
+            });
+    }
 }

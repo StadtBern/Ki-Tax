@@ -34,7 +34,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Massenversand;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.reporting.ReportMassenversandService;
 import ch.dvbern.ebegu.reporting.massenversand.MassenversandDataRow;
@@ -44,6 +46,7 @@ import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -58,6 +61,8 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @Local(ReportMassenversandService.class)
 public class ReportMassenversandServiceBean extends AbstractReportServiceBean implements ReportMassenversandService {
 
+	private static final char SEPARATOR = ';';
+
 	private MassenversandExcelConverter massenversandExcelConverter = new MassenversandExcelConverter();
 
 	@Inject
@@ -65,6 +70,9 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 
 	@Inject
 	private GesuchsperiodeService gesuchsperiodeService;
+
+	@Inject
+	private GesuchService gesuchService;
 
 
 	@Nonnull
@@ -79,9 +87,51 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		boolean ohneErneuerungsgesuch,
 		@Nullable String text
 	) {
+
+		//TODO (reviewer) habe hier alle gesuche genommen, damit ich das gui mit den Bemerkungen testen konnte!
+		List<Gesuch> ermittelteGesuche = new ArrayList<>(gesuchService.getAllGesuche());
+		// Wenn ein Text eingegeben wurde, wird der Massenversand gespeichert
+		if (StringUtils.isNotEmpty(text) && !ermittelteGesuche.isEmpty()) {
+			saveMassenversand(
+				datumVon,
+				datumBis,
+				gesuchPeriodeID,
+				inklBgGesuche,
+				inklMischGesuche,
+				inklTsGesuche,
+				ohneErneuerungsgesuch,
+				text,
+				ermittelteGesuche);
+		}
 		//TODO Die echten Daten ermitteln!
 		final List<MassenversandDataRow> reportDataMassenversand = new ArrayList<>();
 		return reportDataMassenversand;
+	}
+
+	private void saveMassenversand(
+		@Nonnull LocalDate datumVon,
+		@Nonnull LocalDate datumBis,
+		@Nullable String gesuchPeriodeID,
+		boolean inklBgGesuche,
+		boolean inklMischGesuche,
+		boolean inklTsGesuche,
+		boolean ohneErneuerungsgesuch,
+		@Nonnull String text,
+		@Nonnull List<Gesuch> gesuche
+	) {
+		Massenversand massenversand = new Massenversand();
+		massenversand.setText(text);
+		@SuppressWarnings("StringConcatenationMissingWhitespace")
+		String einstellungen = Constants.DATE_FORMATTER.format(datumVon) + SEPARATOR
+			+ Constants.DATE_FORMATTER.format(datumBis) + SEPARATOR
+			+ gesuchPeriodeID + SEPARATOR
+			+ inklBgGesuche + SEPARATOR
+			+ inklMischGesuche + SEPARATOR
+			+ inklTsGesuche + SEPARATOR
+			+ ohneErneuerungsgesuch + SEPARATOR;
+		massenversand.setEinstellungen(einstellungen);
+		massenversand.setGesuche(gesuche);
+		gesuchService.createMassenversand(massenversand);
 	}
 
 	@Nonnull
