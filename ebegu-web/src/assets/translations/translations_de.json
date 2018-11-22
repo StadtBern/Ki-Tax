@@ -1034,7 +1034,7 @@
     "MASSENVERSAND_ERROR_NICHTS_AUSGEWAEHLT": "Bitte treffen Sie mindestens eine Auswahl",
     "MASSENVERSAND_ERSTELLEN_CONFIRM_TITLE": "Kontaktdaten exportieren",
     "MASSENVERSAND_ERSTELLEN_CONFIRM_INFO": "Mit dieser Aktion wird der eingegebene Text in allen ausgewerteten Gesuchen endgültig gespeichert werden. Sind Sie sicher, dass der Text richtig ist und möchten fortfahren?",
-    "MASSENVERSAND_LIST": "An diese Familie versendete Serienbriefe",
+    "MASSENVERSAND_LIST": "Für dieses Gesuch versendete Serienbriefe",
     "MUTATIONSMELDUNG_ERSTELLEN_UPPER": "MUTATIONSMELDUNG ERSTELLEN",
     "MUTATIONSMELDUNG_SENDEN_UPPER": "MUTATIONSMELDUNG AN JUGENDAMT",
     "MUTATIONSMELDUNG_BETREFF": "Mutationsmeldung",
