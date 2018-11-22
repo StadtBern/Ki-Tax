@@ -94,4 +94,15 @@ public class Massenversand extends AbstractEntity {
 		return Objects.equals(getEinstellungen(), otherGesuchsteller.getEinstellungen()) &&
 			Objects.equals(getText(), otherGesuchsteller.getText());
 	}
+
+	/**
+	 * Gibt eine Beschreibung des Versands zurueck, welche unter "Dokumente" angezeigt werden soll
+	 */
+	public String getDescription() {
+		String description = getText();
+		if (getTimestampErstellt() != null) {
+			description = Constants.DATE_FORMATTER.format(getTimestampErstellt()) + " (" + getUserErstellt() + "): " + description;
+		}
+		return description;
+	}
 }

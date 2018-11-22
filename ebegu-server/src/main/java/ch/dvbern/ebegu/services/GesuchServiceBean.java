@@ -108,7 +108,6 @@ import ch.dvbern.ebegu.errors.MergeDocException;
 import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.services.interceptors.UpdateStatusInterceptor;
 import ch.dvbern.ebegu.types.DateRange_;
-import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.EbeguUtil;
 import ch.dvbern.ebegu.util.FreigabeCopyUtil;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
@@ -1596,8 +1595,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		List<String> result = new ArrayList<>();
 		List<Massenversand> massenversaende = persistence.getCriteriaResults(query);
 		for (Massenversand versand : massenversaende) {
-			Objects.requireNonNull(versand.getTimestampErstellt());
-			result.add(Constants.DATE_FORMATTER.format(versand.getTimestampErstellt()) + ": " + versand.getText());
+			result.add(versand.getDescription());
 		}
 		return result;
 	}
