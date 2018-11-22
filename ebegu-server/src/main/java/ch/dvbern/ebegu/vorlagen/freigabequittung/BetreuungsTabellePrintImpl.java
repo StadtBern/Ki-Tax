@@ -28,7 +28,7 @@ public class BetreuungsTabellePrintImpl implements BetreuungsTabellePrint {
 
 	@Override
 	public String getKind() {
-		return betreuungen.getKind().getKindJA().getFullName();
+		return betreuungen.getKind().getKindJA().getNameVorname();
 	}
 
 	@Override

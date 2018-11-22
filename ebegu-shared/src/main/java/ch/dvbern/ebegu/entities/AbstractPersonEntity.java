@@ -106,6 +106,10 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 		return vorname + " " + nachname;
 	}
 
+	public String getNameVorname() {
+		return nachname + " " + vorname;
+	}
+
 	@Nonnull
 	public AbstractPersonEntity copyForMutation(@Nonnull AbstractPersonEntity mutation) {
 		super.copyForMutation(mutation);
