@@ -57,7 +57,7 @@ public class BelegungTagesschule extends AbstractEntity {
 
 	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
 	@Nullable
-	@Column()
+	@Column
 	private String planKlasse;
 
 	@Override

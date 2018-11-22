@@ -40,16 +40,17 @@
                     <!-- Planklasse -->
                     <div class="col-sm-12 dv-input-container-small">
                         <dv-input-container class="form-group">
-                            <label class="md-no-float" for="planklasse_ID">
+                            <label class="md-no-float" for="planKlasse_ID">
                                 <span data-translate="PLANKLASSE"> </span>
-                                <dv-tooltip input-id="planklasse" text="'PLANKLASSE_INFO' | translate"></dv-tooltip>
+                                <dv-tooltip input-id="planKlasse" text="'PLANKLASSE_INFO' | translate"></dv-tooltip>
                             </label>
-                            <input aria-describedby="planklasse_ID-error" id="planklasse_ID" type="text" name="planklasse"
-                                   ng-model="vm.betreuung.belegungTagesschule.planklasse"
+                            <input aria-describedby="planKlasse_ID-error" id="planKlasse_ID"
+                                   type="text" name="planKlasse"
+                                   ng-model="vm.betreuung.belegungTagesschule.planKlasse"
                                    dv-max-length class="form-control"
                                    ng-required="vm.isGesuchstellerRole()">
-                            <dv-error-messages input-id="planklasse"
-                                               for="vm.form.planklasse.$error"></dv-error-messages>
+                            <dv-error-messages input-id="planKlasse"
+                                               for="vm.form.planKlasse.$error"></dv-error-messages>
                         </dv-input-container>
                     </div>
                 </div>
