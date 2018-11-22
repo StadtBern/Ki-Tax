@@ -114,7 +114,7 @@ export class StatistikViewController {
             this.$log.debug('Validated Form: ' + form.$name);
 
             switch (tmpType) {
-                case TSStatistikParameterType.GESUCH_STICHTAG: {
+                case TSStatistikParameterType.GESUCH_STICHTAG:
                     this.reportAsyncRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((batchExecutionId: string) => {
@@ -124,8 +124,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.GESUCH_ZEITRAUM: {
+
+                case TSStatistikParameterType.GESUCH_ZEITRAUM:
                     this.reportAsyncRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
@@ -136,8 +136,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.KINDER: {
+
+                case TSStatistikParameterType.KINDER:
                     this.reportAsyncRS.getKinderReportExcel(
                         this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
@@ -149,8 +149,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.GESUCHSTELLER: {
+
+                case TSStatistikParameterType.GESUCHSTELLER:
                     this.reportAsyncRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
                         .then((batchExecutionId: string) => {
                             this.informReportGenerationStarted(batchExecutionId);
@@ -159,8 +159,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.KANTON: {
+
+                case TSStatistikParameterType.KANTON:
                     this.reportAsyncRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                         .then((batchExecutionId: string) => {
@@ -170,8 +170,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.MITARBEITERINNEN: {
+
+                case TSStatistikParameterType.MITARBEITERINNEN:
                     this.reportAsyncRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                         .then((batchExecutionId: string) => {
@@ -181,8 +181,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.BENUTZER: {
+
+                case TSStatistikParameterType.BENUTZER:
                     this.reportAsyncRS.getBenutzerReportExcel()
                         .then((batchExecutionId: string) => {
                             this.informReportGenerationStarted(batchExecutionId);
@@ -191,8 +191,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
+
+                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
                     this.reportAsyncRS.getGesuchstellerKinderBetreuungReportExcel(
                         this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
@@ -204,7 +204,7 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
+
                 case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
                     if (this._statistikParameter.gesuchsperiode) {
                         this.reportAsyncRS.getZahlungPeriodeReportExcel(
@@ -245,9 +245,9 @@ export class StatistikViewController {
     private createMassenversand(): void {
         this.$log.info('Erstelle Massenversand');
         this.reportAsyncRS.getMassenversandReportExcel(
-            this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+            this._statistikParameter.von ? this._statistikParameter.von.format(this.DATE_PARAM_FORMAT) : null,
             this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
-            this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null,
+            this._statistikParameter.gesuchsperiode.toString(),
             this._statistikParameter.bgGesuche,
             this._statistikParameter.mischGesuche,
             this._statistikParameter.tsGesuche,
@@ -303,11 +303,19 @@ export class StatistikViewController {
 
     private isMassenversandValid(type?: TSStatistikParameterType): boolean {
         if (type === TSStatistikParameterType.MASSENVERSAND) {
-            this.flagShowErrorNoGesuchSelected = (
-                !this.statistikParameter.bgGesuche
-                && !this.statistikParameter.mischGesuche
-                && !this.statistikParameter.tsGesuche);
+            // simulate a click in the checkboxes of Verantwortlichkeit
+            this.gesuchTypeClicked();
+
+            return !this.flagShowErrorNoGesuchSelected;
         }
-        return !this.flagShowErrorNoGesuchSelected;
+        // for any other kind of statistik we return always true
+        return true;
+    }
+
+    public gesuchTypeClicked(): void {
+        this.flagShowErrorNoGesuchSelected =
+            !this.statistikParameter.bgGesuche
+            && !this.statistikParameter.mischGesuche
+            && !this.statistikParameter.tsGesuche;
     }
 }

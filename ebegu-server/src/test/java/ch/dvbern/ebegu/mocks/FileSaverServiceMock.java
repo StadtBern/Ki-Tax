@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.services.FileSaverServiceBean;
@@ -41,7 +40,7 @@ public class FileSaverServiceMock extends FileSaverServiceBean {
 
 	@Nonnull
 	@Override
-	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) throws MimeTypeParseException {
+	public UploadFileInfo save(byte[] bytes, String fileName, String folderName) {
 		saveToTempDir(bytes, fileName);
 		return new UploadFileInfo(fileName, null);
 	}

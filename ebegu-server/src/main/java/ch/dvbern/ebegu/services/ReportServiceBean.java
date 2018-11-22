@@ -740,13 +740,7 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			predicatesToUse.add(predicateAllowedInstitutionen);
 		}
 		boolean isSchulamtBenutzer = principalBean.isCallerInAnyOfRole(UserRole.SCHULAMT, UserRole.ADMINISTRATOR_SCHULAMT);
-		if (isSchulamtBenutzer) {
-			Predicate predicateSchulamt = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-			predicatesToUse.add(predicateSchulamt);
-		} else {
-			Predicate predicateNotSchulamt = builder.notEqual(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-			predicatesToUse.add(predicateNotSchulamt);
-		}
+		createPredicateSchulamt(builder, root, predicatesToUse, isSchulamtBenutzer);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
 		return persistence.getCriteriaResults(query);
@@ -783,16 +777,29 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 			predicatesToUse.add(predicateAllowedInstitutionen);
 		}
 		boolean isSchulamtBenutzer = principalBean.isCallerInAnyOfRole(UserRole.SCHULAMT, UserRole.ADMINISTRATOR_SCHULAMT);
-		if (isSchulamtBenutzer) {
-			Predicate predicateSchulamt = builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-			predicatesToUse.add(predicateSchulamt);
-		} else {
-			Predicate predicateNotSchulamt = builder.notEqual(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung).get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
-			predicatesToUse.add(predicateNotSchulamt);
-		}
+		createPredicateSchulamt(builder, root, predicatesToUse, isSchulamtBenutzer);
 
 		query.where(CriteriaQueryHelper.concatenateExpressions(builder, predicatesToUse));
 		return persistence.getCriteriaResults(query);
+	}
+
+	private void createPredicateSchulamt(
+		CriteriaBuilder builder,
+		Root<VerfuegungZeitabschnitt> root,
+		List<Predicate> predicatesToUse,
+		boolean isSchulamtBenutzer
+	) {
+		if (isSchulamtBenutzer) {
+			Predicate predicateSchulamt =
+				builder.equal(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung)
+					.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+			predicatesToUse.add(predicateSchulamt);
+		} else {
+			Predicate predicateNotSchulamt =
+				builder.notEqual(root.get(VerfuegungZeitabschnitt_.verfuegung).get(Verfuegung_.betreuung)
+					.get(Betreuung_.institutionStammdaten).get(InstitutionStammdaten_.betreuungsangebotTyp), BetreuungsangebotTyp.TAGESSCHULE);
+			predicatesToUse.add(predicateNotSchulamt);
+		}
 	}
 
 	private void addStammdaten(GesuchstellerKinderBetreuungDataRow row, VerfuegungZeitabschnitt zeitabschnitt, Gesuch gesuch) {

@@ -119,11 +119,11 @@ public class MassenversandExcelConverter implements ExcelConverter {
 			maxKinder <= MAX_KIND_COLS_IN_TEMPLATE,
 			"Es gibt mehr Kinder als Spalten (für Kinder) die im Template zur Verfügung stehen");
 
-		IntStream.range(0, maxKinder).forEach(i -> {
+		IntStream.range(0, maxKinder).forEach(i ->
 			IntStream.range(0, 11).forEach(j -> {
 				// Pro Kind haben wir 11 Spalten
 				sheet.addValue(MergeFieldMassenversand.repeatKind, EMPTY_STRING);
-			});
-		});
+			})
+		);
 	}
 }

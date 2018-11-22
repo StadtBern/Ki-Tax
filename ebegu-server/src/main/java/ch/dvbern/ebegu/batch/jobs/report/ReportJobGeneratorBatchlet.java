@@ -97,7 +97,14 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 	}
 
 	@Nonnull
-	private UploadFileInfo generateReport(ReportVorlage workJobType, LocalDate dateFrom, LocalDate dateTo, String gesuchPeriodeID, String zahlungsauftragId) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+	private UploadFileInfo generateReport(
+		@Nonnull ReportVorlage workJobType,
+		@Nonnull LocalDate dateFrom,
+		@Nonnull LocalDate dateTo,
+		@Nonnull String gesuchPeriodeID,
+		@Nonnull String zahlungsauftragId
+	) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
+
 		switch (workJobType) {
 
 		case VORLAGE_REPORT_GESUCH_STICHTAG: {
@@ -147,7 +154,8 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 			boolean inklTsGesuche = Boolean.valueOf(getParameters().getProperty(WorkJobConstants.INKL_TS_GESUCHE));
 			boolean ohneFolgegesuche = Boolean.valueOf(getParameters().getProperty(WorkJobConstants.OHNE_ERNEUERUNGSGESUCHE));
 			final String text = getParameters().getProperty(WorkJobConstants.TEXT);
-			UploadFileInfo uploadFileInfo = reportMassenversandService.generateExcelReportMassenversand(dateFrom,
+			UploadFileInfo uploadFileInfo = reportMassenversandService.generateExcelReportMassenversand(
+				dateFrom,
 				dateTo,
 				gesuchPeriodeID,
 				inklBgGesuche,

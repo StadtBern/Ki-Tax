@@ -33,7 +33,7 @@ public interface ReportMassenversandService {
 	List<MassenversandDataRow> getReportMassenversand(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,
-		@Nullable String gesuchPeriodeID,
+		@Nonnull String gesuchPeriodeID,
 		boolean inklBgGesuche,
 		boolean inklMischGesuche,
 		boolean inklTsGesuche,
@@ -45,7 +45,7 @@ public interface ReportMassenversandService {
 	UploadFileInfo generateExcelReportMassenversand(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,
-		@Nullable String gesuchPeriodeId,
+		@Nonnull String gesuchPeriodeId,
 		boolean inklBgGesuche,
 		boolean inklMischGesuche,
 		boolean inklTsGesuche,
