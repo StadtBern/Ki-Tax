@@ -94,9 +94,7 @@ public class DokumenteResource {
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = dokumentenverzeichnisEvaluator.calculate(gesuch.get());
-			dokumentenverzeichnisEvaluator.addSonstige(dokumentGrundsNeeded);
-			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded);
-			dokumentenverzeichnisEvaluator.addFreigabequittung(dokumentGrundsNeeded);
+			dokumentenverzeichnisEvaluator.addOptionalDokumentGruende(dokumentGrundsNeeded);
 			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuch(gesuch.get());
 			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
@@ -111,20 +109,25 @@ public class DokumenteResource {
 	@Path("/byTyp/{gesuchId}/{dokumentGrundTyp}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public JaxDokumente getDokumente(
+	public JaxDokumente getDokumenteByTyp(
 		@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchId,
 		@Nonnull @NotNull @PathParam("dokumentGrundTyp") DokumentGrundTyp dokumentGrundTyp) {
 
 		Optional<Gesuch> gesuch = gesuchService.findGesuch(gesuchId.getId());
 		if (gesuch.isPresent()) {
 			final Set<DokumentGrund> dokumentGrundsNeeded = new HashSet<>();
-			dokumentenverzeichnisEvaluator.addPapiergesuch(dokumentGrundsNeeded);
-			dokumentenverzeichnisEvaluator.addFreigabequittung(dokumentGrundsNeeded);
-			final Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService.findAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
-			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
+
+			dokumentenverzeichnisEvaluator.addOptionalDokumentGruendeByType(dokumentGrundsNeeded, dokumentGrundTyp);
+
+			Collection<DokumentGrund> persistedDokumentGrund = dokumentGrundService
+				.findAllDokumentGrundByGesuchAndDokumentType(gesuch.get(), dokumentGrundTyp);
+
+			final Set<DokumentGrund> dokumentGrundsMerged = DokumenteUtil
+				.mergeNeededAndPersisted(dokumentGrundsNeeded, persistedDokumentGrund, gesuch.get());
+
 			return converter.dokumentGruendeToJAX(dokumentGrundsMerged);
 		}
-		throw new EbeguEntityNotFoundException("getDokumente", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
+		throw new EbeguEntityNotFoundException("getDokumenteByTyp", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, "GesuchId invalid: " + gesuchId.getId());
 	}
 
 	@ApiOperation(value = "Aktualisiert einen Dokumentgrund in der Datenbank", response = JaxDokumentGrund.class)

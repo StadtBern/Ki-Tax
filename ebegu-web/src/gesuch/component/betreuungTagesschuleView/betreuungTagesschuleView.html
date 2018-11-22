@@ -23,8 +23,8 @@
             <!-- Modulauswahl Tagesschule -->
             <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.isTageschulenAnmeldungAktiv() && vm.isTagesschuleAlreadySelected()">
 
-                <!-- Eintrittsdatum -->
                 <div class="row">
+                    <!-- Eintrittsdatum -->
                     <div class="col-sm-12 dv-input-container-small form-group">
                         <label class="md-no-float required" data-translate="EINTRITTSDATUM"
                                for="eintrittsdatum_ID"></label>
@@ -36,6 +36,22 @@
                         </dv-datepicker>
                         <dv-error-messages input-id="eintrittsdatum"
                                            for="vm.form.eintrittsdatum.$error"></dv-error-messages>
+                    </div>
+                    <!-- Planklasse -->
+                    <div class="col-sm-12 dv-input-container-small">
+                        <dv-input-container class="form-group">
+                            <label class="md-no-float" for="planKlasse_ID">
+                                <span data-translate="PLANKLASSE"> </span>
+                                <dv-tooltip input-id="planKlasse" text="'PLANKLASSE_INFO' | translate"></dv-tooltip>
+                            </label>
+                            <input aria-describedby="planKlasse_ID-error" id="planKlasse_ID"
+                                   type="text" name="planKlasse"
+                                   ng-model="vm.betreuung.belegungTagesschule.planKlasse"
+                                   dv-max-length class="form-control"
+                                   ng-required="vm.isGesuchstellerRole()">
+                            <dv-error-messages input-id="planKlasse"
+                                               for="vm.form.planKlasse.$error"></dv-error-messages>
+                        </dv-input-container>
                     </div>
                 </div>
 

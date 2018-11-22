@@ -16,18 +16,23 @@
 package ch.dvbern.ebegu.entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
+
+import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 
 /**
  * Entity for the Belegung of the Tageschulangebote in a Betreuung.
@@ -42,12 +47,18 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Valid
 	@SortNatural
 	@ManyToMany
-	// es darf nicht cascadeAll sein, da sonst die Module geloescht werden, wenn die Belegung geloescht wird, obwohl das Modul eigentlich zur Institutione gehoert
+	// es darf nicht cascadeAll sein, da sonst die Module geloescht werden, wenn die Belegung geloescht wird, obwohl das Modul eigentlich zur Institutione
+	// gehoert
 	private Set<ModulTagesschule> moduleTagesschule = new TreeSet<>();
 
 	@NotNull
 	@Column(nullable = false)
 	private LocalDate eintrittsdatum;
+
+	@Size(min = 1, max = DB_DEFAULT_MAX_LENGTH)
+	@Nullable
+	@Column
+	private String planKlasse;
 
 	@Override
 	public boolean isSame(AbstractEntity other) {
@@ -62,31 +73,43 @@ public class BelegungTagesschule extends AbstractEntity {
 		if (!(other instanceof BelegungTagesschule)) {
 			return false;
 		}
-		return true;
+		BelegungTagesschule otherBelegungTS = (BelegungTagesschule) other;
+		return Objects.equals(getPlanKlasse(), otherBelegungTS.getPlanKlasse()) &&
+			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum());
 	}
 
-	@NotNull
+	@Nonnull
 	public Set<ModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(@NotNull Set<ModulTagesschule> module) {
+	public void setModuleTagesschule(@Nonnull Set<ModulTagesschule> module) {
 		this.moduleTagesschule = module;
 	}
 
-	@NotNull
+	@Nonnull
 	public LocalDate getEintrittsdatum() {
 		return eintrittsdatum;
 	}
 
-	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
+	public void setEintrittsdatum(@Nonnull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
+	}
+
+	@Nullable
+	public String getPlanKlasse() {
+		return planKlasse;
+	}
+
+	public void setPlanKlasse(@Nullable String planKlasse) {
+		this.planKlasse = planKlasse;
 	}
 
 	@Nonnull
 	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
 		super.copyForMutation(mutation);
 		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
+		mutation.setPlanKlasse(this.getPlanKlasse());
 
 		// Don't copy them, because it's a ManyToMany realation
 		mutation.getModuleTagesschule().clear();

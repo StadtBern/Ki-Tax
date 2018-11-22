@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -43,21 +45,33 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
 	private LocalDate eintrittsdatum;
 
+	@Nullable
+	private String planKlasse;
 
+	@Nonnull
 	public List<JaxModulTagesschule> getModuleTagesschule() {
 		return moduleTagesschule;
 	}
 
-	public void setModuleTagesschule(List<JaxModulTagesschule> moduleTagesschule) {
+	public void setModuleTagesschule(@Nonnull List<JaxModulTagesschule> moduleTagesschule) {
 		this.moduleTagesschule = moduleTagesschule;
 	}
 
-	@NotNull
+	@Nonnull
 	public LocalDate getEintrittsdatum() {
 		return eintrittsdatum;
 	}
 
-	public void setEintrittsdatum(@NotNull LocalDate eintrittsdatum) {
+	public void setEintrittsdatum(@Nonnull LocalDate eintrittsdatum) {
 		this.eintrittsdatum = eintrittsdatum;
+	}
+
+	@Nullable
+	public String getPlanKlasse() {
+		return this.planKlasse;
+	}
+
+	public void setPlanKlasse(@Nullable String planKlasse) {
+		this.planKlasse = planKlasse;
 	}
 }

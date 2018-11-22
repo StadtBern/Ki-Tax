@@ -21,11 +21,13 @@ export default class TSBelegungTagesschule extends TSAbstractEntity {
 
     private _moduleTagesschule: TSModulTagesschule[] = [];
     private _eintrittsdatum: moment.Moment;
+    private _planKlasse: string;
 
-    constructor(moduleTagesschule?: TSModulTagesschule[], eintrittsdatum?: moment.Moment) {
+    constructor(moduleTagesschule?: TSModulTagesschule[], eintrittsdatum?: moment.Moment, planKlasse?: string) {
         super();
         this._moduleTagesschule = moduleTagesschule ? moduleTagesschule : [];
         this._eintrittsdatum = eintrittsdatum;
+        this._planKlasse = planKlasse;
     }
 
     public get moduleTagesschule(): TSModulTagesschule[] {
@@ -42,5 +44,13 @@ export default class TSBelegungTagesschule extends TSAbstractEntity {
 
     public set eintrittsdatum(value: moment.Moment) {
         this._eintrittsdatum = value;
+    }
+
+    public get planKlasse(): string {
+        return this._planKlasse;
+    }
+
+    public set planKlasse(value: string) {
+        this._planKlasse = value;
     }
 }

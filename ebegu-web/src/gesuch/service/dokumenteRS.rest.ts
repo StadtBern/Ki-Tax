@@ -57,14 +57,6 @@ export default class DokumenteRS {
             });
     }
 
-    public getDokumenteByType(gesuch: TSGesuch, dokumentGrundTyp: TSDokumentGrundTyp): IPromise<TSDokumenteDTO> {
-        return this.http.get(this.serviceURL + '/byTyp/' + encodeURIComponent(gesuch.id) + '/' + encodeURIComponent(TSDokumentGrundTyp[dokumentGrundTyp]))
-            .then((response: any) => {
-                this.log.debug('PARSING dokumentDTO REST object ', response.data);
-                return this.ebeguRestUtil.parseDokumenteDTO(new TSDokumenteDTO(), response.data);
-            });
-    }
-
     public updateDokumentGrund(dokumentGrund: TSDokumentGrund): IPromise<TSDokumentGrund> {
         let restDokumentGrund = {};
         restDokumentGrund = this.ebeguRestUtil.dokumentGrundToRestObject(restDokumentGrund, dokumentGrund);

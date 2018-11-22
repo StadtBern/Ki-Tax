@@ -20,8 +20,13 @@ import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import MitteilungRS from '../../../core/service/mitteilungRS.rest';
+import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 import {isVerfuegtOrSTV, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
-import {getTSBetreuungsangebotTypValues, getTSBetreuungsangebotTypValuesNoTagesschuleanmeldungen, TSBetreuungsangebotTyp} from '../../../models/enums/TSBetreuungsangebotTyp';
+import {
+    getTSBetreuungsangebotTypValues,
+    getTSBetreuungsangebotTypValuesNoTagesschuleanmeldungen,
+    TSBetreuungsangebotTyp
+} from '../../../models/enums/TSBetreuungsangebotTyp';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {TSGesuchsperiodeStatus} from '../../../models/enums/TSGesuchsperiodeStatus';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -45,7 +50,6 @@ import BerechnungsManager from '../../service/berechnungsManager';
 import GesuchModelManager from '../../service/gesuchModelManager';
 import WizardStepManager from '../../service/wizardStepManager';
 import AbstractGesuchViewController from '../abstractGesuchView';
-import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 import ILogService = angular.ILogService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
@@ -819,5 +823,9 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
             this.getBetreuungModel().institutionStammdaten = undefined;
         }
         this.setSelectedInstitutionStammdaten();
+    }
+
+    public getAuthServiceRS(): AuthServiceRS {
+        return this.authServiceRS;
     }
 }
