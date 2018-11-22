@@ -36,6 +36,14 @@ public final class DateUtil {
 
 	/**
 	 * Parset den gegebenen String als LocalDate mit dem Format "yyyy-MM-dd"
+	 */
+	@Nonnull
+	public static LocalDate parseStringToDateNullSafe(@Nonnull String stringDate) {
+		return LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	}
+
+	/**
+	 * Parset den gegebenen String als LocalDate mit dem Format "yyyy-MM-dd"
 	 * Sollte der gegebene String null oder leer sein, wird now() zurueckgegeben
 	 */
 	@Nonnull

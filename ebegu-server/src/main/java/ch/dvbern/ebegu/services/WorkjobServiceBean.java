@@ -44,14 +44,8 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
-
 import ch.dvbern.ebegu.authentication.PrincipalBean;
+import ch.dvbern.ebegu.entities.AbstractEntity_;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Workjob;
 import ch.dvbern.ebegu.entities.Workjob_;
@@ -67,6 +61,11 @@ import ch.dvbern.ebegu.persistence.CriteriaQueryHelper;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.UploadFileInfo;
 import ch.dvbern.lib.cdipersistence.Persistence;
+import com.google.common.collect.Sets;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -193,7 +192,7 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		//	EBEGU-1663 Wildfly 10 hack, this can be removed later and download file can be generated when report is finsihed
 		// since there is no Security Context in WF10 in the batchlet we have to store the download file here and update it using a query in the batchlet
 		final UploadFileInfo dummyFile = new UploadFileInfo("dummyname", null);
-		dummyFile.setSize(0l);
+		dummyFile.setSize(0L);
 		dummyFile.setPath("/invalid/dummypath");
 		final DownloadFile dummyDownloadFile = downloadFileService.create(dummyFile, TokenLifespan.LONG, workJob.getTriggeringIp());
 		this.persistence.getEntityManager().refresh(workJob); //evtl hat job schon gestartet
@@ -210,8 +209,24 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 	@Override
 	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA, SCHULAMT, ADMINISTRATOR_SCHULAMT, SACHBEARBEITER_INSTITUTION,
 		SACHBEARBEITER_TRAEGERSCHAFT, REVISOR })
-	public Workjob createNewReporting(@Nonnull Workjob workJob, @Nonnull ReportVorlage vorlage, @Nullable LocalDate datumVon, @Nullable LocalDate datumBis, @Nullable String gesuchPeriodIdParam) {
-		return createNewReporting(workJob, vorlage, datumVon, datumBis, gesuchPeriodIdParam, false, false, false, false, null);
+	public Workjob createNewReporting(
+		@Nonnull Workjob workJob,
+		@Nonnull ReportVorlage vorlage,
+		@Nullable LocalDate datumVon,
+		@Nullable LocalDate datumBis,
+		@Nullable String gesuchPeriodIdParam
+	) {
+		return createNewReporting(
+			workJob,
+			vorlage,
+			datumVon,
+			datumBis,
+			gesuchPeriodIdParam,
+			false,
+			false,
+			false,
+			false,
+			null);
 	}
 
 	private void setPropertyIfPresent(@Nonnull Properties jobParameters, @Nonnull String paramName, @Nullable String paramValue) {
@@ -266,7 +281,7 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 		Predicate statusPredicate = root.get(Workjob_.status).in(statusParam);
 
 		query.where(userPredicate, statusPredicate);
-		query.orderBy(cb.desc(root.get(Workjob_.timestampMutiert)));
+		query.orderBy(cb.desc(root.get(AbstractEntity_.timestampMutiert)));
 		TypedQuery<Workjob> q = persistence.getEntityManager().createQuery(query);
 		q.setParameter(startingUsernameParam, startingUserName);
 		q.setParameter(statusParam, statesToSearch);
@@ -320,7 +335,7 @@ public class WorkjobServiceBean extends AbstractBaseService implements WorkjobSe
 
 		Root<Workjob> root = updateQuery.from(Workjob.class);
 		updateQuery.set(root.get(Workjob_.resultData), resultData);
-		updateQuery.where(cb.equal(root.get(Workjob_.id), workjobID));
+		updateQuery.where(cb.equal(root.get(AbstractEntity_.id), workjobID));
 		this.persistence.getEntityManager().createQuery(updateQuery).executeUpdate();
 	}
 

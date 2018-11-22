@@ -245,9 +245,9 @@ export class StatistikViewController {
     private createMassenversand(): void {
         this.$log.info('Erstelle Massenversand');
         this.reportAsyncRS.getMassenversandReportExcel(
-            this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
+            this._statistikParameter.von ? this._statistikParameter.von.format(this.DATE_PARAM_FORMAT) : null,
             this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
-            this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null,
+            this._statistikParameter.gesuchsperiode.toString(),
             this._statistikParameter.bgGesuche,
             this._statistikParameter.mischGesuche,
             this._statistikParameter.tsGesuche,

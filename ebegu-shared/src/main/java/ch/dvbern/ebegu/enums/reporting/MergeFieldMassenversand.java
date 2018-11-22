@@ -16,8 +16,6 @@
  */
 package ch.dvbern.ebegu.enums.reporting;
 
-import java.time.LocalDate;
-
 import javax.annotation.Nonnull;
 
 import ch.dvbern.oss.lib.excelmerger.mergefields.MergeField;
@@ -59,17 +57,17 @@ public enum MergeFieldMassenversand implements MergeFieldProvider {
 
 	repeatKind(new RepeatColMergeField<>("repeatKind", STRING_CONVERTER)),
 
-	kindName(new RepeatValMergeField<String>("kindName", STRING_CONVERTER)),
-	kindVorname(new RepeatValMergeField<String>("kindVorname", STRING_CONVERTER)),
-	kindGeburtsdatum(new RepeatValMergeField<LocalDate>("kindGeburtsdatum", DATE_CONVERTER)),
-	kindDubletten(new RepeatValMergeField<String>("kindDubletten", STRING_CONVERTER)),
-	kindInstitutionKita(new RepeatValMergeField<String>("kindInstitutionKita", STRING_CONVERTER)),
-	kindInstitutionTagi(new RepeatValMergeField<String>("kindInstitutionTagi", STRING_CONVERTER)),
-	kindInstitutionTeKleinkind(new RepeatValMergeField<String>("kindInstitutionTeKleinkind", STRING_CONVERTER)),
-	kindInstitutionTeSchulkind(new RepeatValMergeField<String>("kindInstitutionTeSchulkind", STRING_CONVERTER)),
-	kindInstitutionTagesschule(new RepeatValMergeField<String>("kindInstitutionTagesschule", STRING_CONVERTER)),
-	kindInstitutionFerieninsel(new RepeatValMergeField<String>("kindInstitutionFerieninsel", STRING_CONVERTER)),
-	kindInstitutionenWeitere(new RepeatValMergeField<String>("kindInstitutionenWeitere", STRING_CONVERTER)),
+	kindName(new RepeatValMergeField<>("kindName", STRING_CONVERTER)),
+	kindVorname(new RepeatValMergeField<>("kindVorname", STRING_CONVERTER)),
+	kindGeburtsdatum(new RepeatValMergeField<>("kindGeburtsdatum", DATE_CONVERTER)),
+	kindDubletten(new RepeatValMergeField<>("kindDubletten", STRING_CONVERTER)),
+	kindInstitutionKita(new RepeatValMergeField<>("kindInstitutionKita", STRING_CONVERTER)),
+	kindInstitutionTagi(new RepeatValMergeField<>("kindInstitutionTagi", STRING_CONVERTER)),
+	kindInstitutionTeKleinkind(new RepeatValMergeField<>("kindInstitutionTeKleinkind", STRING_CONVERTER)),
+	kindInstitutionTeSchulkind(new RepeatValMergeField<>("kindInstitutionTeSchulkind", STRING_CONVERTER)),
+	kindInstitutionTagesschule(new RepeatValMergeField<>("kindInstitutionTagesschule", STRING_CONVERTER)),
+	kindInstitutionFerieninsel(new RepeatValMergeField<>("kindInstitutionFerieninsel", STRING_CONVERTER)),
+	kindInstitutionenWeitere(new RepeatValMergeField<>("kindInstitutionenWeitere", STRING_CONVERTER)),
 
 	einreichungsart(new SimpleMergeField<>("einreichungsart", STRING_CONVERTER)),
 	status(new SimpleMergeField<>("status", STRING_CONVERTER)),

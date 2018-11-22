@@ -35,7 +35,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
+import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.reporting.ReportMassenversandService;
 import ch.dvbern.ebegu.reporting.massenversand.MassenversandDataRow;
 import ch.dvbern.ebegu.reporting.massenversand.MassenversandExcelConverter;
@@ -72,7 +74,7 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 	public List<MassenversandDataRow> getReportMassenversand(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,
-		@Nullable String gesuchPeriodeID,
+		@Nonnull String gesuchPeriodeID,
 		boolean inklBgGesuche,
 		boolean inklMischGesuche,
 		boolean inklTsGesuche,
@@ -92,7 +94,7 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 	public UploadFileInfo generateExcelReportMassenversand(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,
-		@Nullable String gesuchPeriodeId,
+		@Nonnull String gesuchPeriodeId,
 		boolean inklBgGesuche,
 		boolean inklMischGesuche,
 		boolean inklTsGesuche,
@@ -112,13 +114,10 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 			datumVon, datumBis, gesuchPeriodeId, inklBgGesuche, inklMischGesuche, inklTsGesuche,
 			ohneErneuerungsgesuch, text);
 
-		Gesuchsperiode gesuchsperiode = null;
-		if (gesuchPeriodeId != null) {
-			Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.findGesuchsperiode(gesuchPeriodeId);
-			if (gesuchsperiodeOptional.isPresent()) {
-				gesuchsperiode = gesuchsperiodeOptional.get();
-			}
-		}
+		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.findGesuchsperiode(gesuchPeriodeId);
+		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() ->
+			new EbeguEntityNotFoundException("findGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchPeriodeId)
+		);
 
 		ExcelMergerDTO excelMergerDTO = massenversandExcelConverter.toExcelMergerDTO(
 			reportData,
