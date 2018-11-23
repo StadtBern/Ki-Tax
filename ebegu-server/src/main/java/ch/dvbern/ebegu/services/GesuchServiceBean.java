@@ -1098,7 +1098,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setDatumGewarntNichtFreigegeben(LocalDate.now());
 				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
-				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
 				anzahl--;
 			}
 		}
@@ -1142,7 +1142,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setDatumGewarntFehlendeQuittung(LocalDate.now());
 				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
-				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
 				anzahl--;
 			}
 		}
@@ -1169,7 +1169,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 				removeGesuch(gesuch.getId(), typ);
 			} catch (MailException e) {
-				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
 				anzahl--;
 			}
 		}
@@ -1504,19 +1504,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private void logDeletingOfGesuchstellerAntrag(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		LOG.info("****************************************************");
 		LOG.info("Online Gesuch wird gelöscht:");
-		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
-		LOG.info("Fall: " + fall.getFallNummer());
-		LOG.info("Gesuchsperiode: " + gesuchsperiode.getGesuchsperiodeString());
+		LOG.info("Benutzer: {}", principalBean.getBenutzer().getUsername());
+		LOG.info("Fall: {}", fall.getFallNummer());
+		LOG.info("Gesuchsperiode: {}", gesuchsperiode.getGesuchsperiodeString());
 		LOG.info("****************************************************");
 	}
 
 	private void logDeletingOfAntrag(@Nonnull Gesuch gesuch) {
 		LOG.info("****************************************************");
 		LOG.info("Gesuch wird gelöscht:");
-		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
-		LOG.info("Fall: " + gesuch.getFall().getFallNummer());
-		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
-		LOG.info("Gesuch-Id: " + gesuch.getId());
+		LOG.info("Benutzer: {}", principalBean.getBenutzer().getUsername());
+		LOG.info("Fall: {}", gesuch.getFall().getFallNummer());
+		LOG.info("Gesuchsperiode: {}", gesuch.getGesuchsperiode().getGesuchsperiodeString());
+		LOG.info("Gesuch-Id: {}", gesuch.getId());
 		LOG.info("****************************************************");
 	}
 
@@ -1599,6 +1599,88 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			.collect(Collectors.toList());
 
 		return result;
+	}
+
+	@Override
+	public List<Gesuch> getGepruefteFreigegebeneGesucheForGesuchsperiode(
+		@Nonnull LocalDate datumVon,
+		@Nonnull LocalDate datumBis,
+		@Nonnull String gesuchsperiodeId,
+		boolean inklBgGesuche,
+		boolean inklMischGesuche,
+		boolean inklTsGesuche,
+		boolean ohneErneuerungsgesuch
+	) {
+
+		final Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
+			.orElseThrow(() ->
+				new EbeguEntityNotFoundException("getGepruefteFreigegebeneGesucheForGesuchsperiode",
+					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId)
+			);
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+		Join<Gesuch, AntragStatusHistory> antragStatusHistoryJoin = root.join(Gesuch_.antragStatusHistories, JoinType.LEFT);
+
+		// Prepare TypedParameters
+		ParameterExpression<Gesuchsperiode> gesuchsperiodeIdParam = cb.parameter(Gesuchsperiode.class, "gesuchsperiode");
+		ParameterExpression<LocalDateTime> datumVonParam = cb.parameter(LocalDateTime.class, "datumVon");
+		ParameterExpression<LocalDateTime> datumBisParam = cb.parameter(LocalDateTime.class, "datumBis");
+
+		// Predicates
+		Predicate predicateStatusTransition = getStatusTransitionPredicate(cb, root, antragStatusHistoryJoin, datumVonParam, datumBisParam);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiodeIdParam);
+//		Predicate predicateGueltig = cb.equal(root.get(Gesuch_.gueltig), Boolean.TRUE);
+
+		// todo predicate for folgeGesuche --> only Gesuche that have no Folgegesuch
+		// todo predicate for JA, Misch or SCH Gesuche
+
+		query.where(predicateGesuchsperiode, predicateStatusTransition);
+		query.select(root);
+
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(gesuchsperiodeIdParam, gesuchsperiode);
+		typedQuery.setParameter(datumVonParam, datumVon.atStartOfDay());
+		typedQuery.setParameter(datumBisParam, datumBis.atStartOfDay());
+
+		List<Gesuch> criteriaResults = typedQuery.getResultList();
+		criteriaResults.forEach(gesuch -> authorizer.checkReadAuthorization(gesuch));
+
+		return criteriaResults;
+	}
+
+	/**
+	 * Will create a Predicate to look for all Onlinegesuche that marked as FREIGEGEBEN between Von and Bis
+	 * and all Papiergesuche that were marked as GEPRUEFT between Von and Bis
+	 */
+	private Predicate getStatusTransitionPredicate(
+		@Nonnull CriteriaBuilder cb,
+		@Nonnull Root<Gesuch> root,
+		@Nonnull Join<Gesuch, AntragStatusHistory> antragStatusHistoryJoin,
+		@Nonnull ParameterExpression<LocalDateTime> datumVonParam,
+		@Nonnull ParameterExpression<LocalDateTime> datumBisParam
+	) {
+		final Predicate predicateStatusSetBetweenVonAndBis = cb.between(
+			antragStatusHistoryJoin.get(AntragStatusHistory_.timestampVon),
+			datumVonParam,
+			datumBisParam
+		);
+		final Predicate predicateGeprueft = cb.and(
+			cb.equal(antragStatusHistoryJoin.get(AntragStatusHistory_.status), AntragStatus.GEPRUEFT),
+			predicateStatusSetBetweenVonAndBis
+		);
+		final Predicate predicateFreigegeben = cb.and(
+			cb.equal(antragStatusHistoryJoin.get(AntragStatusHistory_.status), AntragStatus.FREIGEGEBEN),
+			predicateStatusSetBetweenVonAndBis
+		);
+		Predicate predicatePapier = root.get(Gesuch_.eingangsart).in(Eingangsart.PAPIER);
+		Predicate predicateOnline = root.get(Gesuch_.eingangsart).in(Eingangsart.ONLINE);
+		return cb.or(
+			cb.and(predicateGeprueft, predicatePapier),
+			cb.and(predicateFreigegeben, predicateOnline)
+		);
 	}
 
 	private void createFinSitDokument(Gesuch persistedGesuch, String methodname) {

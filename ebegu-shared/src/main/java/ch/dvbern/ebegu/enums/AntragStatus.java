@@ -15,11 +15,9 @@
 
 package ch.dvbern.ebegu.enums;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -274,14 +272,6 @@ public enum AntragStatus {
 	public static Collection<AntragStatus> getAllVerfuegtStates() {
 		return Arrays.asList(VERFUEGT, NUR_SCHULAMT, BESCHWERDE_HAENGIG,
 			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV, KEIN_ANGEBOT);
-	}
-
-	public static Collection<AntragStatus> getAllStatesSchulamtInterface() {
-		List<AntragStatus> states = new ArrayList<>();
-		states.addAll(getAllVerfuegtStates());
-		states.add(VERFUEGEN);
-		states.add(GEPRUEFT);
-		return states;
 	}
 
 	public static Collection<AntragStatus> getVerfuegtAndSTVStates() {

@@ -415,4 +415,19 @@ public interface GesuchService {
 	 * Gibt die Texte aller Massenversände zurück, welche zum übergebenen Gesuch verschickt wurden
 	 */
 	List<String> getMassenversandTexteForGesuch(@Nonnull String gesuchId);
+
+	/**
+	 * Returns all Gesuche that have been set as GEPRUEFT (for Papiergesuche) or as FREIGEGEBEN (for Onlinegesuche)
+	 * between the given dates and that belongs to the given period. It will only return those Gesuche that are
+	 * BG-Gesuche, Mischgesuche or TS-Gesuche according to the given parameters. With the last flag it can be set
+	 * whether Gesuche with a Folgegesuch should also be returned or not.
+	 */
+	List<Gesuch> getGepruefteFreigegebeneGesucheForGesuchsperiode(
+		@Nonnull LocalDate datumVon,
+		@Nonnull LocalDate datumBis,
+		@Nonnull String gesuchsperiodeId,
+		boolean inklBgGesuche,
+		boolean inklMischGesuche,
+		boolean inklTsGesuche,
+		boolean ohneErneuerungsgesuch);
 }

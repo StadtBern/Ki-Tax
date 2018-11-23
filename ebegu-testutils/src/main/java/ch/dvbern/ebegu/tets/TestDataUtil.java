@@ -842,7 +842,8 @@ public final class TestDataUtil {
 		return persistAllEntities(persistence, eingangsdatum, testfall, status);
 	}
 
-	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence persistence, LocalDate eingangsdatum) {
+	public static Gesuch createAndPersistFeutzYvonneGesuch(InstitutionService instService, Persistence persistence,
+		@Nullable LocalDate eingangsdatum) {
 		instService.getAllInstitutionen();
 		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
 		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagiWeissenstein());

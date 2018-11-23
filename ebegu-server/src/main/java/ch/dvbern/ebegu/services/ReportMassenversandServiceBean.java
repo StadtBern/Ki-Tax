@@ -90,8 +90,15 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		@Nullable String text
 	) {
 
-		//TODO (reviewer) habe hier alle gesuche genommen, damit ich das gui mit den Bemerkungen testen konnte!
-		List<Gesuch> ermittelteGesuche = new ArrayList<>(gesuchService.getAllGesuche());
+		List<Gesuch> ermittelteGesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
+			datumVon,
+			datumBis,
+			gesuchPeriodeID,
+			inklBgGesuche,
+			inklMischGesuche,
+			inklTsGesuche,
+			ohneErneuerungsgesuch
+		);
 		// Wenn ein Text eingegeben wurde, wird der Massenversand gespeichert
 		if (StringUtils.isNotEmpty(text) && !ermittelteGesuche.isEmpty()) {
 			saveMassenversand(
