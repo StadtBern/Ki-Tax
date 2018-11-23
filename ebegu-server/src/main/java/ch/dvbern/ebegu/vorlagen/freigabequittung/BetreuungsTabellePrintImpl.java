@@ -33,9 +33,10 @@ public class BetreuungsTabellePrintImpl implements BetreuungsTabellePrint {
 
 	@Override
 	public String getBetreuung() {
-		return new StringBuilder(betreuungen.getInstitutionStammdaten().getInstitution().getName())
-			.append(" (").append(ServerMessageUtil.translateEnumValue(betreuungen.getInstitutionStammdaten().getBetreuungsangebotTyp()))
-			.append(")").toString();
+		return betreuungen.getInstitutionStammdaten().getInstitution().getName()
+			+ " ("
+			+ ServerMessageUtil.translateEnumValue(betreuungen.getInstitutionStammdaten().getBetreuungsangebotTyp())
+			+ ')';
 	}
 
 	@Override

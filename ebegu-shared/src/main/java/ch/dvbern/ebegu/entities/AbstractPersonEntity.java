@@ -103,11 +103,11 @@ public abstract class AbstractPersonEntity extends AbstractEntity {
 	}
 
 	public String getFullName() {
-		return vorname + " " + nachname;
+		return vorname + ' ' + nachname;
 	}
 
 	public String getNameVorname() {
-		return nachname + " " + vorname;
+		return nachname + ' ' + vorname;
 	}
 
 	@Nonnull
