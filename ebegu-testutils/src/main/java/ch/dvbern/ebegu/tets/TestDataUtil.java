@@ -113,13 +113,14 @@ import ch.dvbern.ebegu.enums.WizardStepName;
 import ch.dvbern.ebegu.enums.WizardStepStatus;
 import ch.dvbern.ebegu.enums.Zuschlagsgrund;
 import ch.dvbern.ebegu.services.BetreuungService;
-import ch.dvbern.ebegu.services.EbeguParameterService;
 import ch.dvbern.ebegu.services.GesuchService;
 import ch.dvbern.ebegu.services.InstitutionService;
 import ch.dvbern.ebegu.testfaelle.AbstractTestfall;
+import ch.dvbern.ebegu.testfaelle.TestFall12_Mischgesuch;
 import ch.dvbern.ebegu.testfaelle.Testfall01_WaeltiDagmar;
 import ch.dvbern.ebegu.testfaelle.Testfall02_FeutzYvonne;
 import ch.dvbern.ebegu.testfaelle.Testfall06_BeckerNora;
+import ch.dvbern.ebegu.testfaelle.Testfall11_SchulamtOnly;
 import ch.dvbern.ebegu.types.DateRange;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.FinanzielleSituationRechner;
@@ -638,12 +639,6 @@ public final class TestDataUtil {
 		return list;
 	}
 
-	public static List<EbeguParameter> createAndPersistAllEbeguParameters(EbeguParameterService parameterService) {
-		final List<EbeguParameter> allEbeguParameters = createAllEbeguParameters();
-		allEbeguParameters.forEach(parameterService::saveEbeguParameter);
-		return allEbeguParameters;
-	}
-
 	public static EinkommensverschlechterungInfoContainer createDefaultEinkommensverschlechterungsInfoContainer(Gesuch gesuch) {
 		final EinkommensverschlechterungInfoContainer einkommensverschlechterungInfoContainer = new EinkommensverschlechterungInfoContainer();
 		einkommensverschlechterungInfoContainer.setEinkommensverschlechterungInfoJA(createDefaultEinkommensverschlechterungsInfo());
@@ -869,6 +864,45 @@ public final class TestDataUtil {
 
 	public static Gesuch createAndPersistBeckerNoraGesuch(InstitutionService instService, Persistence persistence, @Nullable LocalDate eingangsdatum) {
 		return createAndPersistBeckerNoraGesuch(instService, persistence, eingangsdatum, null);
+	}
+
+	// todo EBEGU-2007 remove???
+	public static Gesuch createAndPersistASIV11(
+		InstitutionService instService,
+		Persistence persistence,
+		@Nullable LocalDate eingangsdatum,
+		AntragStatus status
+	) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagesschuleBern());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenFerieninselGuarda());
+		Testfall11_SchulamtOnly testfall = new Testfall11_SchulamtOnly(TestDataUtil.createGesuchsperiode1718(),
+			institutionStammdatenList);
+
+		if (status != null) {
+			return persistAllEntities(persistence, eingangsdatum, testfall, status);
+		}
+		return persistAllEntities(persistence, eingangsdatum, testfall);
+	}
+
+	public static Gesuch createAndPersistASIV12(
+		InstitutionService instService,
+		Persistence persistence,
+		@Nullable LocalDate eingangsdatum,
+		AntragStatus status
+	) {
+		instService.getAllInstitutionen();
+		List<InstitutionStammdaten> institutionStammdatenList = new ArrayList<>();
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenTagesschuleBern());
+		institutionStammdatenList.add(TestDataUtil.createInstitutionStammdatenKitaWeissenstein());
+		TestFall12_Mischgesuch testfall = new TestFall12_Mischgesuch(TestDataUtil.createGesuchsperiode1718(),
+			institutionStammdatenList);
+
+		if (status != null) {
+			return persistAllEntities(persistence, eingangsdatum, testfall, status);
+		}
+		return persistAllEntities(persistence, eingangsdatum, testfall);
 	}
 
 	public static Institution createAndPersistDefaultInstitution(Persistence persistence) {

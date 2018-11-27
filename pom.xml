@@ -711,39 +711,6 @@
         </profile>
 
         <profile>
-            <id>wildfly10-embedded</id>
-            <properties>
-                <!--embedded wird ans gleiche ort enpackt wie managed-->
-                <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>
-                <unpack.groupId>org.wildfly</unpack.groupId>
-                <unpack.artifactId>wildfly-dist</unpack.artifactId>
-                <unpack.version>${version.wildfly.container}</unpack.version>
-                <unpack.directory>${project.build.directory}</unpack.directory>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-embedded</artifactId>
-                    <version>${version.wildfly-arquillian-containers}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.wildfly.core</groupId>
-                    <artifactId>wildfly-embedded</artifactId>
-                    <version>2.0.10.Final</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <activation>
-                <property>
-                    <!-- hiermit wird getestet ob ein property disable-managed-wildfly existiert, wenn nicht lauft
-                    arquillian mit embedded container-->
-                    <name>!disable-managed-wildfly</name>
-                </property>
-            </activation>
             <id>test-wildfly-managed</id>
             <properties>
                 <jbossHome>${project.build.directory}/wildfly-${version.wildfly.container}</jbossHome>

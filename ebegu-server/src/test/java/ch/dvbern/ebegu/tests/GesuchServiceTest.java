@@ -785,11 +785,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final List<Gesuch> gesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
 			Constants.START_OF_TIME,
 			Constants.END_OF_TIME,
-			verfuegtesGesuch.getGesuchsperiode().getId(),
-			true,
-			false,
-			false,
-			false
+			verfuegtesGesuch.getGesuchsperiode().getId()
 		);
 
 		Assert.assertEquals(1, gesuche.size());
@@ -808,11 +804,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final List<Gesuch> gesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
 			Constants.START_OF_TIME,
 			Constants.END_OF_TIME,
-			gesuchFeutz.getGesuchsperiode().getId(),
-			true,
-			false,
-			false,
-			false
+			gesuchFeutz.getGesuchsperiode().getId()
 		);
 
 		Assert.assertTrue(gesuche.isEmpty());
@@ -834,11 +826,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final List<Gesuch> gesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
 			Constants.START_OF_TIME,
 			Constants.END_OF_TIME,
-			otherGesuchsperiode.getId(),
-			true,
-			false,
-			false,
-			false
+			otherGesuchsperiode.getId()
 		);
 
 		Assert.assertTrue(gesuche.isEmpty());
@@ -861,11 +849,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final List<Gesuch> gesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
 			Constants.START_OF_TIME,
 			Constants.END_OF_TIME,
-			mergedGesuch.getGesuchsperiode().getId(),
-			true,
-			false,
-			false,
-			false
+			mergedGesuch.getGesuchsperiode().getId()
 		);
 
 		Assert.assertTrue(gesuche.isEmpty());
@@ -889,11 +873,7 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final List<Gesuch> gesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
 			Constants.START_OF_TIME,
 			Constants.END_OF_TIME,
-			freigegebenesGesuch.getGesuchsperiode().getId(),
-			true,
-			false,
-			false,
-			false
+			freigegebenesGesuch.getGesuchsperiode().getId()
 		);
 
 		Assert.assertEquals(1, gesuche.size());
@@ -918,14 +898,34 @@ public class GesuchServiceTest extends AbstractEbeguLoginTest {
 		final List<Gesuch> gesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
 			Constants.END_OF_TIME.minusMonths(2),
 			Constants.END_OF_TIME,
-			freigegebenesGesuch.getGesuchsperiode().getId(),
-			true,
-			false,
-			false,
-			false
+			freigegebenesGesuch.getGesuchsperiode().getId()
 		);
 
 		Assert.assertTrue(gesuche.isEmpty());
+	}
+
+	@Test
+	public void testHasFolgegesuchWithoutFolgegesuch() {
+		Gesuch gesuch = TestDataUtil.createAndPersistASIV12(institutionService, persistence,
+						LocalDate.of(1980, Month.MARCH, 25), AntragStatus.GEPRUEFT);
+
+		Assert.assertFalse(gesuchService.hasFolgegesuch(gesuch.getId()));
+	}
+
+	@Test
+	public void testHasFolgegesuchWithFolgegesuch() {
+		Gesuch gesuch = TestDataUtil.createAndPersistASIV12(institutionService, persistence,
+						LocalDate.of(1980, Month.MARCH, 25), AntragStatus.GEPRUEFT);
+
+		final Gesuchsperiode gesuchsperiode1819 = TestDataUtil.createCustomGesuchsperiode(2018, 2019);
+		final Gesuchsperiode savedGesuchsperiode1819 = persistence.persist(gesuchsperiode1819);
+
+		final Optional<Gesuch> erneurtesGesuch = gesuchService.antragErneuern(gesuch.getId(), savedGesuchsperiode1819.getId(), null);
+		Assert.assertTrue(erneurtesGesuch.isPresent());
+		Gesuch folgegesuch = gesuchService.createGesuch(erneurtesGesuch.get());
+
+		Assert.assertTrue(gesuchService.hasFolgegesuch(gesuch.getId()));
+		Assert.assertFalse(gesuchService.hasFolgegesuch(folgegesuch.getId()));
 	}
 
 

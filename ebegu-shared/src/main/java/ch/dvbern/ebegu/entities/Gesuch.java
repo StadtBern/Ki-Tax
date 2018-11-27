@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -59,6 +60,7 @@ import ch.dvbern.ebegu.enums.Betreuungsstatus;
 import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchBetreuungenStatus;
+import ch.dvbern.ebegu.enums.GesuchTypFromAngebotTyp;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.validationgroups.AntragCompleteValidationGroup;
 import ch.dvbern.ebegu.validators.CheckGesuchComplete;
@@ -850,5 +852,31 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		this.preStatus = preStatus;
 	}
 
-
+	/**
+	 * This method will go through all Betreuungen of the Gesuch and check all of them to know which kind (BetreuungsangebotTyp)
+	 * of betreuungen they are. An enum will be returned with the result
+	 */
+	public GesuchTypFromAngebotTyp calculateGesuchTypFromAngebotTyp() {
+		AtomicBoolean hasSCHAngebote = new AtomicBoolean(false);
+		AtomicBoolean hasBGAngebote = new AtomicBoolean(false);
+		kindContainers.stream()
+			.filter(kindContainer -> kindContainer.getBetreuungen() != null && !kindContainer.getBetreuungen().isEmpty())
+			.flatMap(kindContainer -> kindContainer.getBetreuungen().stream())
+			.collect(Collectors.toList())
+			.forEach(betreuung -> {
+				if (betreuung.isAngebotSchulamt()) {
+					hasSCHAngebote.set(true);
+				} else {
+					hasBGAngebote.set(true);
+				}
+			});
+		if (hasSCHAngebote.get() && hasBGAngebote.get()) {
+			return GesuchTypFromAngebotTyp.MISCH_GESUCH;
+		}
+		if (hasSCHAngebote.get()) {
+			return GesuchTypFromAngebotTyp.TS_GESUCH;
+		}
+		// a gesuch with no Angebot will be considered a BG-Gesuch
+		return GesuchTypFromAngebotTyp.BG_GESUCH;
+	}
 }

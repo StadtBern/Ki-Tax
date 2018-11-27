@@ -1605,11 +1605,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	public List<Gesuch> getGepruefteFreigegebeneGesucheForGesuchsperiode(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,
-		@Nonnull String gesuchsperiodeId,
-		boolean inklBgGesuche,
-		boolean inklMischGesuche,
-		boolean inklTsGesuche,
-		boolean ohneErneuerungsgesuch
+		@Nonnull String gesuchsperiodeId
 	) {
 
 		final Gesuchsperiode gesuchsperiode = gesuchsperiodeService.findGesuchsperiode(gesuchsperiodeId)
@@ -1620,8 +1616,9 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
 		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-
+		query.distinct(true);
 		Root<Gesuch> root = query.from(Gesuch.class);
+
 		Join<Gesuch, AntragStatusHistory> antragStatusHistoryJoin = root.join(Gesuch_.antragStatusHistories, JoinType.LEFT);
 
 		// Prepare TypedParameters
@@ -1632,18 +1629,18 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		// Predicates
 		Predicate predicateStatusTransition = getStatusTransitionPredicate(cb, root, antragStatusHistoryJoin, datumVonParam, datumBisParam);
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiodeIdParam);
-//		Predicate predicateGueltig = cb.equal(root.get(Gesuch_.gueltig), Boolean.TRUE);
 
-		// todo predicate for folgeGesuche --> only Gesuche that have no Folgegesuch
-		// todo predicate for JA, Misch or SCH Gesuche
-
-		query.where(predicateGesuchsperiode, predicateStatusTransition);
+		query.where(predicateGesuchsperiode, predicateStatusTransition); //, predicateAntragTyp);
 		query.select(root);
+
+		// todo EBEGU-2007 un unico gesuch pro fall. El mas actual, pero no el gueltig ya q no tiene xq estar verfuegt
+//		query.groupBy(root.get(Gesuch_.fall))
+//			.orderBy(cb.asc(root.get(AbstractEntity_.timestampErstellt)));
 
 		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
 		typedQuery.setParameter(gesuchsperiodeIdParam, gesuchsperiode);
 		typedQuery.setParameter(datumVonParam, datumVon.atStartOfDay());
-		typedQuery.setParameter(datumBisParam, datumBis.atStartOfDay());
+		typedQuery.setParameter(datumBisParam, datumBis.atStartOfDay().plusDays(1));
 
 		List<Gesuch> criteriaResults = typedQuery.getResultList();
 		criteriaResults.forEach(gesuch -> authorizer.checkReadAuthorization(gesuch));
@@ -1668,7 +1665,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			datumBisParam
 		);
 		final Predicate predicateGeprueft = cb.and(
-			cb.equal(antragStatusHistoryJoin.get(AntragStatusHistory_.status), AntragStatus.GEPRUEFT),
+			cb.or(
+				cb.equal(antragStatusHistoryJoin.get(AntragStatusHistory_.status), AntragStatus.GEPRUEFT),
+				cb.equal(antragStatusHistoryJoin.get(AntragStatusHistory_.status), AntragStatus.NUR_SCHULAMT)
+			),
 			predicateStatusSetBetweenVonAndBis
 		);
 		final Predicate predicateFreigegeben = cb.and(
@@ -1681,6 +1681,39 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			cb.and(predicateGeprueft, predicatePapier),
 			cb.and(predicateFreigegeben, predicateOnline)
 		);
+	}
+
+	@Override
+	public boolean hasFolgegesuch(@Nonnull String gesuchId) {
+		final Optional<Gesuch> optGesuch = findGesuch(gesuchId);
+		final Gesuch gesuch = optGesuch.orElseThrow(()
+			-> new EbeguEntityNotFoundException("hasFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
+
+
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<String> query = cb.createQuery(String.class);
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		query.select(root.get(AbstractEntity_.id));
+
+		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
+		ParameterExpression<LocalDate> gesuchsperiodeGueltigAbParam = cb.parameter(LocalDate.class, "gueltigAb");
+
+		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
+		Predicate gesuchsperiodePredicate = cb.greaterThan(
+			root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
+			gesuchsperiodeGueltigAbParam);
+
+		query.where(fallPredicate, gesuchsperiodePredicate);
+
+		query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
+
+		TypedQuery<String> q = persistence.getEntityManager().createQuery(query);
+		q.setParameter(fallIdParam, gesuch.getFall().getId());
+		q.setParameter(gesuchsperiodeGueltigAbParam, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+
+		final List<String> resultList = q.getResultList();
+		return !resultList.isEmpty();
 	}
 
 	private void createFinSitDokument(Gesuch persistedGesuch, String methodname) {

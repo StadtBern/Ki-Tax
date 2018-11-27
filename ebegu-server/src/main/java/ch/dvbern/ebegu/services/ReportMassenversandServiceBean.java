@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,8 +37,9 @@ import javax.inject.Inject;
 
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
-import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.entities.Massenversand;
+import ch.dvbern.ebegu.enums.ErrorCodeEnum;
+import ch.dvbern.ebegu.enums.GesuchTypFromAngebotTyp;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.reporting.ReportMassenversandService;
@@ -93,14 +95,20 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		List<Gesuch> ermittelteGesuche = gesuchService.getGepruefteFreigegebeneGesucheForGesuchsperiode(
 			datumVon,
 			datumBis,
-			gesuchPeriodeID,
-			inklBgGesuche,
-			inklMischGesuche,
-			inklTsGesuche,
-			ohneErneuerungsgesuch
+			gesuchPeriodeID
 		);
+
+		// Filter Gesuche by AngebotTyp
+		List<Gesuch> gesucheFilteredByAngebotTyp =
+			filterGesucheByAngebotTyp(inklBgGesuche, inklMischGesuche, inklTsGesuche, ermittelteGesuche);
+
+		List<Gesuch> gesucheFilteredByFolgegesuch =
+			filterGesucheByFolgegesuch(ohneErneuerungsgesuch, gesucheFilteredByAngebotTyp);
+
+		// todo EBEGU-2007 un unico gesuch pro fall. El mas actual, pero no el gueltig ya q no tiene xq estar verfuegt
+
 		// Wenn ein Text eingegeben wurde, wird der Massenversand gespeichert
-		if (StringUtils.isNotEmpty(text) && !ermittelteGesuche.isEmpty()) {
+		if (StringUtils.isNotEmpty(text) && !gesucheFilteredByFolgegesuch.isEmpty()) {
 			saveMassenversand(
 				datumVon,
 				datumBis,
@@ -110,11 +118,30 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 				inklTsGesuche,
 				ohneErneuerungsgesuch,
 				text,
-				ermittelteGesuche);
+				gesucheFilteredByFolgegesuch);
 		}
 		//TODO Die echten Daten ermitteln!
 		final List<MassenversandDataRow> reportDataMassenversand = new ArrayList<>();
 		return reportDataMassenversand;
+	}
+
+	private List<Gesuch> filterGesucheByFolgegesuch(boolean ohneErneuerungsgesuch, List<Gesuch> gesucheFilteredByAngebotTyp) {
+		if (ohneErneuerungsgesuch) {
+			return gesucheFilteredByAngebotTyp.stream()
+				.filter(gesuch -> !gesuchService.hasFolgegesuch(gesuch.getId()))
+				.collect(Collectors.toList());
+		}
+		return gesucheFilteredByAngebotTyp;
+	}
+
+	private List<Gesuch> filterGesucheByAngebotTyp(boolean inklBgGesuche, boolean inklMischGesuche, boolean inklTsGesuche, List<Gesuch> ermittelteGesuche) {
+		return ermittelteGesuche.stream()
+				.filter(gesuch -> {
+					final GesuchTypFromAngebotTyp gesuchTyp = gesuch.calculateGesuchTypFromAngebotTyp();
+					return (inklTsGesuche && gesuchTyp == GesuchTypFromAngebotTyp.TS_GESUCH)
+						|| (inklBgGesuche && gesuchTyp == GesuchTypFromAngebotTyp.BG_GESUCH)
+						|| (inklMischGesuche && gesuchTyp == GesuchTypFromAngebotTyp.MISCH_GESUCH);
+				}).collect(Collectors.toList());
 	}
 
 	private void saveMassenversand(
