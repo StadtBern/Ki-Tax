@@ -17,10 +17,10 @@ package ch.dvbern.ebegu.services;
 
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -33,8 +33,15 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import ch.dvbern.ebegu.dto.KindDubletteDTO;
+import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Gesuchsteller;
+import ch.dvbern.ebegu.entities.GesuchstellerAdresse;
+import ch.dvbern.ebegu.entities.InstitutionStammdaten;
+import ch.dvbern.ebegu.entities.Kind;
+import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Massenversand;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchTypFromAngebotTyp;
@@ -43,8 +50,11 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.reporting.ReportMassenversandService;
 import ch.dvbern.ebegu.reporting.massenversand.MassenversandDataRow;
 import ch.dvbern.ebegu.reporting.massenversand.MassenversandExcelConverter;
+import ch.dvbern.ebegu.reporting.massenversand.MassenversandRepeatKindDataCol;
 import ch.dvbern.ebegu.util.Constants;
+import ch.dvbern.ebegu.util.ServerMessageUtil;
 import ch.dvbern.ebegu.util.UploadFileInfo;
+import ch.dvbern.ebegu.vorlagen.PrintUtil;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergeException;
 import ch.dvbern.oss.lib.excelmerger.ExcelMerger;
 import ch.dvbern.oss.lib.excelmerger.ExcelMergerDTO;
@@ -76,6 +86,9 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 	@Inject
 	private GesuchService gesuchService;
 
+	@Inject
+	private KindService  kindService;
+
 
 	@Nonnull
 	@Override
@@ -100,13 +113,13 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		List<Gesuch> gesucheFilteredByAngebotTyp =
 			filterGesucheByAngebotTyp(inklBgGesuche, inklMischGesuche, inklTsGesuche, ermittelteGesuche);
 
-		List<Gesuch> gesucheFilteredByFolgegesuch =
+		List<Gesuch> resultGesuchList =
 			filterGesucheByFolgegesuch(ohneErneuerungsgesuch, gesucheFilteredByAngebotTyp);
 
 		// todo EBEGU-2007 un unico gesuch pro fall. El mas actual, pero no el gueltig ya q no tiene xq estar verfuegt
 
 		// Wenn ein Text eingegeben wurde, wird der Massenversand gespeichert
-		if (StringUtils.isNotEmpty(text) && !gesucheFilteredByFolgegesuch.isEmpty()) {
+		if (StringUtils.isNotEmpty(text) && !resultGesuchList.isEmpty()) {
 			saveMassenversand(
 				datumVon,
 				datumBis,
@@ -116,11 +129,122 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 				inklTsGesuche,
 				ohneErneuerungsgesuch,
 				text,
-				gesucheFilteredByFolgegesuch);
+				resultGesuchList);
 		}
-		//TODO Die echten Daten ermitteln!
-		final List<MassenversandDataRow> reportDataMassenversand = new ArrayList<>();
+
+		final List<MassenversandDataRow> reportDataMassenversand = createReportDataMassenversand(resultGesuchList);
 		return reportDataMassenversand;
+	}
+
+	private List<MassenversandDataRow> createReportDataMassenversand(@Nonnull List<Gesuch> resultGesuchList) {
+		final List<MassenversandDataRow> rows = resultGesuchList.stream()
+			.map(gesuch -> {
+				MassenversandDataRow row = new MassenversandDataRow();
+
+				row.setGesuchsperiode(gesuch.getGesuchsperiode().getGesuchsperiodeString());
+				row.setFall(gesuch.getFall().getPaddedFallnummer());
+
+				setGS1Data(gesuch, row);
+				setGS2Data(gesuch, row);
+
+				setKinderData(gesuch, row);
+
+				row.setEinreichungsart(ServerMessageUtil.translateEnumValue(gesuch.getEingangsart()));
+				row.setStatus(ServerMessageUtil.translateEnumValue(gesuch.getStatus()));
+				row.setTyp(ServerMessageUtil.translateEnumValue(gesuch.getTyp()));
+
+				return row;
+			})
+			.collect(Collectors.toList());
+
+		return rows;
+	}
+
+	private void setGS2Data(Gesuch gesuch, MassenversandDataRow row) {
+		if (gesuch.getGesuchsteller2() != null && gesuch.getGesuchsteller2().getGesuchstellerJA() != null) {
+			final Gesuchsteller gesuchstellerJA = gesuch.getGesuchsteller2().getGesuchstellerJA();
+			row.setGs2Name(gesuchstellerJA.getNachname());
+			row.setGs2Vorname(gesuchstellerJA.getVorname());
+			row.setGs2PersonId(gesuchstellerJA.getEwkPersonId());
+			row.setGs2Mail(gesuchstellerJA.getMail());
+		}
+	}
+
+	private void setGS1Data(Gesuch gesuch, MassenversandDataRow row) {
+		if (gesuch.getGesuchsteller1() != null && gesuch.getGesuchsteller1().getGesuchstellerJA() != null) {
+			final Gesuchsteller gesuchstellerJA = gesuch.getGesuchsteller1().getGesuchstellerJA();
+			row.setGs1Name(gesuchstellerJA.getNachname());
+			row.setGs1Vorname(gesuchstellerJA.getVorname());
+			row.setGs1PersonId(gesuchstellerJA.getEwkPersonId());
+			row.setGs1Mail(gesuchstellerJA.getMail());
+			final GesuchstellerAdresse currentAddress = gesuch.getGesuchsteller1().getWohnadresseAm(LocalDate.now());
+			if (currentAddress != null) {
+				row.setAdresse(currentAddress.getAddressAsString());
+			}
+		}
+	}
+
+	private void setKinderData(Gesuch gesuch, MassenversandDataRow row) {
+		final Set<KindDubletteDTO> kindDubletten = kindService.getKindDubletten(gesuch.getId());
+		row.setKinderCols(
+			gesuch.getKindContainers().stream()
+				.filter(kindContainer -> kindContainer.getKindJA() != null
+					&& kindContainer.getBetreuungen() != null && !kindContainer.getBetreuungen().isEmpty())
+				.map(kindContainer -> {
+					final MassenversandRepeatKindDataCol kindCol = new MassenversandRepeatKindDataCol();
+					final Kind kind = kindContainer.getKindJA();
+					kindCol.setKindName(kind.getNachname());
+					kindCol.setKindVorname(kind.getVorname());
+					kindCol.setKindGeburtsdatum(kind.getGeburtsdatum());
+					setDubletten(kindCol, kindContainer, kindDubletten);
+
+					kindContainer.getBetreuungen().stream()
+						.map(Betreuung::getInstitutionStammdaten)
+						.forEach(instStammdaten -> setInstitutionName(kindCol, instStammdaten));
+
+					return kindCol;
+				})
+				.collect(Collectors.toList())
+		);
+	}
+
+	private void setDubletten(
+		@Nonnull MassenversandRepeatKindDataCol kindCol,
+		@Nonnull KindContainer kindContainer,
+		@Nonnull Set<KindDubletteDTO> kindDubletten
+	) {
+		kindDubletten.stream()
+			.filter(kindDubletteDTO -> kindDubletteDTO.getKindNummerOriginal().equals(kindContainer.getKindNummer()))
+			.forEach(kindDubletteDTO ->
+				kindCol.addKindDubletten(PrintUtil.getPaddedFallnummer(kindDubletteDTO.getFallNummer())
+			));
+	}
+
+	private void setInstitutionName(
+		@Nonnull MassenversandRepeatKindDataCol kindCol,
+		@Nonnull InstitutionStammdaten instStammdaten
+	) {
+		final String instName = instStammdaten.getInstitution().getName();
+		switch (instStammdaten.getBetreuungsangebotTyp()) {
+		case KITA:
+			kindCol.setKindInstitutionKitaOrWeitere(instName);
+			break;
+		case TAGI:
+			kindCol.setKindInstitutionTagiOrWeitere(instName);
+			break;
+		case TAGESELTERN_KLEINKIND:
+			kindCol.setKindInstitutionTeKleinkindOrWeitere(instName);
+			break;
+		case TAGESELTERN_SCHULKIND:
+			kindCol.setKindInstitutionTeSchulkindOrWeitere(instName);
+			break;
+		case TAGESSCHULE:
+			kindCol.setKindInstitutionTagesschuleOrWeitere(instName);
+			break;
+		case FERIENINSEL:
+			kindCol.setKindInstitutionFerieninselOrWeitere(instName);
+			break;
+		}
 	}
 
 	private List<Gesuch> filterGesucheByFolgegesuch(boolean ohneErneuerungsgesuch, List<Gesuch> gesucheFilteredByAngebotTyp) {

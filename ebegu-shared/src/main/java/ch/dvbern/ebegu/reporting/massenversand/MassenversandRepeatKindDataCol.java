@@ -17,6 +17,10 @@ package ch.dvbern.ebegu.reporting.massenversand;
 
 import java.time.LocalDate;
 
+import javax.annotation.Nonnull;
+
+import com.google.common.base.Strings;
+
 /**
  * DTO fuer ein Kind einer Familie eines Massenversands
  */
@@ -120,5 +124,69 @@ public class MassenversandRepeatKindDataCol {
 
 	public void setKindInstitutionenWeitere(String kindInstitutionenWeitere) {
 		this.kindInstitutionenWeitere = kindInstitutionenWeitere;
+	}
+
+	public void addKindDubletten(@Nonnull String dublette) {
+		setKindDubletten(
+			Strings.isNullOrEmpty(getKindDubletten())
+				? dublette
+				: getKindDubletten() + ", " + dublette
+		);
+	}
+
+	private void addKindInstitutionenWeitere(@Nonnull String instName) {
+		setKindInstitutionenWeitere(
+			Strings.isNullOrEmpty(getKindInstitutionenWeitere())
+				? instName
+				: getKindInstitutionenWeitere() + ", " + instName
+		);
+	}
+
+	public void setKindInstitutionKitaOrWeitere(@Nonnull String instName) {
+		if (Strings.isNullOrEmpty(getKindInstitutionKita())) {
+			setKindInstitutionKita(instName);
+		} else {
+			addKindInstitutionenWeitere(instName);
+		}
+	}
+
+	public void setKindInstitutionTagiOrWeitere(@Nonnull String instName) {
+		if (Strings.isNullOrEmpty(getKindInstitutionTagi())) {
+			setKindInstitutionTagi(instName);
+		} else {
+			addKindInstitutionenWeitere(instName);
+		}
+	}
+
+	public void setKindInstitutionTeKleinkindOrWeitere(@Nonnull String instName) {
+		if (Strings.isNullOrEmpty(getKindInstitutionTeKleinkind())) {
+			setKindInstitutionTeKleinkind(instName);
+		} else {
+			addKindInstitutionenWeitere(instName);
+		}
+	}
+
+	public void setKindInstitutionTeSchulkindOrWeitere(@Nonnull String instName) {
+		if (Strings.isNullOrEmpty(getKindInstitutionTeSchulkind())) {
+			setKindInstitutionTeSchulkind(instName);
+		} else {
+			addKindInstitutionenWeitere(instName);
+		}
+	}
+
+	public void setKindInstitutionTagesschuleOrWeitere(@Nonnull String instName) {
+		if (Strings.isNullOrEmpty(getKindInstitutionTagesschule())) {
+			setKindInstitutionTagesschule(instName);
+		} else {
+			addKindInstitutionenWeitere(instName);
+		}
+	}
+
+	public void setKindInstitutionFerieninselOrWeitere(@Nonnull String instName) {
+		if (Strings.isNullOrEmpty(getKindInstitutionFerieninsel())) {
+			setKindInstitutionFerieninsel(instName);
+		} else {
+			addKindInstitutionenWeitere(instName);
+		}
 	}
 }

@@ -42,6 +42,7 @@ public final class Constants {
 
 	public static final Locale DEFAULT_LOCALE = new Locale("de", "CH");
 
+	public static final Character LINE_BREAK = '\n';
 	public static final String DATA = "Data";
 	public static final String REGEX_EMAIL = "[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}";
 	public static final String REGEX_TELEFON = "(0|\\+41|0041)[ ]*[\\d]{2}[ ]*[\\d]{3}[ ]*[\\d]{2}[ ]*[\\d]{2}";
