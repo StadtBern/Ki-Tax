@@ -282,6 +282,40 @@ public enum AntragStatus {
 		return Arrays.asList(FREIGABEQUITTUNG, IN_BEARBEITUNG_GS);
 	}
 
+	public static Collection<AntragStatus> getAllGepruefteStatus() {
+		return Arrays.asList(
+			NUR_SCHULAMT,
+			GEPRUEFT,
+			VERFUEGEN,
+			VERFUEGT,
+			KEIN_ANGEBOT,
+			BESCHWERDE_HAENGIG,
+			PRUEFUNG_STV,
+			IN_BEARBEITUNG_STV,
+			GEPRUEFT_STV
+		);
+	}
+
+	public static Collection<AntragStatus> getAllFreigegebeneStatus() {
+		return Arrays.asList(
+			NUR_SCHULAMT,
+			FREIGEGEBEN,
+			IN_BEARBEITUNG_JA,
+			ERSTE_MAHNUNG,
+			ERSTE_MAHNUNG_ABGELAUFEN,
+			ZWEITE_MAHNUNG,
+			ZWEITE_MAHNUNG_ABGELAUFEN,
+			GEPRUEFT,
+			VERFUEGEN,
+			VERFUEGT,
+			KEIN_ANGEBOT,
+			BESCHWERDE_HAENGIG,
+			PRUEFUNG_STV,
+			IN_BEARBEITUNG_STV,
+			GEPRUEFT_STV
+		);
+	}
+
 	/**
 	 * Ein verfuegtes Gesuch kann mehrere Status haben. Diese Methode immer anwenden um herauszufinden
 	 * ob ein Gesuch verfuegt ist.

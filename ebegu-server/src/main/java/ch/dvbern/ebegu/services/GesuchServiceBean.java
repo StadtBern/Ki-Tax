@@ -1617,54 +1617,20 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		// We first look for all Gesuche that belongs to the gesuchsperiode and were geprueft/nurschulamt/freigegeben between
 		// the given dates.
-		final List<Tuple> allTuples = getGepruefteFreigegebeneGesucheForGesuchsperiodeTuples(datumVon, datumBis, gesuchsperiode);
+		final List<Tuple> allTuples =
+			getGepruefteFreigegebeneGesucheForGesuchsperiodeTuples(datumVon, datumBis, gesuchsperiode);
 
 		List<Gesuch> gesuche = new ArrayList<>();
 		allTuples.forEach(tuple -> {
-			final String gesuchsperiodeIdValue = String.valueOf(tuple.get(0));
-			final String fallIdValue = String.valueOf(tuple.get(1));
-			final Integer laufnummerValue = Integer.valueOf(String.valueOf(tuple.get(2)));
+			final String fallIdValue = String.valueOf(tuple.get(0));
+			final String gesuchsperiodeIdValue = String.valueOf(tuple.get(1));
 
-			Gesuch gesuch = findGesuchFromFallPeriodeAndLaufnummer(gesuchsperiodeIdValue, fallIdValue, laufnummerValue);
-
-			gesuche.add(gesuch);
+			Optional<Gesuch> gesuch =
+				getNeustesGeprueftesFreigegebensGesuchFuerFallPeriode(gesuchsperiodeIdValue, fallIdValue);
+			gesuch.ifPresent(gesuche::add);
 		});
 
 		return gesuche;
-	}
-
-	private Gesuch findGesuchFromFallPeriodeAndLaufnummer(
-		@Nonnull String gesuchsperiodeId,
-		@Nonnull String fallId,
-		@Nonnull Integer laufnummer
-	) {
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-		query.distinct(true);
-		Root<Gesuch> root = query.from(Gesuch.class);
-
-		ParameterExpression<String> gesuchsperiodeIdParam = cb.parameter(String.class, "gesuchsperiode");
-		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fall");
-		ParameterExpression<Integer> laufnummerParam = cb.parameter(Integer.class, "laufnummer");
-
-		Predicate fallPredicate = root.get(Gesuch_.fall).get(AbstractEntity_.id).in(gesuchsperiodeIdParam);
-		Predicate gesuchsperiodePredicate = root.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id).in(fallIdParam);
-		Predicate laufnummerPredicate = root.get(Gesuch_.laufnummer).in(laufnummerParam);
-
-		query.where(cb.and(
-			fallPredicate,
-			gesuchsperiodePredicate,
-			laufnummerPredicate
-		));
-
-		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
-		typedQuery.setParameter(gesuchsperiodeIdParam, gesuchsperiodeId);
-		typedQuery.setParameter(fallIdParam, fallId);
-		typedQuery.setParameter(laufnummerParam, laufnummer);
-
-		Gesuch gesuch = typedQuery.getSingleResult();
-		authorizer.checkReadAuthorization(gesuch);
-		return gesuch;
 	}
 
 	private List<Tuple> getGepruefteFreigegebeneGesucheForGesuchsperiodeTuples(
@@ -1687,13 +1653,16 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		ParameterExpression<AntragStatus> nurSchulamtParam = cb.parameter(AntragStatus.class, "nurschulamt");
 		ParameterExpression<Eingangsart> papierParam = cb.parameter(Eingangsart.class, "papier");
 		ParameterExpression<Eingangsart> onlineParam = cb.parameter(Eingangsart.class, "online");
+		ParameterExpression<Integer> laufnummerParam = cb.parameter(Integer.class, "laufnummer");
 
 		// Predicates
 		Predicate predicateStatusTransition = getStatusTransitionPredicate(cb, root, antragStatusHistoryJoin, datumVonParam, datumBisParam,
 			geprueftParam, freigegebenParam, nurSchulamtParam, papierParam, onlineParam);
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiodeIdParam);
+		// An Erstgesuch is that which has its laufnummer=0
+		Predicate predicateErstgesuch = cb.equal(root.get(Gesuch_.laufnummer), laufnummerParam);
 
-		query.where(predicateGesuchsperiode, predicateStatusTransition);
+		query.where(predicateGesuchsperiode, predicateStatusTransition, predicateErstgesuch);
 
 		query.groupBy(
 			root.get(Gesuch_.fall).get(AbstractEntity_.id),
@@ -1714,8 +1683,78 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		typedQuery.setParameter(gesuchsperiodeIdParam, gesuchsperiode);
 		typedQuery.setParameter(datumVonParam, datumVon.atStartOfDay());
 		typedQuery.setParameter(datumBisParam, datumBis.atStartOfDay().plusDays(1));
+		typedQuery.setParameter(laufnummerParam, 0);
 
 		return typedQuery.getResultList();
+	}
+
+	/**
+	 * Returns the newest Gesuch for the given fall and period that has been at least freigegeben (for Onlinegesuche)
+	 * or at least Geprueft (for Papiergesuche)
+	 */
+	@Nonnull
+	public Optional<Gesuch> getNeustesGeprueftesFreigegebensGesuchFuerFallPeriode(
+		@Nonnull String gesuchsperiodeId,
+		@Nonnull String fallId
+	) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		ParameterExpression<String> fallParam = cb.parameter(String.class, "fallId");
+		ParameterExpression<String> gesuchsperiodeParam = cb.parameter(String.class, "gesuchsperiodeId");
+		ParameterExpression<Eingangsart> papierParam = cb.parameter(Eingangsart.class, "papier");
+		ParameterExpression<Eingangsart> onlineParam = cb.parameter(Eingangsart.class, "online");
+		//noinspection rawtypes
+		ParameterExpression<Collection> geprueftParam = cb.parameter(Collection.class, "geprueft");
+		//noinspection rawtypes
+		ParameterExpression<Collection> freigegebenParam = cb.parameter(Collection.class, "freigegeben");
+
+		Predicate predicateStatus = getStatusFromEingangsartPredicate(cb, root, papierParam, onlineParam, geprueftParam, freigegebenParam);
+		Predicate predicateFall = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallParam);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id), gesuchsperiodeParam);
+
+		query.where(predicateStatus, predicateGesuchsperiode, predicateFall);
+		query.select(root);
+
+		query.orderBy(cb.desc(root.get(AbstractEntity_.timestampErstellt)));
+
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(fallParam, fallId);
+		typedQuery.setParameter(gesuchsperiodeParam, gesuchsperiodeId);
+		typedQuery.setParameter(papierParam, Eingangsart.PAPIER);
+		typedQuery.setParameter(onlineParam, Eingangsart.ONLINE);
+		typedQuery.setParameter(geprueftParam, AntragStatus.getAllGepruefteStatus());
+		typedQuery.setParameter(freigegebenParam, AntragStatus.getAllFreigegebeneStatus());
+
+		final List<Gesuch> gesuche = typedQuery.getResultList();
+		if (gesuche.isEmpty()) {
+			return Optional.empty();
+		}
+		Gesuch gesuch = gesuche.get(0);
+		authorizer.checkReadAuthorization(gesuch);
+		return Optional.of(gesuch);
+	}
+
+	private Predicate getStatusFromEingangsartPredicate(
+		@Nonnull CriteriaBuilder cb,
+		@Nonnull Root<Gesuch> root,
+		@Nonnull ParameterExpression<Eingangsart> papierParam,
+		@Nonnull ParameterExpression<Eingangsart> onlineParam,
+		@SuppressWarnings("rawtypes") @Nonnull ParameterExpression<Collection> geprueftParam,
+		@SuppressWarnings("rawtypes") @Nonnull ParameterExpression<Collection> freigegebenParam
+	) {
+		final Predicate predicateGeprueft = root.get(Gesuch_.status).in(geprueftParam);
+		final Predicate predicateFreigegeben = root.get(Gesuch_.status).in(freigegebenParam);
+
+		final Predicate predicatePapier = cb.equal(root.get(Gesuch_.eingangsart), papierParam);
+		final Predicate predicateOnline = cb.equal(root.get(Gesuch_.eingangsart), onlineParam);
+
+		return cb.or(
+			cb.and(predicateGeprueft, predicatePapier),
+			cb.and(predicateFreigegeben, predicateOnline)
+		);
 	}
 
 	/**
@@ -1750,8 +1789,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			cb.equal(antragStatusHistoryJoin.get(AntragStatusHistory_.status), freigegebenParam),
 			predicateStatusSetBetweenVonAndBis
 		);
-		Predicate predicatePapier = root.get(Gesuch_.eingangsart).in(papierParam);
-		Predicate predicateOnline = root.get(Gesuch_.eingangsart).in(onlineParam);
+
+		final Predicate predicatePapier = cb.equal(root.get(Gesuch_.eingangsart), papierParam);
+		final Predicate predicateOnline = cb.equal(root.get(Gesuch_.eingangsart), onlineParam);
+
 		return cb.or(
 			cb.and(predicateGeprueft, predicatePapier),
 			cb.and(predicateFreigegeben, predicateOnline)
