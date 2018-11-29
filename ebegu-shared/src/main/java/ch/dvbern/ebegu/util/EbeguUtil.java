@@ -16,11 +16,12 @@
 package ch.dvbern.ebegu.util;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +33,8 @@ import ch.dvbern.ebegu.entities.Familiensituation;
 import ch.dvbern.ebegu.entities.FamiliensituationContainer;
 import ch.dvbern.ebegu.entities.Gesuch;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableSortedSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
@@ -58,20 +61,22 @@ public class EbeguUtil {
 	}
 
 	/**
-	 * Gibt aus einer Liste von Gesuchen nur das jeweils neueste (hoechste Laufummer) pro Fall zurueck.
+	 * Gibt aus einer Liste von Gesuchen nur das jeweils neueste (aktuellstes Jahr und hoechste Laufummer) pro Fall zurueck.
 	 * Die Rueckgabe erfolgt in einer Map mit GesuchId-Gesuch
 	 */
 	public static Map<String, Gesuch> groupByFallAndSelectNewestAntrag(List<Gesuch> allGesuche) {
 		ArrayListMultimap<Fall, Gesuch> fallToAntragMultimap = ArrayListMultimap.create();
 		allGesuche.forEach(gesuch -> fallToAntragMultimap.put(gesuch.getFall(), gesuch));
 		// map erstellen in der nur noch das gesuch mit der hoechsten laufnummer drin ist
-		Map<String, Gesuch> gesuchMap = new HashMap<>();
-		for (Fall fall : fallToAntragMultimap.keySet()) {
-			List<Gesuch> antraege = fallToAntragMultimap.get(fall);
-			antraege.sort(Comparator.comparing(Gesuch::getLaufnummer).reversed());
-			gesuchMap.put(antraege.get(0).getId(), antraege.get(0)); //nur neusten Antrag zurueckgeben
-		}
-		return gesuchMap;
+		return fallToAntragMultimap.asMap().values().stream()
+			.map(gesuche -> ImmutableSortedSet.copyOf(getNewestGesuchComparator(), gesuche).last())
+			.collect(Collectors.toMap(Gesuch::getId, Function.identity()));
+	}
+
+	private static Comparator<Gesuch> getNewestGesuchComparator() {
+		return (g1, g2) -> ComparisonChain.start().compare(g1.getGesuchsperiode().getBasisJahr(),
+			g2.getGesuchsperiode().getBasisJahr()).compare(g1.getLaufnummer(),
+			g2.getLaufnummer()).result();
 	}
 
 	public static boolean isSameObject(@Nullable AbstractEntity thisEntity, @Nullable AbstractEntity otherEntity) {
