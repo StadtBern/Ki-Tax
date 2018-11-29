@@ -1615,44 +1615,68 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 					ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchsperiodeId)
 			);
 
-		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
-		query.distinct(true);
-
-		Root<Gesuch> root = query.from(Gesuch.class);
-
 		// We first look for all Gesuche that belongs to the gesuchsperiode and were geprueft/nurschulamt/freigegeben between
 		// the given dates.
 		final List<Tuple> allTuples = getGepruefteFreigegebeneGesucheForGesuchsperiodeTuples(datumVon, datumBis, gesuchsperiode);
 
-		List<Predicate> allPredicates = new ArrayList<>();
+		List<Gesuch> gesuche = new ArrayList<>();
+		allTuples.forEach(tuple -> {
+			final String gesuchsperiodeIdValue = String.valueOf(tuple.get(0));
+			final String fallIdValue = String.valueOf(tuple.get(1));
+			final Integer laufnummerValue = Integer.valueOf(String.valueOf(tuple.get(2)));
 
-		// for each tuple we create a new predicate, which we will use to execute the query
-		allTuples.forEach(tuple ->
-			allPredicates.add(
-				cb.and(
-					root.get(Gesuch_.fall).get(AbstractEntity_.id).in(tuple.get(0)),
-					root.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id).in(tuple.get(1)),
-					root.get(Gesuch_.laufnummer).in(tuple.get(2))
-				)
-			)
-		);
+			Gesuch gesuch = findGesuchFromFallPeriodeAndLaufnummer(gesuchsperiodeIdValue, fallIdValue, laufnummerValue);
 
-		query.where(CriteriaQueryHelper.concatenateOrExpressions(cb, allPredicates));
+			gesuche.add(gesuch);
+		});
 
-		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
-		List<Gesuch> criteriaResults = typedQuery.getResultList();
-		criteriaResults.forEach(gesuch -> authorizer.checkReadAuthorization(gesuch));
-
-		return criteriaResults;
+		return gesuche;
 	}
 
-	private List<Tuple> getGepruefteFreigegebeneGesucheForGesuchsperiodeTuples(@Nonnull LocalDate datumVon, @Nonnull LocalDate datumBis, Gesuchsperiode gesuchsperiode) {
+	private Gesuch findGesuchFromFallPeriodeAndLaufnummer(
+		@Nonnull String gesuchsperiodeId,
+		@Nonnull String fallId,
+		@Nonnull Integer laufnummer
+	) {
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
-		CriteriaQuery<Tuple> subquery = cb.createTupleQuery();
-		Root<Gesuch> subqueryRoot = subquery.from(Gesuch.class);
+		final CriteriaQuery<Gesuch> query = cb.createQuery(Gesuch.class);
+		query.distinct(true);
+		Root<Gesuch> root = query.from(Gesuch.class);
 
-		Join<Gesuch, AntragStatusHistory> antragStatusHistoryJoin = subqueryRoot.join(Gesuch_.antragStatusHistories, JoinType.LEFT);
+		ParameterExpression<String> gesuchsperiodeIdParam = cb.parameter(String.class, "gesuchsperiode");
+		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fall");
+		ParameterExpression<Integer> laufnummerParam = cb.parameter(Integer.class, "laufnummer");
+
+		Predicate fallPredicate = root.get(Gesuch_.fall).get(AbstractEntity_.id).in(gesuchsperiodeIdParam);
+		Predicate gesuchsperiodePredicate = root.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id).in(fallIdParam);
+		Predicate laufnummerPredicate = root.get(Gesuch_.laufnummer).in(laufnummerParam);
+
+		query.where(cb.and(
+			fallPredicate,
+			gesuchsperiodePredicate,
+			laufnummerPredicate
+		));
+
+		TypedQuery<Gesuch> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(gesuchsperiodeIdParam, gesuchsperiodeId);
+		typedQuery.setParameter(fallIdParam, fallId);
+		typedQuery.setParameter(laufnummerParam, laufnummer);
+
+		Gesuch gesuch = typedQuery.getSingleResult();
+		authorizer.checkReadAuthorization(gesuch);
+		return gesuch;
+	}
+
+	private List<Tuple> getGepruefteFreigegebeneGesucheForGesuchsperiodeTuples(
+		@Nonnull LocalDate datumVon,
+		@Nonnull LocalDate datumBis,
+		@Nonnull Gesuchsperiode gesuchsperiode
+	) {
+		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		CriteriaQuery<Tuple> query = cb.createTupleQuery();
+		Root<Gesuch> root = query.from(Gesuch.class);
+
+		Join<Gesuch, AntragStatusHistory> antragStatusHistoryJoin = root.join(Gesuch_.antragStatusHistories, JoinType.LEFT);
 
 		// Prepare TypedParameters
 		ParameterExpression<Gesuchsperiode> gesuchsperiodeIdParam = cb.parameter(Gesuchsperiode.class, "gesuchsperiode");
@@ -1665,33 +1689,33 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		ParameterExpression<Eingangsart> onlineParam = cb.parameter(Eingangsart.class, "online");
 
 		// Predicates
-		Predicate predicateStatusTransition = getStatusTransitionPredicate(cb, subqueryRoot, antragStatusHistoryJoin, datumVonParam, datumBisParam,
+		Predicate predicateStatusTransition = getStatusTransitionPredicate(cb, root, antragStatusHistoryJoin, datumVonParam, datumBisParam,
 			geprueftParam, freigegebenParam, nurSchulamtParam, papierParam, onlineParam);
-		Predicate predicateGesuchsperiode = cb.equal(subqueryRoot.get(Gesuch_.gesuchsperiode), gesuchsperiodeIdParam);
+		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiodeIdParam);
 
-		subquery.where(predicateGesuchsperiode, predicateStatusTransition);
+		query.where(predicateGesuchsperiode, predicateStatusTransition);
 
-		subquery.groupBy(
-			subqueryRoot.get(Gesuch_.fall).get(AbstractEntity_.id),
-			subqueryRoot.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id)
+		query.groupBy(
+			root.get(Gesuch_.fall).get(AbstractEntity_.id),
+			root.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id)
 		);
-		subquery.multiselect(
-			subqueryRoot.get(Gesuch_.fall).get(AbstractEntity_.id),
-			subqueryRoot.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id),
-			cb.max(subqueryRoot.get(Gesuch_.laufnummer))
+		query.multiselect(
+			root.get(Gesuch_.fall).get(AbstractEntity_.id),
+			root.get(Gesuch_.gesuchsperiode).get(AbstractEntity_.id),
+			cb.max(root.get(Gesuch_.laufnummer))
 		);
 
-		TypedQuery<Tuple> typedSubquery = persistence.getEntityManager().createQuery(subquery);
-		typedSubquery.setParameter(geprueftParam, AntragStatus.GEPRUEFT);
-		typedSubquery.setParameter(freigegebenParam, AntragStatus.FREIGEGEBEN);
-		typedSubquery.setParameter(nurSchulamtParam, AntragStatus.NUR_SCHULAMT);
-		typedSubquery.setParameter(papierParam, Eingangsart.PAPIER);
-		typedSubquery.setParameter(onlineParam, Eingangsart.ONLINE);
-		typedSubquery.setParameter(gesuchsperiodeIdParam, gesuchsperiode);
-		typedSubquery.setParameter(datumVonParam, datumVon.atStartOfDay());
-		typedSubquery.setParameter(datumBisParam, datumBis.atStartOfDay().plusDays(1));
+		TypedQuery<Tuple> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(geprueftParam, AntragStatus.GEPRUEFT);
+		typedQuery.setParameter(freigegebenParam, AntragStatus.FREIGEGEBEN);
+		typedQuery.setParameter(nurSchulamtParam, AntragStatus.NUR_SCHULAMT);
+		typedQuery.setParameter(papierParam, Eingangsart.PAPIER);
+		typedQuery.setParameter(onlineParam, Eingangsart.ONLINE);
+		typedQuery.setParameter(gesuchsperiodeIdParam, gesuchsperiode);
+		typedQuery.setParameter(datumVonParam, datumVon.atStartOfDay());
+		typedQuery.setParameter(datumBisParam, datumBis.atStartOfDay().plusDays(1));
 
-		return typedSubquery.getResultList();
+		return typedQuery.getResultList();
 	}
 
 	/**
