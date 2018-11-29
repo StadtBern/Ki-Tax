@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -71,6 +72,7 @@ import static ch.dvbern.ebegu.enums.UserRoleName.SUPER_ADMIN;
 @SuppressWarnings("unchecked")
 @Stateless
 @Local(ReportMassenversandService.class)
+@PermitAll
 public class ReportMassenversandServiceBean extends AbstractReportServiceBean implements ReportMassenversandService {
 
 	private static final char SEPARATOR = ';';
@@ -92,6 +94,7 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 
 	@Nonnull
 	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT })
 	public List<MassenversandDataRow> getReportMassenversand(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,
@@ -116,8 +119,6 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		List<Gesuch> resultGesuchList =
 			filterGesucheByFolgegesuch(ohneErneuerungsgesuch, gesucheFilteredByAngebotTyp);
 
-		// todo EBEGU-2007 un unico gesuch pro fall. El mas actual, pero no el gueltig ya q no tiene xq estar verfuegt
-
 		// Wenn ein Text eingegeben wurde, wird der Massenversand gespeichert
 		if (StringUtils.isNotEmpty(text) && !resultGesuchList.isEmpty()) {
 			saveMassenversand(
@@ -134,6 +135,62 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 
 		final List<MassenversandDataRow> reportDataMassenversand = createReportDataMassenversand(resultGesuchList);
 		return reportDataMassenversand;
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT })
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public UploadFileInfo generateExcelReportMassenversand(
+		@Nonnull LocalDate datumVon,
+		@Nonnull LocalDate datumBis,
+		@Nonnull String gesuchPeriodeId,
+		boolean inklBgGesuche,
+		boolean inklMischGesuche,
+		boolean inklTsGesuche,
+		boolean ohneErneuerungsgesuch,
+		@Nullable String text
+	) throws ExcelMergeException {
+
+		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_MASSENVERSAND;
+
+		InputStream is = ReportMassenversandServiceBean.class.getResourceAsStream(reportVorlage.getTemplatePath());
+		Validate.notNull(is, VORLAGE + reportVorlage.getTemplatePath() + NICHT_GEFUNDEN);
+
+		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
+		Sheet sheet = workbook.getSheet(reportVorlage.getDataSheetName());
+
+		List<MassenversandDataRow> reportData = getReportMassenversand(
+			datumVon, datumBis, gesuchPeriodeId, inklBgGesuche, inklMischGesuche, inklTsGesuche,
+			ohneErneuerungsgesuch, text);
+
+		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.findGesuchsperiode(gesuchPeriodeId);
+		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() ->
+			new EbeguEntityNotFoundException("findGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchPeriodeId)
+		);
+
+		ExcelMergerDTO excelMergerDTO = massenversandExcelConverter.toExcelMergerDTO(
+			reportData,
+			Locale.getDefault(),
+			datumVon,
+			datumBis,
+			gesuchsperiode,
+			inklBgGesuche,
+			inklMischGesuche,
+			inklTsGesuche,
+			ohneErneuerungsgesuch,
+			text);
+
+		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());
+		massenversandExcelConverter.applyAutoSize(sheet);
+
+		byte[] bytes = createWorkbook(workbook);
+
+		return fileSaverService.save(bytes,
+			reportVorlage.getDefaultExportFilename(),
+			Constants.TEMP_REPORT_FOLDERNAME,
+			getContentTypeForExport());
 	}
 
 	private List<MassenversandDataRow> createReportDataMassenversand(@Nonnull List<Gesuch> resultGesuchList) {
@@ -290,61 +347,5 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		massenversand.setEinstellungen(einstellungen);
 		massenversand.setGesuche(gesuche);
 		gesuchService.createMassenversand(massenversand);
-	}
-
-	@Nonnull
-	@Override
-	@RolesAllowed({ SUPER_ADMIN, ADMIN, ADMINISTRATOR_SCHULAMT })
-	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public UploadFileInfo generateExcelReportMassenversand(
-		@Nonnull LocalDate datumVon,
-		@Nonnull LocalDate datumBis,
-		@Nonnull String gesuchPeriodeId,
-		boolean inklBgGesuche,
-		boolean inklMischGesuche,
-		boolean inklTsGesuche,
-		boolean ohneErneuerungsgesuch,
-		@Nullable String text
-	) throws ExcelMergeException {
-
-		final ReportVorlage reportVorlage = ReportVorlage.VORLAGE_REPORT_MASSENVERSAND;
-
-		InputStream is = ReportMassenversandServiceBean.class.getResourceAsStream(reportVorlage.getTemplatePath());
-		Validate.notNull(is, VORLAGE + reportVorlage.getTemplatePath() + NICHT_GEFUNDEN);
-
-		Workbook workbook = ExcelMerger.createWorkbookFromTemplate(is);
-		Sheet sheet = workbook.getSheet(reportVorlage.getDataSheetName());
-
-		List<MassenversandDataRow> reportData = getReportMassenversand(
-			datumVon, datumBis, gesuchPeriodeId, inklBgGesuche, inklMischGesuche, inklTsGesuche,
-			ohneErneuerungsgesuch, text);
-
-		Optional<Gesuchsperiode> gesuchsperiodeOptional = gesuchsperiodeService.findGesuchsperiode(gesuchPeriodeId);
-		Gesuchsperiode gesuchsperiode = gesuchsperiodeOptional.orElseThrow(() ->
-			new EbeguEntityNotFoundException("findGesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchPeriodeId)
-		);
-
-		ExcelMergerDTO excelMergerDTO = massenversandExcelConverter.toExcelMergerDTO(
-			reportData,
-			Locale.getDefault(),
-			datumVon,
-			datumBis,
-			gesuchsperiode,
-			inklBgGesuche,
-			inklMischGesuche,
-			inklTsGesuche,
-			ohneErneuerungsgesuch,
-			text);
-
-		mergeData(sheet, excelMergerDTO, reportVorlage.getMergeFields());
-		massenversandExcelConverter.applyAutoSize(sheet);
-
-		byte[] bytes = createWorkbook(workbook);
-
-		return fileSaverService.save(bytes,
-			reportVorlage.getDefaultExportFilename(),
-			Constants.TEMP_REPORT_FOLDERNAME,
-			getContentTypeForExport());
 	}
 }

@@ -1099,7 +1099,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setDatumGewarntNichtFreigegeben(LocalDate.now());
 				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
-				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
+				LOG.error("Mail WarnungGesuchNichtFreigegeben konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
 			}
 		}
@@ -1143,7 +1143,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				gesuch.setDatumGewarntFehlendeQuittung(LocalDate.now());
 				updateGesuch(gesuch, false, null);
 			} catch (MailException e) {
-				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
+				LOG.error("Mail WarnungFreigabequittungFehlt konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
 			}
 		}
@@ -1170,7 +1170,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				}
 				removeGesuch(gesuch.getId(), typ);
 			} catch (MailException e) {
-				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch {}", gesuch.getId(), e);
+				LOG.error("Mail InfoGesuchGeloescht konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
 				anzahl--;
 			}
 		}
@@ -1505,19 +1505,19 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	private void logDeletingOfGesuchstellerAntrag(@Nonnull Fall fall, @Nonnull Gesuchsperiode gesuchsperiode) {
 		LOG.info("****************************************************");
 		LOG.info("Online Gesuch wird gelöscht:");
-		LOG.info("Benutzer: {}", principalBean.getBenutzer().getUsername());
-		LOG.info("Fall: {}", fall.getFallNummer());
-		LOG.info("Gesuchsperiode: {}", gesuchsperiode.getGesuchsperiodeString());
+		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
+		LOG.info("Fall: " + fall.getFallNummer());
+		LOG.info("Gesuchsperiode: " + gesuchsperiode.getGesuchsperiodeString());
 		LOG.info("****************************************************");
 	}
 
 	private void logDeletingOfAntrag(@Nonnull Gesuch gesuch) {
 		LOG.info("****************************************************");
 		LOG.info("Gesuch wird gelöscht:");
-		LOG.info("Benutzer: {}", principalBean.getBenutzer().getUsername());
-		LOG.info("Fall: {}", gesuch.getFall().getFallNummer());
-		LOG.info("Gesuchsperiode: {}", gesuch.getGesuchsperiode().getGesuchsperiodeString());
-		LOG.info("Gesuch-Id: {}", gesuch.getId());
+		LOG.info("Benutzer: " + principalBean.getBenutzer().getUsername());
+		LOG.info("Fall: " + gesuch.getFall().getFallNummer());
+		LOG.info("Gesuchsperiode: " + gesuch.getGesuchsperiode().getGesuchsperiodeString());
+		LOG.info("Gesuch-Id: " + gesuch.getId());
 		LOG.info("****************************************************");
 	}
 

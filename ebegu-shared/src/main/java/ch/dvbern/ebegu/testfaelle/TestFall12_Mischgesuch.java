@@ -32,7 +32,6 @@ import ch.dvbern.ebegu.enums.BetreuungsangebotTyp;
 import ch.dvbern.ebegu.enums.Geschlecht;
 import ch.dvbern.ebegu.enums.Kinderabzug;
 
-// todo EBEGU-2007 remove???
 public class TestFall12_Mischgesuch extends AbstractTestfall {
 
 	private static final String FAMILIENNAME = "Schmid";

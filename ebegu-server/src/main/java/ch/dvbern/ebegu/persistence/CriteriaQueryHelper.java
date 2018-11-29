@@ -132,21 +132,6 @@ public class CriteriaQueryHelper {
 	}
 
 	@Nullable
-	public static Predicate concatenateOrExpressions(@Nonnull final CriteriaBuilder builder, @Nonnull final List<Predicate> predicatesToUse) {
-		Predicate concatenated = null;
-		for (final Predicate expression : predicatesToUse) {
-			if (concatenated == null) {
-				// Dies ist die erste
-				concatenated = expression;
-			} else {
-				// anhaengen
-				concatenated = builder.or(concatenated, expression);
-			}
-		}
-		return concatenated;
-	}
-
-	@Nullable
 	public static Predicate concatenateExpressions(@Nonnull final CriteriaBuilder builder, @Nonnull Predicate... predicatesToUse) {
 		return concatenateExpressions(builder, Arrays.asList(predicatesToUse));
 	}
