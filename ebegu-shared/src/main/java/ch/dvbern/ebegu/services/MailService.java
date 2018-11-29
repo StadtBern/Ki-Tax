@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -112,4 +113,9 @@ public interface MailService {
 	 * schickt eine email an den uebergebenen Empfaenger die angibt wie das angehaengte File heruntergeladen werden kann
 	 */
 	void sendDocumentCreatedEmail(@Nonnull String receiverEmail, @Nullable DownloadFile attachement, @Nonnull String downloadurl) throws MailException;
+
+	/**
+	 * schickt eine email an den verantwortlichen SCH und informiert, dass das Gesuch verfuegt wurde
+	 */
+	void sendInfoGesuchVerfuegtVerantwortlicherSCH(@Nonnull  Gesuch gesuch, @Nonnull Benutzer verantwortlicherSCH) throws MailException;
 }

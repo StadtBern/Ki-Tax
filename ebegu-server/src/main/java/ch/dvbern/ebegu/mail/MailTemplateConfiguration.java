@@ -140,6 +140,10 @@ public class MailTemplateConfiguration {
 			toArgumentPair(GESUCHSTELLER, gesuchsteller),
 			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
+	public String getInfoGesuchVerfuegtVerantwortlicherSCH(@Nonnull Gesuch gesuch) {
+		return processTemplate("InfoGesuchVerfuegtVerantwortlicherSCH.ftl",
+			toArgumentPair("gesuch", gesuch));
+	}
 
 	private String processTemplateGesuch(@Nonnull String nameOfTemplate, @Nonnull Gesuch gesuch, @Nonnull Gesuchsteller gesuchsteller, @Nonnull Object[]... extraValuePairs) {
 		Object[][] paramsToPass = Arrays.copyOf(extraValuePairs, extraValuePairs.length + 2);

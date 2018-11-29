@@ -31,10 +31,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.DownloadFile;
 import ch.dvbern.ebegu.entities.Fall;
@@ -50,6 +47,9 @@ import ch.dvbern.ebegu.errors.EbeguEntityNotFoundException;
 import ch.dvbern.ebegu.errors.MailException;
 import ch.dvbern.ebegu.mail.MailTemplateConfiguration;
 import ch.dvbern.ebegu.util.ServerMessageUtil;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -376,6 +376,20 @@ public class MailServiceBean extends AbstractMailServiceBean implements MailServ
 			LOG.error("E-Mail mit Report versendet konnte nicht verschickt werden an {}", receiverEmail, e);
 			throw e;
 		}
+	}
+
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, ADMIN, SACHBEARBEITER_JA })
+	public void sendInfoGesuchVerfuegtVerantwortlicherSCH(@Nonnull Gesuch gesuch, @Nonnull Benutzer verantwortlicherSCH) throws MailException {
+		String mailaddress = verantwortlicherSCH.getEmail();
+		if (StringUtils.isNotEmpty(mailaddress)) {
+			String message = mailTemplateConfig.getInfoGesuchVerfuegtVerantwortlicherSCH(gesuch);
+			sendMessageWithTemplate(message, mailaddress);
+			LOG.info("Email fuer InfoGesuchVerfuegtVerantwortlicherSCH wurde versendet an {}", mailaddress);
+		} else {
+			LOG.warn("skipping InfoGesuchVerfuegtVerantwortlicherSCH because verantwortlicherSCH has no mailaddress");
+		}
+
 	}
 
 	/**
