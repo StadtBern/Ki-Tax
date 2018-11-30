@@ -140,6 +140,7 @@ public class MailTemplateConfiguration {
 			toArgumentPair(GESUCHSTELLER, gesuchsteller),
 			toArgumentPair(EMPFAENGER_MAIL, empfaengerMail));
 	}
+
 	public String getInfoGesuchVerfuegtVerantwortlicherSCH(@Nonnull Gesuch gesuch) {
 		return processTemplate("InfoGesuchVerfuegtVerantwortlicherSCH.ftl",
 			toArgumentPair("gesuch", gesuch));

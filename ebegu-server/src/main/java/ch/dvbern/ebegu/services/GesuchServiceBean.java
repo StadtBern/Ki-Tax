@@ -1423,7 +1423,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				try {
 					mailService.sendInfoGesuchVerfuegtVerantwortlicherSCH(gesuch, verantwortlicherSCH);
 				} catch (MailException e) {
-					LOG.error("Mail InfoGesuchVerfuegtVerantwortlicherSCH konnte nicht verschickt werden fuer Gesuch " + gesuch.getId(), e);
+					LOG.error("Mail InfoGesuchVerfuegtVerantwortlicherSCH konnte nicht verschickt werden fuer Gesuch {}",
+						gesuch.getId(), e);
 				}
 			}
 			// neues Gesuch erst nachdem das andere auf ungültig gesetzt wurde setzen wegen unique key
