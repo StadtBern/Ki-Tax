@@ -74,9 +74,9 @@ public class EbeguUtil {
 	}
 
 	private static Comparator<Gesuch> getNewestGesuchComparator() {
-		return (g1, g2) -> ComparisonChain.start().compare(g1.getGesuchsperiode().getBasisJahr(),
-			g2.getGesuchsperiode().getBasisJahr()).compare(g1.getLaufnummer(),
-			g2.getLaufnummer()).result();
+		return (g1, g2) -> ComparisonChain.start()
+			.compare(g1.getGesuchsperiode().getBasisJahr(), g2.getGesuchsperiode().getBasisJahr())
+			.compare(g1.getLaufnummer(), g2.getLaufnummer()).result();
 	}
 
 	public static boolean isSameObject(@Nullable AbstractEntity thisEntity, @Nullable AbstractEntity otherEntity) {
