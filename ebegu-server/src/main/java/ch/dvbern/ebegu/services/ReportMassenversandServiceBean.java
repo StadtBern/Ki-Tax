@@ -234,9 +234,10 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 			row.setGs1Vorname(gesuchstellerJA.getVorname());
 			row.setGs1PersonId(gesuchstellerJA.getEwkPersonId());
 			row.setGs1Mail(gesuchstellerJA.getMail());
-			final GesuchstellerAdresse currentAddress = gesuch.getGesuchsteller1().getWohnadresseAm(LocalDate.now());
-			if (currentAddress != null) {
-				row.setAdresse(currentAddress.getAddressAsString());
+			final GesuchstellerAdresse currentKorrespondezAdresse =
+				gesuch.getGesuchsteller1().extractEffektiveKorrespondezAdresse(LocalDate.now());
+			if (currentKorrespondezAdresse != null) {
+				row.setAdresse(currentKorrespondezAdresse.getAddressAsString());
 			}
 		}
 	}

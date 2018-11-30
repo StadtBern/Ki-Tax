@@ -287,6 +287,23 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		return folgegesuch;
 	}
 
+	/**$
+	 * Will return the korrespondenzadresse if it is defined. If not it will return the current Wohnadresse
+	 */
+	@Nullable
+	public GesuchstellerAdresse extractEffektiveKorrespondezAdresse(LocalDate stichtag) {
+		final GesuchstellerAdresseContainer korrespondezAdresse = extractKorrespondezAdresse();
+		if (korrespondezAdresse != null) {
+			return korrespondezAdresse.getGesuchstellerAdresseJA();
+		}
+		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
+			if (AdresseTyp.WOHNADRESSE == adresse.extractAdresseTyp() && adresse.extractGueltigkeit().contains(stichtag)) {
+				return adresse.getGesuchstellerAdresseJA();
+			}
+		}
+		return null;
+	}
+
 	@Nullable
 	public GesuchstellerAdresse getWohnadresseAm(LocalDate stichtag) {
 		for (GesuchstellerAdresseContainer adresse : getAdressen()) {
