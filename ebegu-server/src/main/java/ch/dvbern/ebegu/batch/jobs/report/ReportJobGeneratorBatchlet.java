@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.batch.api.AbstractBatchlet;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
@@ -102,7 +103,7 @@ public class ReportJobGeneratorBatchlet extends AbstractBatchlet {
 		@Nonnull LocalDate dateFrom,
 		@Nonnull LocalDate dateTo,
 		@Nonnull String gesuchPeriodeID,
-		@Nonnull String zahlungsauftragId
+		@Nullable String zahlungsauftragId
 	) throws ExcelMergeException, IOException, MergeDocException, URISyntaxException {
 
 		switch (workJobType) {

@@ -1603,6 +1603,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
+	@Nonnull
 	public List<Gesuch> getGepruefteFreigegebeneGesucheForGesuchsperiode(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,
@@ -1659,8 +1660,8 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Predicate predicateStatusTransition = getStatusTransitionPredicate(cb, root, antragStatusHistoryJoin, datumVonParam, datumBisParam,
 			geprueftParam, freigegebenParam, nurSchulamtParam, papierParam, onlineParam);
 		Predicate predicateGesuchsperiode = cb.equal(root.get(Gesuch_.gesuchsperiode), gesuchsperiodeIdParam);
-		// An Erstgesuch is that which has its laufnummer=0
-		Predicate predicateErstgesuch = cb.equal(root.get(Gesuch_.laufnummer), laufnummerParam);
+		// An Erstgesuch is not MUTATION (i.e. ERSTGESUCH or ERNEUERUNGSGESUCH)
+		Predicate predicateErstgesuch = cb.equal(root.get(Gesuch_.typ), AntragTyp.MUTATION).not();
 
 		query.where(predicateGesuchsperiode, predicateStatusTransition, predicateErstgesuch);
 

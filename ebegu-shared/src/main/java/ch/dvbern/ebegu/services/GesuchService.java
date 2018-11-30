@@ -420,6 +420,7 @@ public interface GesuchService {
 	 * Returns all Gesuche that have been set as GEPRUEFT (for Papiergesuche) or as FREIGEGEBEN (for Onlinegesuche)
 	 * between the given dates and that belongs to the given period.
 	 */
+	@Nonnull
 	List<Gesuch> getGepruefteFreigegebeneGesucheForGesuchsperiode(
 		@Nonnull LocalDate datumVon,
 		@Nonnull LocalDate datumBis,

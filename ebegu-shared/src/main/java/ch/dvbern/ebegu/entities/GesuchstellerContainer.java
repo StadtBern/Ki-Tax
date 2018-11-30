@@ -287,9 +287,10 @@ public class GesuchstellerContainer extends AbstractEntity implements Searchable
 		return folgegesuch;
 	}
 
-	/**$
+	/**
 	 * Will return the korrespondenzadresse if it is defined. If not it will return the current Wohnadresse
 	 */
+	//TODO (team) so was ähnliches kommt auch im PrintUtil.getGesuchstellerAdresse bzw. in den neuen PDFGenerators vor!
 	@Nullable
 	public GesuchstellerAdresse extractEffektiveKorrespondezAdresse(LocalDate stichtag) {
 		final GesuchstellerAdresseContainer korrespondezAdresse = extractKorrespondezAdresse();
