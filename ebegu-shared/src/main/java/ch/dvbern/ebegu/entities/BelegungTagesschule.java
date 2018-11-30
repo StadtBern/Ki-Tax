@@ -24,11 +24,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import ch.dvbern.ebegu.enums.EnumAbholungTagesschule;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
@@ -60,6 +63,11 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Column
 	private String planKlasse;
 
+	@Enumerated(value = EnumType.STRING)
+	@Nullable
+	@Column
+	private EnumAbholungTagesschule abholungTagesschule;
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
@@ -76,6 +84,10 @@ public class BelegungTagesschule extends AbstractEntity {
 		BelegungTagesschule otherBelegungTS = (BelegungTagesschule) other;
 		return Objects.equals(getPlanKlasse(), otherBelegungTS.getPlanKlasse()) &&
 			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum());
+
+		// TODO  (reviewer) muss hier noch die abholungTagesschule beruecksichtigt werden?
+		// TODO  Ich denke nicht, weil zwei - eigentlich identische - Anmeldungen nicht zweimal gemacht werden können sollten,
+		// TODO  die sich nur in der Abholung unterscheiden?
 	}
 
 	@Nonnull
@@ -105,11 +117,21 @@ public class BelegungTagesschule extends AbstractEntity {
 		this.planKlasse = planKlasse;
 	}
 
+	@Nullable
+	public EnumAbholungTagesschule getAbholungTagesschule() {
+		return abholungTagesschule;
+	}
+
+	public void setAbholungTagesschule(@Nullable EnumAbholungTagesschule abholungTagesschule) {
+		this.abholungTagesschule = abholungTagesschule;
+	}
+
 	@Nonnull
 	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
 		super.copyForMutation(mutation);
 		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
 		mutation.setPlanKlasse(this.getPlanKlasse());
+		mutation.setAbholungTagesschule(this.abholungTagesschule);
 
 		// Don't copy them, because it's a ManyToMany realation
 		mutation.getModuleTagesschule().clear();

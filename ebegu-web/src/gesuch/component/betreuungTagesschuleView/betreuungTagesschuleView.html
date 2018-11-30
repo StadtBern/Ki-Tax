@@ -55,6 +55,29 @@
                     </div>
                 </div>
 
+                <!-- Abholung aus der Tagesschule -->
+                <!--TODO (reviewer) das required (*) erscheint immer, das ist aber bei allen selects so -->
+                <!--TODO weil beim label einfach class = required gesetzt ist -->
+                <div class="row marginTop20">
+                    <div class="col-sm-12 dv-input-container-medium">
+                        <div class="form-group">
+                            <label class="md-no-float required" for="abholungTagesschule_ID">
+                                <span data-translate="ABHOLUNG_AUS_TAGESSCHULE"></span>
+                            </label>
+                            <div class="dv-select-style">
+                                <select aria-describedby="abholungTagesschule_ID-error" name="abholungTagesschule" id="abholungTagesschule_ID"
+                                        ng-model="vm.betreuung.belegungTagesschule.abholungTagesschule"
+                                        class="form-control"
+                                        ng-options="(abholungTagesschule| translate) for abholungTagesschule in vm.abholungTagesschuleValues "
+                                        ng-required="vm.isGesuchstellerRole()">
+                                </select>
+                                <dv-error-messages input-id="abholungTagesschule"
+                                                   for="vm.form.abholungTagesschule.$error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TS-Module -->
                 <div class="dv-ebegu-calendar__wrapper-tagesschule" ng-if="vm.isTagesschuleAlreadySelected()">
 

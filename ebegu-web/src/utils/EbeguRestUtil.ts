@@ -2556,6 +2556,7 @@ export default class EbeguRestUtil {
             belegungTS.moduleTagesschule = this.parseModuleTagesschuleArray(belegungFromServer.moduleTagesschule);
             belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
             belegungTS.planKlasse = belegungFromServer.planKlasse;
+            belegungTS.abholungTagesschule = belegungFromServer.abholungTagesschule;
             return belegungTS;
         }
         return undefined;
@@ -2567,6 +2568,7 @@ export default class EbeguRestUtil {
             restBelegung.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(belegungTS.moduleTagesschule);
             restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
             restBelegung.planKlasse = belegungTS.planKlasse;
+            restBelegung.abholungTagesschule = belegungTS.abholungTagesschule;
             return restBelegung;
         }
         return undefined;

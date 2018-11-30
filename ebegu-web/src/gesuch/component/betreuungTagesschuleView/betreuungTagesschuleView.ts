@@ -22,6 +22,7 @@ import MitteilungRS from '../../../core/service/mitteilungRS.rest';
 import {TSAnmeldungMutationZustand} from '../../../models/enums/TSAnmeldungMutationZustand';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {getWeekdaysValues, TSDayOfWeek} from '../../../models/enums/TSDayOfWeek';
+import {getTSAbholungTagesschuleValues} from '../../../models/enums/TSAbholungTagesschule';
 import {getTSModulTagesschuleNameValues, TSModulTagesschuleName} from '../../../models/enums/TSModulTagesschuleName';
 import TSBetreuung from '../../../models/TSBetreuung';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
@@ -73,6 +74,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
     showNochNichtFreigegeben: boolean = false;
     showMutiert: boolean = false;
     aktuellGueltig: boolean = true;
+    abholungTagesschuleValues: Array<any>;
 
     static $inject = ['$state', 'GesuchModelManager', 'EbeguUtil', 'CONSTANTS', '$scope', 'BerechnungsManager', 'ErrorService',
         'AuthServiceRS', 'WizardStepManager', '$stateParams', 'MitteilungRS', 'DvDialog', '$log', '$timeout', '$translate'];
@@ -86,7 +88,7 @@ export class BetreuungTagesschuleViewController extends BetreuungViewController 
 
         super($state, gesuchModelManager, ebeguUtil, CONSTANTS, $scope, berechnungsManager, errorService, authServiceRS,
             wizardStepManager, $stateParams, mitteilungRS, dvDialog, $log, $timeout, $translate);
-
+        this.abholungTagesschuleValues = getTSAbholungTagesschuleValues();
         this.$scope.$watch(() => {
             return this.getBetreuungModel().institutionStammdaten;
         }, (newValue, oldValue) => {
