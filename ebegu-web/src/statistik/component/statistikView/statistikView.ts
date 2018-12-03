@@ -15,6 +15,7 @@
 
 import {IComponentOptions, IIntervalService} from 'angular';
 import {IStateService} from 'angular-ui-router';
+import * as moment from 'moment';
 import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import BatchJobRS from '../../../core/service/batchRS.rest';
