@@ -83,11 +83,8 @@ public class BelegungTagesschule extends AbstractEntity {
 		}
 		BelegungTagesschule otherBelegungTS = (BelegungTagesschule) other;
 		return Objects.equals(getPlanKlasse(), otherBelegungTS.getPlanKlasse()) &&
-			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum());
-
-		// TODO  (reviewer) muss hier noch die abholungTagesschule beruecksichtigt werden?
-		// TODO  Ich denke nicht, weil zwei - eigentlich identische - Anmeldungen nicht zweimal gemacht werden können sollten,
-		// TODO  die sich nur in der Abholung unterscheiden?
+			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum()) &&
+			Objects.equals(getAbholungTagesschule(), otherBelegungTS.getAbholungTagesschule());
 	}
 
 	@Nonnull

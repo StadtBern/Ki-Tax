@@ -56,12 +56,10 @@
                 </div>
 
                 <!-- Abholung aus der Tagesschule -->
-                <!--TODO (reviewer) das required (*) erscheint immer, das ist aber bei allen selects so -->
-                <!--TODO weil beim label einfach class = required gesetzt ist -->
                 <div class="row marginTop20">
                     <div class="col-sm-12 dv-input-container-medium">
                         <div class="form-group">
-                            <label class="md-no-float required" for="abholungTagesschule_ID">
+                            <label class="md-no-float" ng-class="{'required': vm.isGesuchstellerRole()}" for="abholungTagesschule_ID">
                                 <span data-translate="ABHOLUNG_AUS_TAGESSCHULE"></span>
                             </label>
                             <div class="dv-select-style">
