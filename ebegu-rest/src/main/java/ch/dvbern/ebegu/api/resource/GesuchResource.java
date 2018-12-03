@@ -862,4 +862,16 @@ public class GesuchResource {
 		}
 		return Response.ok().build();
 	}
+
+	@ApiOperation(value = "Gibt alle Antraege (Gesuche und Mutationen) eines Falls zurueck",
+		responseContainer = "List", response = JaxAntragDTO.class)
+	@Nonnull
+	@GET
+	@Path("/massenversand/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public List<String> getMassenversandTexteForGesuch(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchIdJax) {
+		Validate.notNull(gesuchIdJax.getId());
+		return gesuchService.getMassenversandTexteForGesuch(converter.toEntityId(gesuchIdJax));
+	}
 }

@@ -14,7 +14,6 @@
  */
 
 import {IComponentOptions, ILogService} from 'angular';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
@@ -23,11 +22,11 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSDokument from '../../../models/TSDokument';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import EbeguUtil from '../../../utils/EbeguUtil';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import DokumenteRS from '../../service/dokumenteRS.rest';
 import GesuchModelManager from '../../service/gesuchModelManager';
+import GesuchRS from '../../service/gesuchRS.rest';
 import GlobalCacheService from '../../service/globalCacheService';
 import WizardStepManager from '../../service/wizardStepManager';
 import AbstractGesuchViewController from '../abstractGesuchView';
@@ -57,16 +56,17 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
     dokumenteSonst: TSDokumentGrund[] = [];
     dokumentePapiergesuch: TSDokumentGrund[] = [];
     dokumenteFreigabequittung: TSDokumentGrund[] = [];
+    massenversand: string[] = [];
 
     static $inject: string[] = ['$stateParams', 'GesuchModelManager', 'BerechnungsManager',
         'DokumenteRS', '$log', 'WizardStepManager', 'EbeguUtil', 'GlobalCacheService', '$scope',
-        '$timeout', 'AuthServiceRS'];
+        '$timeout', 'GesuchRS', 'AuthServiceRS'];
 
     /* @ngInject */
     constructor($stateParams: IStammdatenStateParams, gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 private dokumenteRS: DokumenteRS, private $log: ILogService, wizardStepManager: WizardStepManager,
                 private ebeguUtil: EbeguUtil, private globalCacheService: GlobalCacheService, $scope: IScope,
-                $timeout: ITimeoutService, private authServiceRS: AuthServiceRS) {
+                $timeout: ITimeoutService, private gesuchRS: GesuchRS, private authServiceRS: AuthServiceRS) {
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.DOKUMENTE, $timeout);
         this.parsedNum = parseInt($stateParams.gesuchstellerNumber, 10);
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
@@ -90,6 +90,9 @@ export class DokumenteViewController extends AbstractGesuchViewController<any> {
         } else {
             this.$log.debug('No gesuch für dokumente');
         }
+        this.gesuchRS.getMassenversandTexteForGesuch(this.gesuchModelManager.getGesuch().id).then((response: any) => {
+            this.massenversand = response;
+        });
     }
 
     private searchDokumente(alleDokumente: TSDokumenteDTO, dokumenteForType: TSDokumentGrund[], dokumentGrundTyp: TSDokumentGrundTyp) {

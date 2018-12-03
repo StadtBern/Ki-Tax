@@ -88,6 +88,28 @@
                     </dv-dokumente-list>
                 </div>
 
+
+                <!-- -------------------------------------------Massenversand -------------------------------------  -->
+
+                <div dv-show-element
+                     dv-show-allowed-roles="vm.TSRoleUtil.getJugendamtAndSchulamtRole()"
+                     dv-show-expression="vm.massenversand.length > 0">
+                    <h2>
+                        <span data-translate="MASSENVERSAND_LIST"></span>
+                    </h2>
+                    <div class="overflow-scroll-table">
+                        <table st-table="table" st-safe-src="vm.massenversand"
+                               class="table dokumentgrundtable" id="massenversand">
+                            <tbody>
+                                <tr ng-repeat="row in table">
+                                    <td>{{row}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
                 <!-- -------------------------------------------Navigation--------------------------------------------  -->
 
                 <div class="nav-row-dokumente">

@@ -95,7 +95,11 @@ public final class PrintUtil {
 	public static String createFallNummerString(Gesuch gesuch) {
 
 		return Integer.toString(gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb().getYear()).substring(2, 4) + "."
-			+ Strings.padStart(Long.toString(gesuch.getFall().getFallNummer()), FALLNUMMER_MAXLAENGE, '0');
+			+ getPaddedFallnummer(gesuch.getFall().getFallNummer());
+	}
+
+	public static String getPaddedFallnummer(long fallNummer) {
+		return Strings.padStart(Long.toString(fallNummer), FALLNUMMER_MAXLAENGE, '0');
 	}
 
 	/**

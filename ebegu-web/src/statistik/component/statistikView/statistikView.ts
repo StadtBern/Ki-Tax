@@ -15,28 +15,32 @@
 
 import {IComponentOptions, IIntervalService} from 'angular';
 import {IStateService} from 'angular-ui-router';
-import TSStatistikParameter from '../../../models/TSStatistikParameter';
-import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
-import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
-import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
-import {TSRole} from '../../../models/enums/TSRole';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import * as moment from 'moment';
-import DateUtil from '../../../utils/DateUtil';
-import {ReportAsyncRS} from '../../../core/service/reportAsyncRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
 import ErrorService from '../../../core/errors/service/ErrorService';
 import BatchJobRS from '../../../core/service/batchRS.rest';
-import TSWorkJob from '../../../models/TSWorkJob';
+import {DownloadRS} from '../../../core/service/downloadRS.rest';
+import GesuchsperiodeRS from '../../../core/service/gesuchsperiodeRS.rest';
+import {ReportAsyncRS} from '../../../core/service/reportAsyncRS.rest';
+import {RemoveDialogController} from '../../../gesuch/dialog/RemoveDialogController';
+import {TSRole} from '../../../models/enums/TSRole';
+import {TSStatistikParameterType} from '../../../models/enums/TSStatistikParameterType';
 import TSBatchJobInformation from '../../../models/TSBatchJobInformation';
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import TSStatistikParameter from '../../../models/TSStatistikParameter';
+import TSWorkJob from '../../../models/TSWorkJob';
+import DateUtil from '../../../utils/DateUtil';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import IFormController = angular.IFormController;
 import ILogService = angular.ILogService;
-import Moment = moment.Moment;
 import ITranslateService = angular.translate.ITranslateService;
+import Moment = moment.Moment;
 
 let template = require('./statistikView.html');
 require('./statistikView.less');
+
+let removeDialogTemplate = require('../../../gesuch/dialog/removeDialogTemplate.html');
 
 export class StatistikViewComponentConfig implements IComponentOptions {
     transclude = false;
@@ -46,6 +50,7 @@ export class StatistikViewComponentConfig implements IComponentOptions {
 }
 
 export class StatistikViewController {
+
     private polling: angular.IPromise<any>;
     private _statistikParameter: TSStatistikParameter;
     private _gesuchsperioden: Array<TSGesuchsperiode>;
@@ -57,13 +62,14 @@ export class StatistikViewController {
     private minDate: Moment;
     private userjobs: Array<TSWorkJob>;
     private allJobs: Array<TSBatchJobInformation>;
+    private flagShowErrorNoGesuchSelected: boolean = false;
 
     static $inject: string[] = ['$state', 'GesuchsperiodeRS', '$log', 'ReportAsyncRS', 'DownloadRS', 'BatchJobRS',
-        'ErrorService', '$translate', '$interval'];
+        'ErrorService', '$translate', '$interval', 'DvDialog'];
 
     constructor(private $state: IStateService, private gesuchsperiodeRS: GesuchsperiodeRS, private $log: ILogService,
         private reportAsyncRS: ReportAsyncRS, private downloadRS: DownloadRS, private bachJobRS: BatchJobRS, private errorService: ErrorService,
-        private $translate: ITranslateService, private $interval: IIntervalService) {
+        private $translate: ITranslateService, private $interval: IIntervalService, private dvDialog: DvDialog) {
     }
 
     $onInit() {
@@ -102,13 +108,13 @@ export class StatistikViewController {
     }
 
     public generateStatistik(form: IFormController, type?: TSStatistikParameterType): void {
-        if (form.$valid) {
+        if (this.isMassenversandValid(type) && form.$valid) {
             let tmpType = (<any>TSStatistikParameterType)[type];
             tmpType ? this.$log.debug('Statistik Type: ' + tmpType) : this.$log.debug('default, Type not recognized');
             this.$log.debug('Validated Form: ' + form.$name);
 
             switch (tmpType) {
-                case TSStatistikParameterType.GESUCH_STICHTAG: {
+                case TSStatistikParameterType.GESUCH_STICHTAG:
                     this.reportAsyncRS.getGesuchStichtagReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
                         .then((batchExecutionId: string) => {
@@ -118,8 +124,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.GESUCH_ZEITRAUM: {
+
+                case TSStatistikParameterType.GESUCH_ZEITRAUM:
                     this.reportAsyncRS.getGesuchZeitraumReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.gesuchsperiode ? this._statistikParameter.gesuchsperiode.toString() : null)
@@ -130,8 +136,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.KINDER: {
+
+                case TSStatistikParameterType.KINDER:
                     this.reportAsyncRS.getKinderReportExcel(
                         this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
@@ -143,8 +149,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.GESUCHSTELLER: {
+
+                case TSStatistikParameterType.GESUCHSTELLER:
                     this.reportAsyncRS.getGesuchstellerReportExcel(this._statistikParameter.stichtag.format(this.DATE_PARAM_FORMAT))
                         .then((batchExecutionId: string) => {
                             this.informReportGenerationStarted(batchExecutionId);
@@ -153,8 +159,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.KANTON: {
+
+                case TSStatistikParameterType.KANTON:
                     this.reportAsyncRS.getKantonReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                         .then((batchExecutionId: string) => {
@@ -164,8 +170,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.MITARBEITERINNEN: {
+
+                case TSStatistikParameterType.MITARBEITERINNEN:
                     this.reportAsyncRS.getMitarbeiterinnenReportExcel(this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT))
                         .then((batchExecutionId: string) => {
@@ -175,8 +181,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.BENUTZER: {
+
+                case TSStatistikParameterType.BENUTZER:
                     this.reportAsyncRS.getBenutzerReportExcel()
                         .then((batchExecutionId: string) => {
                             this.informReportGenerationStarted(batchExecutionId);
@@ -185,8 +191,8 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
-                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG: {
+
+                case TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG:
                     this.reportAsyncRS.getGesuchstellerKinderBetreuungReportExcel(
                         this._statistikParameter.von.format(this.DATE_PARAM_FORMAT),
                         this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
@@ -198,7 +204,7 @@ export class StatistikViewController {
                             this.$log.error('An error occurred downloading the document, closing download window.');
                         });
                     break;
-                }
+
                 case TSStatistikParameterType.ZAHLUNGEN_PERIODE:
                     if (this._statistikParameter.gesuchsperiode) {
                         this.reportAsyncRS.getZahlungPeriodeReportExcel(
@@ -215,11 +221,44 @@ export class StatistikViewController {
                         this.$log.warn('gesuchsperiode muss gewählt sein');
                     }
                     break;
+                case TSStatistikParameterType.MASSENVERSAND:
+                    if (this.statistikParameter.text) {
+                        this.dvDialog.showRemoveDialog(removeDialogTemplate, undefined, RemoveDialogController, {
+                            title: this.$translate.instant('MASSENVERSAND_ERSTELLEN_CONFIRM_TITLE'),
+                            deleteText: this.$translate.instant('MASSENVERSAND_ERSTELLEN_CONFIRM_INFO'),
+                            parentController: undefined,
+                            elementID: undefined
+                        }).then(() => {   //User confirmed removal
+                            this.createMassenversand();
+                        });
+                    } else {
+                        this.createMassenversand();
+                    }
+                    break;
                 default:
                     this.$log.debug('default, Type not recognized');
                     break;
             }
         }
+    }
+
+    private createMassenversand(): void {
+        this.$log.info('Erstelle Massenversand');
+        this.reportAsyncRS.getMassenversandReportExcel(
+            this._statistikParameter.von ? this._statistikParameter.von.format(this.DATE_PARAM_FORMAT) : null,
+            this._statistikParameter.bis.format(this.DATE_PARAM_FORMAT),
+            this._statistikParameter.gesuchsperiode.toString(),
+            this._statistikParameter.bgGesuche,
+            this._statistikParameter.mischGesuche,
+            this._statistikParameter.tsGesuche,
+            this._statistikParameter.ohneFolgegesuche,
+            this._statistikParameter.text)
+            .then((batchExecutionId: string) => {
+                this.informReportGenerationStarted(batchExecutionId);
+            })
+            .catch(() => {
+                this.$log.error('An error occurred downloading the document, closing download window.');
+            });
     }
 
     private informReportGenerationStarted(batchExecutionId: string) {
@@ -260,5 +299,23 @@ export class StatistikViewController {
             }));
             this.allJobs = res;
         });
+    }
+
+    private isMassenversandValid(type?: TSStatistikParameterType): boolean {
+        if (type === TSStatistikParameterType.MASSENVERSAND) {
+            // simulate a click in the checkboxes of Verantwortlichkeit
+            this.gesuchTypeClicked();
+
+            return !this.flagShowErrorNoGesuchSelected;
+        }
+        // for any other kind of statistik we return always true
+        return true;
+    }
+
+    public gesuchTypeClicked(): void {
+        this.flagShowErrorNoGesuchSelected =
+            !this.statistikParameter.bgGesuche
+            && !this.statistikParameter.mischGesuche
+            && !this.statistikParameter.tsGesuche;
     }
 }
