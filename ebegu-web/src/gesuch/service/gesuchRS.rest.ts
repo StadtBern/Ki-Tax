@@ -17,6 +17,7 @@ import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
 import * as moment from 'moment';
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSFinSitStatus} from '../../models/enums/TSFinSitStatus';
 import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
 import TSAntragDTO from '../../models/TSAntragDTO';
@@ -25,7 +26,6 @@ import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
 import IRootScopeService = angular.IRootScopeService;
-import {TSFinSitStatus} from '../../models/enums/TSFinSitStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;

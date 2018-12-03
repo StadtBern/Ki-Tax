@@ -15,8 +15,8 @@
 
 import {IHttpParamSerializer, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import IPromise = angular.IPromise;
 import IHttpService = angular.IHttpService;
+import IPromise = angular.IPromise;
 
 /**
  * spricht die reportAsync resourec an welce die reports async generiert

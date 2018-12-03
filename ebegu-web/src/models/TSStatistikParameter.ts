@@ -13,8 +13,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
+import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSStatistikParameter extends TSAbstractEntity {
     private _gesuchsperiode: string;

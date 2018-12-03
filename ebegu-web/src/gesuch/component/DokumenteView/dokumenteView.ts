@@ -14,6 +14,7 @@
  */
 
 import {IComponentOptions, ILogService} from 'angular';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
 import TSDokumenteDTO from '../../../models/dto/TSDokumenteDTO';
 import {TSCacheTyp} from '../../../models/enums/TSCacheTyp';
 import {TSDokumentGrundTyp} from '../../../models/enums/TSDokumentGrundTyp';
@@ -22,6 +23,7 @@ import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
 import TSDokument from '../../../models/TSDokument';
 import TSDokumentGrund from '../../../models/TSDokumentGrund';
 import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {IStammdatenStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
 import DokumenteRS from '../../service/dokumenteRS.rest';
