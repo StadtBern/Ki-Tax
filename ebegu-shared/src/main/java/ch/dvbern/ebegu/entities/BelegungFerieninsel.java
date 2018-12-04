@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,8 +29,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.enums.Ferienname;
+import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
@@ -53,6 +56,11 @@ public class BelegungFerieninsel extends AbstractEntity {
 	@ManyToMany(cascade = CascadeType.ALL)
 	private List<BelegungFerieninselTag> tage = new ArrayList<>();
 
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String notfallAngaben;
+
 	@Override
 	public boolean isSame(AbstractEntity other) {
 		//noinspection ObjectEquality
@@ -74,26 +82,38 @@ public class BelegungFerieninsel extends AbstractEntity {
 		return tageSame && Objects.equals(ferienname, that.ferienname);
 	}
 
+	@Nonnull
 	public Ferienname getFerienname() {
 		return ferienname;
 	}
 
-	public void setFerienname(Ferienname ferienname) {
+	public void setFerienname(@Nonnull Ferienname ferienname) {
 		this.ferienname = ferienname;
 	}
 
+	@Nonnull
 	public List<BelegungFerieninselTag> getTage() {
 		return tage;
 	}
 
-	public void setTage(List<BelegungFerieninselTag> tage) {
+	public void setTage(@Nonnull List<BelegungFerieninselTag> tage) {
 		this.tage = tage;
+	}
+
+	@Nullable
+	public String getNotfallAngaben() {
+		return notfallAngaben;
+	}
+
+	public void setNotfallAngaben(@Nullable String notfallAngaben) {
+		this.notfallAngaben = notfallAngaben;
 	}
 
 	@Nonnull
 	public BelegungFerieninsel copyForMutation(@Nonnull BelegungFerieninsel mutation) {
 		super.copyForMutation(mutation);
 		mutation.setFerienname(ferienname);
+		mutation.setNotfallAngaben(notfallAngaben);
 		for (BelegungFerieninselTag belegungFerieninselTag : tage) {
 			mutation.getTage().add(belegungFerieninselTag.copyForMutation(new BelegungFerieninselTag()));
 		}

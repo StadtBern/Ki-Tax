@@ -3060,6 +3060,7 @@ public class JaxBConverter {
 
 			convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
 			belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
+			belegungFerieninsel.setNotfallAngaben(belegungFerieninselJAX.getNotfallAngaben());
 			belegungFerieninselTageListToEntity(belegungFerieninselJAX.getTage(), belegungFerieninsel.getTage());
 			return belegungFerieninsel;
 		}
@@ -3104,6 +3105,7 @@ public class JaxBConverter {
 			convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
 			jaxBelegungFerieninsel.setFerienname(persistedBelegungFerieninsel.getFerienname());
 			jaxBelegungFerieninsel.setTage(belegungFerieninselTageListToJAX(persistedBelegungFerieninsel.getTage()));
+			jaxBelegungFerieninsel.setNotfallAngaben(persistedBelegungFerieninsel.getNotfallAngaben());
 			return jaxBelegungFerieninsel;
 		}
 		return null;

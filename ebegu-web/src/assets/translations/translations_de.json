@@ -1190,6 +1190,7 @@
     "WARN_ANGEBOT_NOCH_NICHT_FREIGEGEBEN": "Dieses Angebot wurde noch nicht freigegeben. Bitte bearbeiten Sie das aktuell gültige Angebot.",
     "WARN_ANGEBOT_MUTIERT": "Dieses Angebot wurde mutiert. Bitte bearbeiten Sie das aktuell gültige Angebot.",
     "FERIENINSELTAGE": "An welchen Tagen möchten Sie Ihr Kind für die Ferieninsel anmelden?",
+    "FERIENINSEL_NOTFALLANGABEN":"Mitteilungen / Besonderes (z.B. Medikamente, Allergien/Unverträglichkeiten, ADS, kein Schweinefleisch usw.)",
     "ANMELDEN_FERIENINSEL": "DEFINITIV ANMELDEN",
     "ANMELDEN_TAGESSCHULE": "DEFINITIV ANMELDEN",
     "CONFIRM_SAVE_FERIENINSEL": "Sind Sie sicher, dass Sie Ihr Kind definitiv anmelden wollen?",

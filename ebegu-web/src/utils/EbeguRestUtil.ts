@@ -28,9 +28,11 @@ import TSAbwesenheit from '../models/TSAbwesenheit';
 import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
 import TSAdresse from '../models/TSAdresse';
 import TSAdresseContainer from '../models/TSAdresseContainer';
+import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
 import TSAntragDTO from '../models/TSAntragDTO';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 import TSApplicationProperty from '../models/TSApplicationProperty';
+import TSBatchJobInformation from '../models/TSBatchJobInformation';
 import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
 import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
 import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
@@ -91,15 +93,13 @@ import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import TSVorlage from '../models/TSVorlage';
 import TSWizardStep from '../models/TSWizardStep';
+import TSWorkJob from '../models/TSWorkJob';
 import TSZahlung from '../models/TSZahlung';
 import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
 import {TSDateRange} from '../models/types/TSDateRange';
 import TSLand from '../models/types/TSLand';
 import DateUtil from './DateUtil';
 import EbeguUtil from './EbeguUtil';
-import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
-import TSWorkJob from '../models/TSWorkJob';
-import TSBatchJobInformation from '../models/TSBatchJobInformation';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -1357,6 +1357,7 @@ export default class EbeguRestUtil {
         }
         return betPensContainers;
     }
+
     public parseAbwesenheitContainers(data: Array<any>): TSAbwesenheitContainer[] {
         let abwesenheitContainers: TSAbwesenheitContainer[] = [];
         if (data && Array.isArray(data)) {
@@ -1672,7 +1673,6 @@ export default class EbeguRestUtil {
         }
         return undefined;
     }
-
 
     public parseBerechtigungen(data: Array<any>): TSBerechtigung[] {
         let berechtigungenList: TSBerechtigung[] = [];
@@ -2221,7 +2221,7 @@ export default class EbeguRestUtil {
             tsWorkJob.workJobType = workjobFromServer.workJobType;
             tsWorkJob.resultData = workjobFromServer.resultData;
             tsWorkJob.requestURI = workjobFromServer.requestURI;
-            tsWorkJob.execution =  this.parseBatchJobInformation(new TSBatchJobInformation(), workjobFromServer.execution);
+            tsWorkJob.execution = this.parseBatchJobInformation(new TSBatchJobInformation(), workjobFromServer.execution);
             return tsWorkJob;
         }
         return undefined;
@@ -2649,6 +2649,7 @@ export default class EbeguRestUtil {
         if (receivedBelegungFerieninsel) {
             this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
             belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
+            belegungFerieninselTS.notfallAngaben = receivedBelegungFerieninsel.notfallAngaben;
             belegungFerieninselTS.tage = this.parseBelegungFerieninselTagList(receivedBelegungFerieninsel.tage);
             return belegungFerieninselTS;
         }
@@ -2680,6 +2681,7 @@ export default class EbeguRestUtil {
         if (belegungFerieninselTS) {
             this.abstractEntityToRestObject(restBelegungFerieninsel, belegungFerieninselTS);
             restBelegungFerieninsel.ferienname = belegungFerieninselTS.ferienname;
+            restBelegungFerieninsel.notfallAngaben = belegungFerieninselTS.notfallAngaben;
             restBelegungFerieninsel.tage = [];
             if (belegungFerieninselTS.tage) {
                 for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {

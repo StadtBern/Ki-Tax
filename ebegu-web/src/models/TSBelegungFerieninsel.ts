@@ -21,12 +21,14 @@ export default class TSBelegungFerieninsel extends TSAbstractEntity {
 
     private _ferienname: TSFerienname;
     private _tage: Array<TSBelegungFerieninselTag> = [];
+    private _notfallAngaben: string;
 
 
-    constructor(ferienname?: TSFerienname, tage?: Array<TSBelegungFerieninselTag>) {
+    constructor(ferienname?: TSFerienname, tage?: Array<TSBelegungFerieninselTag>, notfallAngaben?: string) {
         super();
         this._ferienname = ferienname;
         this._tage = tage;
+        this._notfallAngaben = notfallAngaben;
     }
 
     public get ferienname(): TSFerienname {
@@ -43,5 +45,13 @@ export default class TSBelegungFerieninsel extends TSAbstractEntity {
 
     public set tage(value: Array<TSBelegungFerieninselTag>) {
         this._tage = value;
+    }
+
+    public get notfallAngaben(): string {
+        return this._notfallAngaben;
+    }
+
+    public set notfallAngaben(value: string) {
+        this._notfallAngaben = value;
     }
 }
