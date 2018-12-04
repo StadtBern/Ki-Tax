@@ -1654,7 +1654,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		ParameterExpression<AntragStatus> nurSchulamtParam = cb.parameter(AntragStatus.class, "nurschulamt");
 		ParameterExpression<Eingangsart> papierParam = cb.parameter(Eingangsart.class, "papier");
 		ParameterExpression<Eingangsart> onlineParam = cb.parameter(Eingangsart.class, "online");
-		ParameterExpression<Integer> laufnummerParam = cb.parameter(Integer.class, "laufnummer");
 
 		// Predicates
 		Predicate predicateStatusTransition = getStatusTransitionPredicate(cb, root, antragStatusHistoryJoin, datumVonParam, datumBisParam,
@@ -1684,7 +1683,6 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		typedQuery.setParameter(gesuchsperiodeIdParam, gesuchsperiode);
 		typedQuery.setParameter(datumVonParam, datumVon.atStartOfDay());
 		typedQuery.setParameter(datumBisParam, datumBis.atStartOfDay().plusDays(1));
-		typedQuery.setParameter(laufnummerParam, 0);
 
 		return typedQuery.getResultList();
 	}
