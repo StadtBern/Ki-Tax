@@ -110,9 +110,10 @@
                                    data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG" for="bemerkung_ID">
                             </label>
                             <p class="inlineHint" data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG_HINT"></p>
+                            <!--TODO hier musste ich die class 'md-input' hinzufügen damit es disabled auch richtig aussieht-->
                             <textarea aria-describedby="bemerkung_ID-error"
                                       name="bemerkung"
-                                      class="form-control" rows="6"
+                                      class="form-control md-input" rows="6"
                                       id="bemerkung_ID"
                                       ng-model="vm.betreuung.belegungTagesschule.bemerkung"
                                       ng-required="vm.betreuung.belegungTagesschule.abweichungZweitesSemester"
