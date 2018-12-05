@@ -1830,6 +1830,8 @@ public class JaxBConverter {
 
 			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
 			belegungTagesschule.setPlanKlasse(belegungTagesschuleJAXP.getPlanKlasse());
+			belegungTagesschule.setBemerkung(belegungTagesschuleJAXP.getBemerkung());
+			belegungTagesschule.setAbweichungZweitesSemester(belegungTagesschuleJAXP.isAbweichungZweitesSemester());
 			return belegungTagesschule;
 		}
 		return null;
@@ -2051,6 +2053,8 @@ public class JaxBConverter {
 			jaxBelegungTagesschule.setModuleTagesschule(moduleTagesschuleListToJax(belegungFromServer.getModuleTagesschule()));
 			jaxBelegungTagesschule.setEintrittsdatum(belegungFromServer.getEintrittsdatum());
 			jaxBelegungTagesschule.setPlanKlasse(belegungFromServer.getPlanKlasse());
+			jaxBelegungTagesschule.setBemerkung(belegungFromServer.getBemerkung());
+			jaxBelegungTagesschule.setAbweichungZweitesSemester(belegungFromServer.isAbweichungZweitesSemester());
 			return jaxBelegungTagesschule;
 		}
 		return null;

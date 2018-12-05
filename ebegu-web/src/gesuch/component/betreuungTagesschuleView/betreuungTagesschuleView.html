@@ -94,7 +94,36 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row marginTop30">
+                    <div class="col-sm-12 dv-input-container-question">
+                        <dv-input-container class="form-group">
+                            <md-checkbox class="checkbox marginTop20"
+                                         ng-model="vm.betreuung.belegungTagesschule.abweichungZweitesSemester"
+                                         name="abweichungZweitesSemester"
+                                         id="abweichungZweitesSemester"
+                                         aria-label="{{'BETREUUNG_TAGESSCHULE_BEMERKUNG_CHECKBOX'|translate}}"
+                                         ng-disabled="vm.isGesuchReadonly()">
+                                <span data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG_CHECKBOX"></span>
+                            </md-checkbox>
+                            <label class="md-no-float" ng-class="{'required': vm.betreuung.belegungTagesschule.abweichungZweitesSemester}"
+                                   data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG" for="bemerkung_ID">
+                            </label>
+                            <p class="inlineHint" data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG_HINT"></p>
+                            <textarea aria-describedby="bemerkung_ID-error"
+                                      name="bemerkung"
+                                      class="form-control" rows="6"
+                                      id="bemerkung_ID"
+                                      ng-model="vm.betreuung.belegungTagesschule.bemerkung"
+                                      ng-required="vm.betreuung.belegungTagesschule.abweichungZweitesSemester"
+                                      maxlength="4000">
+                                </textarea>
+                            <dv-error-messages input-id="bemerkung" for="vm.form.bemerkung.$error"></dv-error-messages>
+                        </dv-input-container>
+                    </div>
+                </div>
             </div>
+
         </div>
 
         <div ng-if="vm.gesuchModelManager.gesuch.gesuchsperiode.hasTagesschulenAnmeldung()">

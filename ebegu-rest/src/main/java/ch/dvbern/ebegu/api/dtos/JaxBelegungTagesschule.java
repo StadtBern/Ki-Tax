@@ -22,11 +22,13 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
 /**
@@ -47,6 +49,12 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	@Nullable
 	private String planKlasse;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	private String bemerkung;
+
+	private boolean abweichungZweitesSemester;
 
 	@Nonnull
 	public List<JaxModulTagesschule> getModuleTagesschule() {
@@ -73,5 +81,22 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	public void setPlanKlasse(@Nullable String planKlasse) {
 		this.planKlasse = planKlasse;
+	}
+
+	@Nullable
+	public String getBemerkung() {
+		return bemerkung;
+	}
+
+	public void setBemerkung(@Nullable String bemerkung) {
+		this.bemerkung = bemerkung;
+	}
+
+	public boolean isAbweichungZweitesSemester() {
+		return abweichungZweitesSemester;
+	}
+
+	public void setAbweichungZweitesSemester(boolean abweichungZweitesSemester) {
+		this.abweichungZweitesSemester = abweichungZweitesSemester;
 	}
 }

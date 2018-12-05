@@ -29,6 +29,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
 
@@ -59,6 +60,14 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Nullable
 	@Column
 	private String planKlasse;
+
+	@Size(max = Constants.DB_TEXTAREA_LENGTH)
+	@Nullable
+	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
+	private String bemerkung;
+
+	@Column(nullable = false)
+	private boolean abweichungZweitesSemester = false;
 
 	@Override
 	public boolean isSame(AbstractEntity other) {
@@ -105,11 +114,30 @@ public class BelegungTagesschule extends AbstractEntity {
 		this.planKlasse = planKlasse;
 	}
 
+	@Nullable
+	public String getBemerkung() {
+		return bemerkung;
+	}
+
+	public void setBemerkung(@Nullable String bemerkung) {
+		this.bemerkung = bemerkung;
+	}
+
+	public boolean isAbweichungZweitesSemester() {
+		return abweichungZweitesSemester;
+	}
+
+	public void setAbweichungZweitesSemester(boolean abweichungZweitesSemester) {
+		this.abweichungZweitesSemester = abweichungZweitesSemester;
+	}
+
 	@Nonnull
 	public BelegungTagesschule copyForMutation(@Nonnull BelegungTagesschule mutation, @Nonnull Betreuung parentBetreuung) {
 		super.copyForMutation(mutation);
 		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
 		mutation.setPlanKlasse(this.getPlanKlasse());
+		mutation.setBemerkung(this.getBemerkung());
+		mutation.setAbweichungZweitesSemester(this.abweichungZweitesSemester);
 
 		// Don't copy them, because it's a ManyToMany realation
 		mutation.getModuleTagesschule().clear();

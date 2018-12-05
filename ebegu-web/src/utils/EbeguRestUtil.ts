@@ -28,9 +28,11 @@ import TSAbwesenheit from '../models/TSAbwesenheit';
 import TSAbwesenheitContainer from '../models/TSAbwesenheitContainer';
 import TSAdresse from '../models/TSAdresse';
 import TSAdresseContainer from '../models/TSAdresseContainer';
+import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
 import TSAntragDTO from '../models/TSAntragDTO';
 import TSAntragStatusHistory from '../models/TSAntragStatusHistory';
 import TSApplicationProperty from '../models/TSApplicationProperty';
+import TSBatchJobInformation from '../models/TSBatchJobInformation';
 import TSBelegungFerieninsel from '../models/TSBelegungFerieninsel';
 import TSBelegungFerieninselTag from '../models/TSBelegungFerieninselTag';
 import TSBelegungTagesschule from '../models/TSBelegungTagesschule';
@@ -91,15 +93,13 @@ import TSVerfuegung from '../models/TSVerfuegung';
 import TSVerfuegungZeitabschnitt from '../models/TSVerfuegungZeitabschnitt';
 import TSVorlage from '../models/TSVorlage';
 import TSWizardStep from '../models/TSWizardStep';
+import TSWorkJob from '../models/TSWorkJob';
 import TSZahlung from '../models/TSZahlung';
 import TSZahlungsauftrag from '../models/TSZahlungsauftrag';
 import {TSDateRange} from '../models/types/TSDateRange';
 import TSLand from '../models/types/TSLand';
 import DateUtil from './DateUtil';
 import EbeguUtil from './EbeguUtil';
-import TSAnmeldungDTO from '../models/TSAnmeldungDTO';
-import TSWorkJob from '../models/TSWorkJob';
-import TSBatchJobInformation from '../models/TSBatchJobInformation';
 
 export default class EbeguRestUtil {
     static $inject = ['EbeguUtil'];
@@ -2556,6 +2556,8 @@ export default class EbeguRestUtil {
             belegungTS.moduleTagesschule = this.parseModuleTagesschuleArray(belegungFromServer.moduleTagesschule);
             belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
             belegungTS.planKlasse = belegungFromServer.planKlasse;
+            belegungTS.bemerkung = belegungFromServer.bemerkung;
+            belegungTS.abweichungZweitesSemester = belegungFromServer.abweichungZweitesSemester;
             return belegungTS;
         }
         return undefined;
@@ -2567,6 +2569,8 @@ export default class EbeguRestUtil {
             restBelegung.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(belegungTS.moduleTagesschule);
             restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
             restBelegung.planKlasse = belegungTS.planKlasse;
+            restBelegung.bemerkung = belegungTS.bemerkung;
+            restBelegung.abweichungZweitesSemester = belegungTS.abweichungZweitesSemester;
             return restBelegung;
         }
         return undefined;
