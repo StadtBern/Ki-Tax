@@ -79,7 +79,9 @@ public class BelegungFerieninsel extends AbstractEntity {
 		boolean tageSame = this.getTage().stream().allMatch(
 			(tageList) -> that.getTage().stream().anyMatch(otherPensenCont -> otherPensenCont.isSame(tageList)));
 
-		return tageSame && Objects.equals(ferienname, that.ferienname);
+		return tageSame
+			&& ferienname == that.ferienname
+			&& Objects.equals(notfallAngaben, that.notfallAngaben);
 	}
 
 	@Nonnull
