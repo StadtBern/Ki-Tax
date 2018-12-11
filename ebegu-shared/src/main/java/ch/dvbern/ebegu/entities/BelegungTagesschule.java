@@ -63,7 +63,7 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Column
 	private String planKlasse;
 
-	@Enumerated(value = EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	@Nullable
 	@Column
 	private EnumAbholungTagesschule abholungTagesschule;
