@@ -1357,6 +1357,7 @@ export default class EbeguRestUtil {
         }
         return betPensContainers;
     }
+
     public parseAbwesenheitContainers(data: Array<any>): TSAbwesenheitContainer[] {
         let abwesenheitContainers: TSAbwesenheitContainer[] = [];
         if (data && Array.isArray(data)) {
@@ -1672,7 +1673,6 @@ export default class EbeguRestUtil {
         }
         return undefined;
     }
-
 
     public parseBerechtigungen(data: Array<any>): TSBerechtigung[] {
         let berechtigungenList: TSBerechtigung[] = [];
@@ -2221,7 +2221,7 @@ export default class EbeguRestUtil {
             tsWorkJob.workJobType = workjobFromServer.workJobType;
             tsWorkJob.resultData = workjobFromServer.resultData;
             tsWorkJob.requestURI = workjobFromServer.requestURI;
-            tsWorkJob.execution =  this.parseBatchJobInformation(new TSBatchJobInformation(), workjobFromServer.execution);
+            tsWorkJob.execution = this.parseBatchJobInformation(new TSBatchJobInformation(), workjobFromServer.execution);
             return tsWorkJob;
         }
         return undefined;
@@ -2556,6 +2556,7 @@ export default class EbeguRestUtil {
             belegungTS.moduleTagesschule = this.parseModuleTagesschuleArray(belegungFromServer.moduleTagesschule);
             belegungTS.eintrittsdatum = DateUtil.localDateToMoment(belegungFromServer.eintrittsdatum);
             belegungTS.planKlasse = belegungFromServer.planKlasse;
+            belegungTS.abholungTagesschule = belegungFromServer.abholungTagesschule;
             belegungTS.bemerkung = belegungFromServer.bemerkung;
             belegungTS.abweichungZweitesSemester = belegungFromServer.abweichungZweitesSemester;
             return belegungTS;
@@ -2569,6 +2570,7 @@ export default class EbeguRestUtil {
             restBelegung.moduleTagesschule = this.moduleTagesschuleArrayToRestObject(belegungTS.moduleTagesschule);
             restBelegung.eintrittsdatum = DateUtil.momentToLocalDate(belegungTS.eintrittsdatum);
             restBelegung.planKlasse = belegungTS.planKlasse;
+            restBelegung.abholungTagesschule = belegungTS.abholungTagesschule;
             restBelegung.bemerkung = belegungTS.bemerkung;
             restBelegung.abweichungZweitesSemester = belegungTS.abweichungZweitesSemester;
             return restBelegung;
@@ -2653,6 +2655,7 @@ export default class EbeguRestUtil {
         if (receivedBelegungFerieninsel) {
             this.parseAbstractEntity(belegungFerieninselTS, receivedBelegungFerieninsel);
             belegungFerieninselTS.ferienname = receivedBelegungFerieninsel.ferienname;
+            belegungFerieninselTS.notfallAngaben = receivedBelegungFerieninsel.notfallAngaben;
             belegungFerieninselTS.tage = this.parseBelegungFerieninselTagList(receivedBelegungFerieninsel.tage);
             return belegungFerieninselTS;
         }
@@ -2684,6 +2687,7 @@ export default class EbeguRestUtil {
         if (belegungFerieninselTS) {
             this.abstractEntityToRestObject(restBelegungFerieninsel, belegungFerieninselTS);
             restBelegungFerieninsel.ferienname = belegungFerieninselTS.ferienname;
+            restBelegungFerieninsel.notfallAngaben = belegungFerieninselTS.notfallAngaben;
             restBelegungFerieninsel.tage = [];
             if (belegungFerieninselTS.tage) {
                 for (let i = 0; i < belegungFerieninselTS.tage.length; i++) {

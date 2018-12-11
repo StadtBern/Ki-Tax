@@ -24,11 +24,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import ch.dvbern.ebegu.enums.EnumAbholungTagesschule;
 import ch.dvbern.ebegu.util.Constants;
 import org.hibernate.annotations.SortNatural;
 import org.hibernate.envers.Audited;
@@ -61,6 +64,11 @@ public class BelegungTagesschule extends AbstractEntity {
 	@Column
 	private String planKlasse;
 
+	@Enumerated(EnumType.STRING)
+	@Nullable
+	@Column
+	private EnumAbholungTagesschule abholungTagesschule;
+
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
 	@Column(nullable = true, length = Constants.DB_TEXTAREA_LENGTH)
@@ -84,7 +92,8 @@ public class BelegungTagesschule extends AbstractEntity {
 		}
 		BelegungTagesschule otherBelegungTS = (BelegungTagesschule) other;
 		return Objects.equals(getPlanKlasse(), otherBelegungTS.getPlanKlasse()) &&
-			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum());
+			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum()) &&
+			Objects.equals(getAbholungTagesschule(), otherBelegungTS.getAbholungTagesschule());
 	}
 
 	@Nonnull
@@ -115,6 +124,15 @@ public class BelegungTagesschule extends AbstractEntity {
 	}
 
 	@Nullable
+	public EnumAbholungTagesschule getAbholungTagesschule() {
+		return abholungTagesschule;
+	}
+
+	public void setAbholungTagesschule(@Nullable EnumAbholungTagesschule abholungTagesschule) {
+		this.abholungTagesschule = abholungTagesschule;
+	}
+
+	@Nullable
 	public String getBemerkung() {
 		return bemerkung;
 	}
@@ -136,6 +154,7 @@ public class BelegungTagesschule extends AbstractEntity {
 		super.copyForMutation(mutation);
 		mutation.setEintrittsdatum(LocalDate.from(eintrittsdatum));
 		mutation.setPlanKlasse(this.getPlanKlasse());
+		mutation.setAbholungTagesschule(this.abholungTagesschule);
 		mutation.setBemerkung(this.getBemerkung());
 		mutation.setAbweichungZweitesSemester(this.abweichungZweitesSemester);
 

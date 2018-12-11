@@ -50,10 +50,10 @@
                 </div>
             </div>
             <!-- Noch nicht abgeschickt: Tage auswaehlbar -->
-            <div class="row marginTop30">
+            <div class="row marginTop10"
+                 ng-if="!vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled() && !vm.isFreigabequittungAusstehend()">
                 <div class="col-sm-12 dv-input-container-medium form-group">
-                    <div class="dv-ebegu-calendar__container"
-                         ng-if="!vm.isAnmeldeschlussAbgelaufen() && vm.betreuung.isEnabled() && !vm.isFreigabequittungAusstehend()">
+                    <div class="dv-ebegu-calendar__container" >
                         <div class="dv-ebegu-calendar__container-weekdays">
                             <div class="dv-ebegu-calendar__weekday dv-ebegu-calendar__weekday--{{day}}"
                                  ng-repeat="day in vm.getMomentWeekdays()">{{ day | translate}}
@@ -79,11 +79,11 @@
                     </div>
                 </div>
             </div>
-            <div class="row marginTop30">
+            <div class="row marginTop10"
+                 ng-if="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
                 <div class="col-sm-12 dv-input-container-medium form-group">
                     <!-- Abgeschickt: Liste der gewaehlten Tage readonly -->
-                    <div class="dv-ebegu-calendar__container"
-                         ng-if="!vm.betreuung.isEnabled() || vm.isFreigabequittungAusstehend()">
+                    <div class="dv-ebegu-calendar__container">
                         <div class="dv-ebegu-calendar__container-weekdays">
                             <div class="dv-ebegu-calendar__weekday"
                                  ng-repeat="day in vm.getMomentWeekdays()">{{ day | translate}}
@@ -110,7 +110,25 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Notfallangaben -->
+        <div ng-if="vm.isAnmeldungMoeglich() || !vm.betreuung.isEnabled()" >
+            <div class="row marginTop30">
+                <div class="col-sm-12 dv-input-container-question form-group">
+                    <span data-translate="FERIENINSEL_NOTFALLANGABEN" for="notfallAngaben"></span>
+                </div>
+            </div>
+            <div class="row marginTop10">
+            <div class="col-md-12 dv-input-container-medium">
+                <dv-input-container class="form-group">
+                    <!--<label class="md-no-float" for="notfallAngaben" data-translate="FERIENINSEL_NOTFALLANGABEN"></label>-->
+                    <textarea md-no-autogrow class="form-control" rows="6" id="notfallAngaben"
+                              ng-model="vm.betreuung.belegungFerieninsel.notfallAngaben"
+                              maxlength="4000">
+                    </textarea>
+                </dv-input-container>
+            </div>
         </div>
 
         <!-- Hinweis, wenn Ferien noch nicht buchbar -->

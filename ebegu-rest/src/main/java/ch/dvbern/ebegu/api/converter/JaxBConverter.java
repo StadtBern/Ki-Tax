@@ -1830,6 +1830,7 @@ public class JaxBConverter {
 
 			belegungTagesschule.setEintrittsdatum(belegungTagesschuleJAXP.getEintrittsdatum());
 			belegungTagesschule.setPlanKlasse(belegungTagesschuleJAXP.getPlanKlasse());
+			belegungTagesschule.setAbholungTagesschule(belegungTagesschuleJAXP.getAbholungTagesschule());
 			belegungTagesschule.setBemerkung(belegungTagesschuleJAXP.getBemerkung());
 			belegungTagesschule.setAbweichungZweitesSemester(belegungTagesschuleJAXP.isAbweichungZweitesSemester());
 			return belegungTagesschule;
@@ -2053,6 +2054,7 @@ public class JaxBConverter {
 			jaxBelegungTagesschule.setModuleTagesschule(moduleTagesschuleListToJax(belegungFromServer.getModuleTagesschule()));
 			jaxBelegungTagesschule.setEintrittsdatum(belegungFromServer.getEintrittsdatum());
 			jaxBelegungTagesschule.setPlanKlasse(belegungFromServer.getPlanKlasse());
+			jaxBelegungTagesschule.setAbholungTagesschule(belegungFromServer.getAbholungTagesschule());
 			jaxBelegungTagesschule.setBemerkung(belegungFromServer.getBemerkung());
 			jaxBelegungTagesschule.setAbweichungZweitesSemester(belegungFromServer.isAbweichungZweitesSemester());
 			return jaxBelegungTagesschule;
@@ -3064,6 +3066,7 @@ public class JaxBConverter {
 
 			convertAbstractFieldsToEntity(belegungFerieninselJAX, belegungFerieninsel);
 			belegungFerieninsel.setFerienname(belegungFerieninselJAX.getFerienname());
+			belegungFerieninsel.setNotfallAngaben(belegungFerieninselJAX.getNotfallAngaben());
 			belegungFerieninselTageListToEntity(belegungFerieninselJAX.getTage(), belegungFerieninsel.getTage());
 			return belegungFerieninsel;
 		}
@@ -3108,6 +3111,7 @@ public class JaxBConverter {
 			convertAbstractFieldsToJAX(persistedBelegungFerieninsel, jaxBelegungFerieninsel);
 			jaxBelegungFerieninsel.setFerienname(persistedBelegungFerieninsel.getFerienname());
 			jaxBelegungFerieninsel.setTage(belegungFerieninselTageListToJAX(persistedBelegungFerieninsel.getTage()));
+			jaxBelegungFerieninsel.setNotfallAngaben(persistedBelegungFerieninsel.getNotfallAngaben());
 			return jaxBelegungFerieninsel;
 		}
 		return null;

@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import ch.dvbern.ebegu.enums.EnumAbholungTagesschule;
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.lib.date.converters.LocalDateXMLConverter;
 
@@ -49,6 +50,9 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	@Nullable
 	private String planKlasse;
+
+	@Nullable
+	private EnumAbholungTagesschule abholungTagesschule;
 
 	@Size(max = Constants.DB_TEXTAREA_LENGTH)
 	@Nullable
@@ -81,6 +85,15 @@ public class JaxBelegungTagesschule extends JaxAbstractDTO {
 
 	public void setPlanKlasse(@Nullable String planKlasse) {
 		this.planKlasse = planKlasse;
+	}
+
+	@Nullable
+	public EnumAbholungTagesschule getAbholungTagesschule() {
+		return abholungTagesschule;
+	}
+
+	public void setAbholungTagesschule(@Nullable EnumAbholungTagesschule abholungTagesschule) {
+		this.abholungTagesschule = abholungTagesschule;
 	}
 
 	@Nullable
