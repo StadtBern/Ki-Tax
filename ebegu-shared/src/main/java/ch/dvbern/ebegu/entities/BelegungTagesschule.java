@@ -93,7 +93,7 @@ public class BelegungTagesschule extends AbstractEntity {
 		BelegungTagesschule otherBelegungTS = (BelegungTagesschule) other;
 		return Objects.equals(getPlanKlasse(), otherBelegungTS.getPlanKlasse()) &&
 			Objects.equals(getEintrittsdatum(), otherBelegungTS.getEintrittsdatum()) &&
-			Objects.equals(getAbholungTagesschule(), otherBelegungTS.getAbholungTagesschule());
+			getAbholungTagesschule() == otherBelegungTS.getAbholungTagesschule();
 	}
 
 	@Nonnull

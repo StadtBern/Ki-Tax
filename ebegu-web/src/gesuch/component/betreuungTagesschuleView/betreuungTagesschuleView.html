@@ -118,23 +118,22 @@
 
                 <div class="row marginTop30">
                     <div class="col-sm-12 dv-input-container-question">
+                        <md-checkbox class="checkbox marginTop20"
+                                     ng-model="vm.betreuung.belegungTagesschule.abweichungZweitesSemester"
+                                     name="abweichungZweitesSemester"
+                                     id="abweichungZweitesSemester"
+                                     aria-label="{{'BETREUUNG_TAGESSCHULE_BEMERKUNG_CHECKBOX' | translate}}"
+                                     ng-disabled="vm.isGesuchReadonly()">
+                            <span data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG_CHECKBOX"></span>
+                        </md-checkbox>
                         <dv-input-container class="form-group">
-                            <md-checkbox class="checkbox marginTop20"
-                                         ng-model="vm.betreuung.belegungTagesschule.abweichungZweitesSemester"
-                                         name="abweichungZweitesSemester"
-                                         id="abweichungZweitesSemester"
-                                         aria-label="{{'BETREUUNG_TAGESSCHULE_BEMERKUNG_CHECKBOX'|translate}}"
-                                         ng-disabled="vm.isGesuchReadonly()">
-                                <span data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG_CHECKBOX"></span>
-                            </md-checkbox>
                             <label class="md-no-float" ng-class="{'required': vm.betreuung.belegungTagesschule.abweichungZweitesSemester}"
                                    data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG" for="bemerkung_ID">
                             </label>
                             <p class="inlineHint" data-translate="BETREUUNG_TAGESSCHULE_BEMERKUNG_HINT"></p>
-                            <!--TODO hier musste ich die class 'md-input' hinzufügen damit es disabled auch richtig aussieht-->
                             <textarea aria-describedby="bemerkung_ID-error"
                                       name="bemerkung"
-                                      class="form-control md-input" rows="6"
+                                      class="form-control " rows="6"
                                       id="bemerkung_ID"
                                       ng-model="vm.betreuung.belegungTagesschule.bemerkung"
                                       ng-required="vm.betreuung.belegungTagesschule.abweichungZweitesSemester"
