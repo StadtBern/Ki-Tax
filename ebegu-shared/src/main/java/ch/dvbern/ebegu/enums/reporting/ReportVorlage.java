@@ -101,7 +101,8 @@ public enum ReportVorlage {
 		}
 		if (UserRole.getSchulamtRoles().contains(role)) {
 			if (vorlage == VORLAGE_REPORT_GESUCH_STICHTAG || vorlage == VORLAGE_REPORT_GESUCH_ZEITRAUM
-				|| vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_GESUCHSTELLER) {
+				|| vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_GESUCHSTELLER
+				|| vorlage == VORLAGE_REPORT_MASSENVERSAND) {
 				return true;
 			}
 			return false;
