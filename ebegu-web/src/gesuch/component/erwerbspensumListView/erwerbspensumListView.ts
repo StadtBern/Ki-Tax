@@ -168,4 +168,8 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
     public setFocusBack(elementID: string): void {
         angular.element('#' + elementID).first().focus();
     }
+
+    isAddErwerbspensumDisabled(): boolean{
+        return this.gesuchModelManager.getGesuch().isThereAnyBetreuung() && this.gesuchModelManager.getGesuch().areThereOnlySchulamtAngebote();
+    }
 }
