@@ -153,7 +153,6 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
      * @returns {boolean}
      */
     public isSaveDisabled(): boolean {
-        let erwerbspensenNumber: number = 0;
         if (this.erwerbspensumRequired) {
             if (this.getErwerbspensenListGS1() && this.getErwerbspensenListGS1().length <= 0) {
                 return true;
@@ -169,7 +168,7 @@ export class ErwerbspensumListViewController extends AbstractGesuchViewControlle
         angular.element('#' + elementID).first().focus();
     }
 
-    isAddErwerbspensumDisabled(): boolean{
+    public isAddErwerbspensumDisabled(): boolean {
         return this.gesuchModelManager.getGesuch().isThereAnyBetreuung() && this.gesuchModelManager.getGesuch().areThereOnlySchulamtAngebote();
     }
 }
