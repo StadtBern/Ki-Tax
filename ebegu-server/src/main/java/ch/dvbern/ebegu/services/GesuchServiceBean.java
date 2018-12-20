@@ -1799,10 +1799,10 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 	}
 
 	@Override
-	public boolean hasFolgegesuch(@Nonnull String gesuchId) {
+	public boolean hasFolgegesuchForAmt(@Nonnull String gesuchId) {
 		final Optional<Gesuch> optGesuch = findGesuch(gesuchId);
 		final Gesuch gesuch = optGesuch.orElseThrow(()
-			-> new EbeguEntityNotFoundException("hasFolgegesuch", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
+			-> new EbeguEntityNotFoundException("hasFolgegesuchForAmt", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, gesuchId));
 
 
 		final CriteriaBuilder cb = persistence.getCriteriaBuilder();
@@ -1813,21 +1813,25 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 
 		ParameterExpression<String> fallIdParam = cb.parameter(String.class, "fallId");
 		ParameterExpression<LocalDate> gesuchsperiodeGueltigAbParam = cb.parameter(LocalDate.class, "gueltigAb");
+		//noinspection rawtypes
+		ParameterExpression<Collection> freigegebenParam = cb.parameter(Collection.class, "freigegeben");
 
+		Predicate freigegebenPredicate = root.get(Gesuch_.status).in(freigegebenParam);
 		Predicate fallPredicate = cb.equal(root.get(Gesuch_.fall).get(AbstractEntity_.id), fallIdParam);
 		Predicate gesuchsperiodePredicate = cb.greaterThan(
 			root.get(Gesuch_.gesuchsperiode).get(AbstractDateRangedEntity_.gueltigkeit).get(DateRange_.gueltigAb),
 			gesuchsperiodeGueltigAbParam);
 
-		query.where(fallPredicate, gesuchsperiodePredicate);
+		query.where(fallPredicate, gesuchsperiodePredicate, freigegebenPredicate);
 
 		query.orderBy(cb.desc(root.get(Gesuch_.laufnummer)));
 
-		TypedQuery<String> q = persistence.getEntityManager().createQuery(query);
-		q.setParameter(fallIdParam, gesuch.getFall().getId());
-		q.setParameter(gesuchsperiodeGueltigAbParam, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		TypedQuery<String> typedQuery = persistence.getEntityManager().createQuery(query);
+		typedQuery.setParameter(fallIdParam, gesuch.getFall().getId());
+		typedQuery.setParameter(gesuchsperiodeGueltigAbParam, gesuch.getGesuchsperiode().getGueltigkeit().getGueltigAb());
+		typedQuery.setParameter(freigegebenParam, AntragStatus.getAllFreigegebeneStatus());
 
-		final List<String> resultList = q.getResultList();
+		final List<String> resultList = typedQuery.getResultList();
 		return !resultList.isEmpty();
 	}
 

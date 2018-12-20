@@ -428,8 +428,8 @@ public interface GesuchService {
 
 	/**
 	 * Returns true when the fall linked to the Gesuch has another gesuch in a newer Gesuchsperiode.
-	 * The status of the gesuch is not taken into account. It will check all Gesuche independently if the user
-	 * is allowed to access them or not.
+	 * The status of the Gesuch must be at least freigegeben, because it must be available for Amt-users.
+	 * It will check all Gesuche independently if the user is allowed to access them or not though.
 	 */
-	boolean hasFolgegesuch(@Nonnull String gesuchId);
+	boolean hasFolgegesuchForAmt(@Nonnull String gesuchId);
 }

@@ -308,7 +308,7 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 	private List<Gesuch> filterGesucheByFolgegesuch(boolean ohneErneuerungsgesuch, List<Gesuch> gesucheFilteredByAngebotTyp) {
 		if (ohneErneuerungsgesuch) {
 			return gesucheFilteredByAngebotTyp.stream()
-				.filter(gesuch -> !gesuchService.hasFolgegesuch(gesuch.getId()))
+				.filter(gesuch -> !gesuchService.hasFolgegesuchForAmt(gesuch.getId()))
 				.collect(Collectors.toList());
 		}
 		return gesucheFilteredByAngebotTyp;
