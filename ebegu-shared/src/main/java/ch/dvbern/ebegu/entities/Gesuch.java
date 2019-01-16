@@ -876,7 +876,10 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		if (hasSCHAngebote.get()) {
 			return GesuchTypFromAngebotTyp.TS_GESUCH;
 		}
-		// a gesuch with no Angebot will be considered a BG-Gesuch
-		return GesuchTypFromAngebotTyp.BG_GESUCH;
+		if (hasBGAngebote.get()) {
+			return GesuchTypFromAngebotTyp.BG_GESUCH;
+		}
+
+		return GesuchTypFromAngebotTyp.NO_ANGEBOT_GESUCH;
 	}
 }
