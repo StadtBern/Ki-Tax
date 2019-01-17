@@ -116,11 +116,11 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		List<Gesuch> gesucheFilteredByAngebotTyp =
 			filterGesucheByAngebotTyp(inklBgGesuche, inklMischGesuche, inklTsGesuche, ermittelteGesuche);
 
-		List<Gesuch> resultGesuchList =
+		List<Gesuch> resultGesuchFinalList =
 			filterGesucheByFolgegesuch(ohneErneuerungsgesuch, gesucheFilteredByAngebotTyp);
 
 		// Wenn ein Text eingegeben wurde, wird der Massenversand gespeichert
-		if (StringUtils.isNotEmpty(text) && !resultGesuchList.isEmpty()) {
+		if (StringUtils.isNotEmpty(text) && !resultGesuchFinalList.isEmpty()) {
 			saveMassenversand(
 				datumVon,
 				datumBis,
@@ -130,10 +130,10 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 				inklTsGesuche,
 				ohneErneuerungsgesuch,
 				text,
-				resultGesuchList);
+				resultGesuchFinalList);
 		}
 
-		final List<MassenversandDataRow> reportDataMassenversand = createReportDataMassenversand(resultGesuchList);
+		final List<MassenversandDataRow> reportDataMassenversand = createReportDataMassenversand(resultGesuchFinalList);
 		return reportDataMassenversand;
 	}
 
@@ -314,14 +314,21 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 		return gesucheFilteredByAngebotTyp;
 	}
 
-	private List<Gesuch> filterGesucheByAngebotTyp(boolean inklBgGesuche, boolean inklMischGesuche, boolean inklTsGesuche, List<Gesuch> ermittelteGesuche) {
+	private List<Gesuch> filterGesucheByAngebotTyp(
+		boolean inklBgGesuche,
+		boolean inklMischGesuche,
+		boolean inklTsGesuche,
+		List<Gesuch> ermittelteGesuche
+	) {
 		return ermittelteGesuche.stream()
-				.filter(gesuch -> {
+			.filter(
+				gesuch -> {
 					final GesuchTypFromAngebotTyp gesuchTyp = gesuch.calculateGesuchTypFromAngebotTyp();
 					return (inklTsGesuche && gesuchTyp == GesuchTypFromAngebotTyp.TS_GESUCH)
 						|| (inklBgGesuche && gesuchTyp == GesuchTypFromAngebotTyp.BG_GESUCH)
 						|| (inklMischGesuche && gesuchTyp == GesuchTypFromAngebotTyp.MISCH_GESUCH);
-				}).collect(Collectors.toList());
+				}
+			).collect(Collectors.toList());
 	}
 
 	private void saveMassenversand(
