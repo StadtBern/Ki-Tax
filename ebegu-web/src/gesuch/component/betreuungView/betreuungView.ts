@@ -464,7 +464,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (!this.getBetreuungModel()) {
             this.errorService.addMesageAsError('Betreuungsmodel ist nicht initialisiert.');
         }
-        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(false, undefined, new TSDateRange())));
+        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(false, 0, undefined, new TSDateRange())));
     }
 
     public removeBetreuungspensum(betreuungspensumToDelete: TSBetreuungspensumContainer): void {

@@ -15,7 +15,10 @@
 
 package ch.dvbern.ebegu.entities;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
@@ -38,6 +41,10 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 	@NotNull
 	private Betreuungsmitteilung betreuungsmitteilung;
 
+	@NotNull
+	@Column(nullable = false)
+	private Integer monatlicheMittagessen = 0;
+
 	public Betreuungsmitteilung getBetreuungsmitteilung() {
 		return betreuungsmitteilung;
 	}
@@ -46,6 +53,15 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 		this.betreuungsmitteilung = betreuungsmitteilung;
 	}
 
+	public Integer getMonatlicheMittagessen() {
+		return monatlicheMittagessen;
+	}
+
+	public void setMonatlicheMittagessen(Integer monatlicheMittagessen) {
+		this.monatlicheMittagessen = monatlicheMittagessen;
+	}
+
+	@SuppressWarnings("Duplicates")
 	@Override
 	public int compareTo(@Nonnull BetreuungsmitteilungPensum o) {
 		CompareToBuilder builder = new CompareToBuilder();
@@ -70,6 +86,7 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 			return false;
 		}
 		final BetreuungsmitteilungPensum otherBetreuungsmitteilungPensum = (BetreuungsmitteilungPensum) other;
-		return getBetreuungsmitteilung().isSame(otherBetreuungsmitteilungPensum.getBetreuungsmitteilung());
+		return getBetreuungsmitteilung().isSame(otherBetreuungsmitteilungPensum.getBetreuungsmitteilung())
+			&& Objects.equals(getMonatlicheMittagessen(), ((BetreuungsmitteilungPensum) other).getMonatlicheMittagessen());
 	}
 }

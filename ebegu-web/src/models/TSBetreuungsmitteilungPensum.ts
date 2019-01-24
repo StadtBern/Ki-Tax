@@ -18,7 +18,18 @@ import {TSDateRange} from './types/TSDateRange';
 
 export default class TSBetreuungsmitteilungPensum extends TSAbstractPensumEntity {
 
-    constructor(pensum?: number, gueltigkeit?: TSDateRange) {
+    private _monatlicheMittagessen: number;
+
+    public get monatlicheMittagessen(): number {
+        return this._monatlicheMittagessen;
+    }
+
+    public set monatlicheMittagessen(value: number) {
+        this._monatlicheMittagessen = value;
+    }
+
+    constructor(pensum?: number, monatlicheMittagessen?: number, gueltigkeit?: TSDateRange) {
         super(pensum, gueltigkeit);
+        this._monatlicheMittagessen = monatlicheMittagessen;
     }
 }

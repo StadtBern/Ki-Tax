@@ -1862,7 +1862,7 @@ public class JaxBConverter {
 	 * but not in the list of jax, won't be added to the list and are then removed (cascade and orphanremoval)
 	 *
 	 * @param jaxBetPenContainers Betreuungspensen DTOs from Client
-	 * @param existingBetreuungspensen List of currently stored BetreungspensumContainers
+	 * @param existingBetreuungspensen List of currently stored BetreuungspensumContainers
 	 */
 	private void betreuungsPensumContainersToEntity(final List<JaxBetreuungspensumContainer> jaxBetPenContainers,
 		final Collection<BetreuungspensumContainer> existingBetreuungspensen) {
@@ -1973,6 +1973,7 @@ public class JaxBConverter {
 	private Betreuungspensum betreuungspensumToEntity(final JaxBetreuungspensum jaxBetreuungspensum, final Betreuungspensum betreuungspensum) {
 		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
 		betreuungspensum.setNichtEingetreten(jaxBetreuungspensum.getNichtEingetreten());
+		betreuungspensum.setMonatlicheMittagessen(jaxBetreuungspensum.getMonatlicheMittagessen());
 		return betreuungspensum;
 	}
 
@@ -1984,15 +1985,19 @@ public class JaxBConverter {
 		return jaxBetreuungen;
 	}
 
-	private BetreuungsmitteilungPensum betreuungsmitteilungpensumToEntity(final JaxBetreuungsmitteilungPensum jaxBetreuungspensum, final
-	BetreuungsmitteilungPensum betreuungspensum) {
+	private BetreuungsmitteilungPensum betreuungsmitteilungpensumToEntity(
+		final JaxBetreuungsmitteilungPensum jaxBetreuungspensum,
+		final BetreuungsmitteilungPensum betreuungspensum
+	) {
 		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
+		betreuungspensum.setMonatlicheMittagessen(jaxBetreuungspensum.getMonatlicheMittagessen());
 		return betreuungspensum;
 	}
 
 	private JaxBetreuungsmitteilungPensum betreuungsmitteilungPensumToJax(final BetreuungsmitteilungPensum betreuungspensum) {
 		final JaxBetreuungsmitteilungPensum jaxBetreuungspensum = new JaxBetreuungsmitteilungPensum();
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
+		jaxBetreuungspensum.setMonatlicheMittagessen(betreuungspensum.getMonatlicheMittagessen());
 		return jaxBetreuungspensum;
 	}
 
@@ -2280,6 +2285,7 @@ public class JaxBConverter {
 		final JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
 		jaxBetreuungspensum.setNichtEingetreten(betreuungspensum.getNichtEingetreten());
+		jaxBetreuungspensum.setMonatlicheMittagessen(betreuungspensum.getMonatlicheMittagessen());
 		return jaxBetreuungspensum;
 	}
 

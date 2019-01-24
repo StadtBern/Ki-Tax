@@ -41,6 +41,10 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	@Column(nullable = false)
 	private Boolean nichtEingetreten = false;
 
+	@NotNull
+	@Column(nullable = false)
+	private Integer monatlicheMittagessen = 0;
+
 	public Betreuungspensum() {
 	}
 
@@ -63,6 +67,15 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		this.nichtEingetreten = nichtEingetreten;
 	}
 
+	public Integer getMonatlicheMittagessen() {
+		return monatlicheMittagessen;
+	}
+
+	public void setMonatlicheMittagessen(Integer monatlicheMittagessen) {
+		this.monatlicheMittagessen = monatlicheMittagessen;
+	}
+
+	@SuppressWarnings("Duplicates")
 	@Override
 	public int compareTo(Betreuungspensum o) {
 		CompareToBuilder builder = new CompareToBuilder();
@@ -74,6 +87,7 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	public Betreuungspensum copyForMutation(Betreuungspensum mutation) {
 		super.copyForMutation(mutation);
 		mutation.setNichtEingetreten(this.getNichtEingetreten());
+		mutation.setMonatlicheMittagessen(this.getMonatlicheMittagessen());
 		return mutation;
 	}
 
@@ -93,6 +107,7 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 			return false;
 		}
 		final Betreuungspensum otherBetreuungspensum = (Betreuungspensum) other;
-		return Objects.equals(getNichtEingetreten(), otherBetreuungspensum.getNichtEingetreten());
+		return Objects.equals(getNichtEingetreten(), otherBetreuungspensum.getNichtEingetreten())
+			&& Objects.equals(getMonatlicheMittagessen(), otherBetreuungspensum.getMonatlicheMittagessen());
 	}
 }
