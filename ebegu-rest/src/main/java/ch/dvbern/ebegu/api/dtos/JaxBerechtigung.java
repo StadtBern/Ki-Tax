@@ -104,6 +104,14 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 	}
 
 	@Override
+	public int hashCode() {
+		return super.hashCode()
+			+ Objects.hashCode(this.getRole())
+			+ Objects.hashCode(this.getGueltigAb())
+			+ Objects.hashCode(this.getGueltigBis());
+	}
+
+	@Override
 	public int compareTo(@Nonnull JaxAbstractDTO o) {
 		if (o instanceof JaxBerechtigung) {
 			final JaxBerechtigung other = (JaxBerechtigung) o;
