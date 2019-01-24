@@ -30,6 +30,7 @@ import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.validators.CheckIbanCH;
 import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import org.hibernate.envers.Audited;
 
@@ -38,6 +39,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 /**
  * Entity fuer gesuchstellerdaten
  */
+@CheckIbanCH
 @Audited
 @Entity
 public class Gesuchsteller extends AbstractPersonEntity {
