@@ -60,6 +60,8 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
     showKorrespondadrGS: boolean;
     showRechnungsadr: boolean;
     showRechnungsadrGS: boolean;
+    showIBAN: boolean;
+    showIBANGS: boolean;
     ebeguRestUtil: EbeguRestUtil;
     allowedRoles: Array<TSRole>;
     gesuchstellerNumber: number;
@@ -97,14 +99,16 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.showKorrespondadrGS = (this.model.korrespondenzAdresse && this.model.korrespondenzAdresse.adresseGS) ? true : false;
         this.showRechnungsadr = (this.model.rechnungsAdresse && this.model.rechnungsAdresse.adresseJA) ? true : false;
         this.showRechnungsadrGS = (this.model.rechnungsAdresse && this.model.rechnungsAdresse.adresseGS) ? true : false;
+        this.showIBAN = (this.getModelJA() && this.getModelJA().iban) ? true : false;
+        this.showIBANGS = (this.model.gesuchstellerGS && this.model.gesuchstellerGS.iban) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
         this.setLastVerfuegtesGesuch();
 
         this.$rootScope.$on(TSGesuchEvent[TSGesuchEvent.EWK_PERSON_SELECTED], (event: any, gsNummer: number, ewkId: string) => {
             if (gsNummer === this.gesuchModelManager.gesuchstellerNumber) {
-                this.model.gesuchstellerJA.ewkPersonId = ewkId;
-                this.model.gesuchstellerJA.ewkAbfrageDatum = DateUtil.today();
+                this.getModelJA().ewkPersonId = ewkId;
+                this.getModelJA().ewkAbfrageDatum = DateUtil.today();
                 this.form.$dirty = true;
             }
         });
@@ -150,6 +154,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             // wenn keine Korrespondenzaddr oder Rechnungsadr da ist koennen wir sie wegmachen
             this.maybeResetKorrespondadr();
             this.maybeResetRechnungsadr();
+            this.maybeResetIBAN();
 
             if ((this.gesuchModelManager.getGesuch().gesuchsteller1 && this.gesuchModelManager.getGesuch().gesuchsteller1.showUmzug)
                 || (this.gesuchModelManager.getGesuch().gesuchsteller2 && this.gesuchModelManager.getGesuch().gesuchsteller2.showUmzug)
@@ -186,6 +191,10 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         return this.model.gesuchstellerJA;
     }
 
+    public getModelGS() {
+        return this.model.gesuchstellerGS;
+    }
+
     /**
      * Die Wohnadresse des GS2 darf bei Mutationen in denen der GS2 bereits existiert, nicht geaendert werden.
      * Die Wohnadresse des GS1 darf bei Mutationen nie geaendert werden
@@ -214,6 +223,13 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             this.getModel().rechnungsAdresse = undefined; //keine rechnungsAdresse weder von GS noch von JA -> entfernen
         } else if (!this.showRechnungsadr) {
             this.getModel().rechnungsAdresse.adresseJA = undefined; //nur adresse JA wird zurueckgesetzt die GS kann bleiben
+        }
+    }
+
+    private maybeResetIBAN(): void {
+        if (!this.showIBAN) {
+            this.getModelJA().iban = undefined;
+            this.getModelJA().kontoinhaber = undefined;
         }
     }
 
@@ -280,10 +296,6 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
     public checkAllEwkRelevantDataPresent(): void {
         if (this.getModelJA()) {
-            // if (this.getModelJA().nachname &&
-            //     this.getModelJA().vorname &&
-            //     this.getModelJA().geschlecht &&
-            //     this.getModelJA().geburtsdatum) {
             if (this.gesuchModelManager.gesuchstellerNumber === 1) {
                 this.ewkRS.gesuchsteller1 = this.getModel();
             } else if (this.gesuchModelManager.gesuchstellerNumber === 2) {
@@ -291,7 +303,20 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
             } else {
                 console.log('Unbekannte Gesuchstellernummer', this.gesuchstellerNumber);
             }
-            // }
         }
+    }
+
+    public getTextIbanKorrekturJA(): string {
+        if (!this.showIBAN && this.showIBANGS) {
+            const iban: string = this.getModelGS().iban;
+            const kontoinhaber: string = this.getModelGS().kontoinhaber;
+            return this.$translate.instant('JA_KORREKTUR_IBAN', {
+                iban,
+                kontoinhaber,
+            });
+
+        }
+
+        return this.$translate.instant('LABEL_KEINE_ANGABE');
     }
 }

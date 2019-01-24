@@ -969,6 +969,7 @@
     "JA_KORREKTUR_SELBSTAENDIG_EKV": "Selbständigkeit Geschäftsgewinn {{basisjahr}}: {{gewinn1}}",
     "JA_KORREKTUR_ZUSCHLAG_ERWERBSPENSUM": "Zuschlag von {{zuschlagsprozent}} wegen {{zuschlagsgrund}}",
     "JA_KORREKTUR_ADDR": "Organisation: {{organisation}}\nStrasse: {{strasse}} {{hausnummer}}\nZusatz: {{zusatzzeile}}\nPLZ/Ort: {{plz}} {{ort}}\nLand: {{land}}",
+    "JA_KORREKTUR_IBAN": "lautend auf (Name und Vorname): {{kontoinhaber}}\nIBAN: {{iban}}",
     "FREIGEBEN_DIALOG_TITLE": "Gesuch freigeben",
     "FREIGEBEN_DIALOG_LABEL_FALL": "Fall:",
     "FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER": "Verantwortlicher Jugendamt:",
@@ -1306,5 +1307,7 @@
     "BENUTZER_ROLLENZUWEISUNG_CONFIRMATION_TEXT": "Mit dieser Rolle weisen Sie dem Benutzer weitgehende Rechte zu. Sind Sie sicher, dass Sie fortfahren wollen?",
     "BENUTZER_ROLLENZUWEISUNG_CONFIRMATION_ADMIN_TITLE": "Admin-Rechte",
     "BENUTZER_ROLLENZUWEISUNG_CONFIRMATION_ADMIN_TEXT": "Mit diesem Schritt geben Sie dem Benutzer Administrationsrechte in Ki-Tax. Wollen Sie fortfahren?",
-    "BENUTZER_STATISTIK": "BENUTZER"
+    "BENUTZER_STATISTIK": "BENUTZER",
+    "IBAN_REQUIRED_QUESTION": "Wird Ihr Kind in einer Kita und/oder bei Tageseltern betreut?",
+    "GESUCHSTELLER_KONTOINHABER": "lautend auf (Name und Vorname)"
 }
