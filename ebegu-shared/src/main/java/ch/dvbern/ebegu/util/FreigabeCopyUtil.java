@@ -218,6 +218,8 @@ public final class FreigabeCopyUtil {
 		gesuchstellerGS.setEwkPersonId(gesuchstellerJA.getEwkPersonId());
 		gesuchstellerGS.setEwkAbfrageDatum(gesuchstellerJA.getEwkAbfrageDatum());
 		gesuchstellerGS.setDiplomatenstatus(gesuchstellerJA.isDiplomatenstatus());
+		gesuchstellerGS.setIban(gesuchstellerJA.getIban());
+		gesuchstellerGS.setKontoinhaber(gesuchstellerJA.getKontoinhaber());
 	}
 
 	private static void copyGesuchstellerAdresseContainer(@Nullable GesuchstellerAdresseContainer container) {

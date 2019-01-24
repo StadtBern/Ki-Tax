@@ -490,6 +490,12 @@ public class JaxBConverter {
 		gesuchsteller.setEwkPersonId(gesuchstellerJAXP.getEwkPersonId());
 		gesuchsteller.setEwkAbfrageDatum(gesuchstellerJAXP.getEwkAbfrageDatum());
 		gesuchsteller.setDiplomatenstatus(gesuchstellerJAXP.isDiplomatenstatus());
+		if (gesuchstellerJAXP.getIban() != null) {
+			gesuchsteller.setIban(new IBAN(gesuchstellerJAXP.getIban()));
+		} else {
+			gesuchsteller.setIban(null);
+		}
+		gesuchsteller.setKontoinhaber(gesuchstellerJAXP.getKontoinhaber());
 		return gesuchsteller;
 	}
 
@@ -626,6 +632,10 @@ public class JaxBConverter {
 		jaxGesuchsteller.setEwkPersonId(persistedGesuchsteller.getEwkPersonId());
 		jaxGesuchsteller.setEwkAbfrageDatum(persistedGesuchsteller.getEwkAbfrageDatum());
 		jaxGesuchsteller.setDiplomatenstatus(persistedGesuchsteller.isDiplomatenstatus());
+		if (persistedGesuchsteller.getIban() != null) {
+			jaxGesuchsteller.setIban(persistedGesuchsteller.getIban().getIban());
+		}
+		jaxGesuchsteller.setKontoinhaber(persistedGesuchsteller.getKontoinhaber());
 		return jaxGesuchsteller;
 	}
 
