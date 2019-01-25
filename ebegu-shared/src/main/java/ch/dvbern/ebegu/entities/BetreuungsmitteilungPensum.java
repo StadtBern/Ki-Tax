@@ -43,7 +43,7 @@ public class BetreuungsmitteilungPensum extends AbstractPensumEntity implements 
 
 	@NotNull
 	@Column(nullable = false)
-	private Integer monatlicheMittagessen = 0;
+	private Integer monatlicheMittagessen;
 
 	public Betreuungsmitteilung getBetreuungsmitteilung() {
 		return betreuungsmitteilung;

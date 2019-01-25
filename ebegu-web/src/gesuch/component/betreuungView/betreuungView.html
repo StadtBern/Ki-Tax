@@ -261,10 +261,10 @@
                                                 <div class="dv-input-container-small" style="padding-right:32px;">
                                                     <input aria-describedby="monatlicheMittagessen-{{$index}}-error"
                                                            id="monatlicheMittagessen-{{$index}}"
-                                                           type="number"
+                                                           type="number" min="0" step="1"
                                                            name="monatlicheMittagessen-{{$index}}"
                                                            ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.monatlicheMittagessen"
-                                                           dv-max-length class="form-control"
+                                                           class="form-control"
                                                            ng-required="true">
                                                     <dv-error-messages input-id="monatlicheMittagessen-{{$index}}"
                                                                        for="vm.form['monatlicheMittagessen-' + $index].$error"></dv-error-messages>

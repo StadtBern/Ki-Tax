@@ -28,7 +28,7 @@ public class JaxBetreuungspensum extends JaxAbstractPensumDTO {
 	private Boolean nichtEingetreten = false;
 
 	@Nonnull
-	private Integer monatlicheMittagessen = 0;
+	private Integer monatlicheMittagessen;
 
 	private static final long serialVersionUID = -8012537546244511785L;
 
