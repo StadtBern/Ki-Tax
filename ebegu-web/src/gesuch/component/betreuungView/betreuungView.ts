@@ -696,7 +696,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 elementID: undefined
             }).then(() => {   //User confirmed removal
                 this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
-                    this.mutationsmeldungModel).then((response) => {
+                    this.mutationsmeldungModel).then(() => {
 
                     this.form.$setUntouched();
                     this.form.$setPristine();

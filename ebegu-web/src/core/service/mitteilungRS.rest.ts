@@ -233,21 +233,24 @@ export default class MitteilungRS {
                     return DateUtil.compareDateTime(a.betreuungspensumJA.gueltigkeit.gueltigAb, b.betreuungspensumJA.gueltigkeit.gueltigAb);
                 }
             ).forEach(betpenContainer => {
-            if (betpenContainer.betreuungspensumJA) {
-                // z.B. -> Pensum 1 vom 1.8.2017 bis 31.07.2018: 80%
-                if (i > 1) {
-                    message += '\n';
+                if (betpenContainer.betreuungspensumJA) {
+                    // z.B. -> Pensum 1 vom 1.8.2017 bis 31.07.2018: 80%
+                    if (i > 1) {
+                        message += '\n';
+                    }
+                    let datumAb: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
+                    let datumBis: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigBis, 'DD.MM.YYYY');
+                    const mittagessen: number = betpenContainer.betreuungspensumJA.monatlicheMittagessen;
+                    datumBis = datumBis ? datumBis : DateUtil.momentToLocalDateFormat(betreuung.gesuchsperiode.gueltigkeit.gueltigBis, 'DD.MM.YYYY'); // by default Ende der Periode
+                    message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i
+                        + this.$translate.instant('MUTATIONSMELDUNG_VON') + datumAb
+                        + this.$translate.instant('MUTATIONSMELDUNG_BIS') + datumBis
+                        + this.$translate.instant('MUTATIONSMELDUNG_MITTAGESSEN') + mittagessen
+                        + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
                 }
-                let datumAb: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
-                let datumBis: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigBis, 'DD.MM.YYYY');
-                datumBis = datumBis ? datumBis : DateUtil.momentToLocalDateFormat(betreuung.gesuchsperiode.gueltigkeit.gueltigBis, 'DD.MM.YYYY'); // by default Ende der Periode
-                message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i
-                    + this.$translate.instant('MUTATIONSMELDUNG_VON') + datumAb
-                    + this.$translate.instant('MUTATIONSMELDUNG_BIS') + datumBis
-                    + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
+                i++;
             }
-            i++;
-        });
+        );
         return message;
     }
 
@@ -270,6 +273,6 @@ export default class MitteilungRS {
         betreuungsmitteilung.monatlicheMittagessen = betreuungspensum.monatlicheMittagessen;
         betreuungsmitteilung.pensum = betreuungspensum.pensum;
         betreuungsmitteilung.gueltigkeit = betreuungspensum.gueltigkeit;
-        return undefined;
+        return betreuungsmitteilung;
     }
 }

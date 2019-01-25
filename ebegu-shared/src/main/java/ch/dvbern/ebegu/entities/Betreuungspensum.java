@@ -51,6 +51,7 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	public Betreuungspensum(BetreuungsmitteilungPensum betPensumMitteilung) {
 		this.setGueltigkeit(new DateRange(betPensumMitteilung.getGueltigkeit()));
 		this.setPensum(betPensumMitteilung.getPensum());
+		this.setMonatlicheMittagessen(betPensumMitteilung.getMonatlicheMittagessen());
 		this.setNichtEingetreten(false); //can not be set through BetreuungsmitteilungPensum
 	}
 
