@@ -20,6 +20,7 @@ import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
 import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
 import TSBetreuung from '../../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
+import TSBetreuungsmitteilungPensum from '../../models/TSBetreuungsmitteilungPensum';
 import TSBetreuungspensum from '../../models/TSBetreuungspensum';
 import TSBetreuungspensumContainer from '../../models/TSBetreuungspensumContainer';
 import TSFall from '../../models/TSFall';
@@ -254,13 +255,21 @@ export default class MitteilungRS {
      * Kopiert alle Betreuungspensen der gegebenen Betreuung in einer neuen Liste und
      * gibt diese zurueck. By default wird eine leere Liste zurueckgegeben
      */
-    private extractPensenFromBetreuung(betreuung: TSBetreuung): Array<TSBetreuungspensum> {
-        let pensen: Array<TSBetreuungspensum> = [];
+    private extractPensenFromBetreuung(betreuung: TSBetreuung): Array<TSBetreuungsmitteilungPensum> {
+        let pensen: Array<TSBetreuungsmitteilungPensum> = [];
         betreuung.betreuungspensumContainers.forEach(betpenContainer => {
             let pensumJA = angular.copy(betpenContainer.betreuungspensumJA);
             pensumJA.id = undefined; // the id must be set to undefined in order no to duplicate it
-            pensen.push(pensumJA);
+            pensen.push(this.convertBetreuungspensumToBetreuungsmitteilung(pensumJA));
         });
         return pensen;
+    }
+
+    private convertBetreuungspensumToBetreuungsmitteilung(betreuungspensum: TSBetreuungspensum): TSBetreuungsmitteilungPensum {
+        const betreuungsmitteilung = new TSBetreuungsmitteilungPensum();
+        betreuungsmitteilung.monatlicheMittagessen = betreuungspensum.monatlicheMittagessen;
+        betreuungsmitteilung.pensum = betreuungspensum.pensum;
+        betreuungsmitteilung.gueltigkeit = betreuungspensum.gueltigkeit;
+        return undefined;
     }
 }
