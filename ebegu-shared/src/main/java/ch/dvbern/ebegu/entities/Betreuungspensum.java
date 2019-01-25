@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.entities;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -41,8 +42,8 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	@Column(nullable = false)
 	private Boolean nichtEingetreten = false;
 
-	@NotNull
-	@Column(nullable = false)
+	@Nullable
+	@Column(nullable = true)
 	private Integer monatlicheMittagessen;
 
 	public Betreuungspensum() {
@@ -68,11 +69,12 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		this.nichtEingetreten = nichtEingetreten;
 	}
 
+	@Nullable
 	public Integer getMonatlicheMittagessen() {
 		return monatlicheMittagessen;
 	}
 
-	public void setMonatlicheMittagessen(Integer monatlicheMittagessen) {
+	public void setMonatlicheMittagessen(@Nullable Integer monatlicheMittagessen) {
 		this.monatlicheMittagessen = monatlicheMittagessen;
 	}
 

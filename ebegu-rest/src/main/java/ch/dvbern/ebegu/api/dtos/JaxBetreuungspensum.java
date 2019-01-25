@@ -15,7 +15,7 @@
 
 package ch.dvbern.ebegu.api.dtos;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -27,7 +27,7 @@ public class JaxBetreuungspensum extends JaxAbstractPensumDTO {
 
 	private Boolean nichtEingetreten = false;
 
-	@Nonnull
+	@Nullable
 	private Integer monatlicheMittagessen;
 
 	private static final long serialVersionUID = -8012537546244511785L;
@@ -40,12 +40,12 @@ public class JaxBetreuungspensum extends JaxAbstractPensumDTO {
 		this.nichtEingetreten = nichtEingetreten;
 	}
 
-	@Nonnull
+	@Nullable
 	public Integer getMonatlicheMittagessen() {
 		return monatlicheMittagessen;
 	}
 
-	public void setMonatlicheMittagessen(@Nonnull Integer monatlicheMittagessen) {
+	public void setMonatlicheMittagessen(@Nullable Integer monatlicheMittagessen) {
 		this.monatlicheMittagessen = monatlicheMittagessen;
 	}
 }

@@ -28,6 +28,7 @@ import TSMitteilung from '../../models/TSMitteilung';
 import TSMtteilungSearchresultDTO from '../../models/TSMitteilungSearchresultDTO';
 import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import EbeguUtil from '../../utils/EbeguUtil';
 import ITranslateService = angular.translate.ITranslateService;
 
 export default class MitteilungRS {
@@ -240,12 +241,16 @@ export default class MitteilungRS {
                     }
                     let datumAb: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
                     let datumBis: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigBis, 'DD.MM.YYYY');
-                    const mittagessen: number = betpenContainer.betreuungspensumJA.monatlicheMittagessen;
+
+                    const mittagessen: string = EbeguUtil.isNotNullOrUndefined(betpenContainer.betreuungspensumJA.monatlicheMittagessen)
+                        ? this.$translate.instant('MUTATIONSMELDUNG_MITTAGESSEN') + betpenContainer.betreuungspensumJA.monatlicheMittagessen
+                        : '';
+
                     datumBis = datumBis ? datumBis : DateUtil.momentToLocalDateFormat(betreuung.gesuchsperiode.gueltigkeit.gueltigBis, 'DD.MM.YYYY'); // by default Ende der Periode
                     message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i
                         + this.$translate.instant('MUTATIONSMELDUNG_VON') + datumAb
                         + this.$translate.instant('MUTATIONSMELDUNG_BIS') + datumBis
-                        + this.$translate.instant('MUTATIONSMELDUNG_MITTAGESSEN') + mittagessen
+                        + mittagessen
                         + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
                 }
                 i++;
