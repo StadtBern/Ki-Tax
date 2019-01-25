@@ -31,7 +31,6 @@ import org.hibernate.envers.Audited;
  * Entity fuer Betreuungspensen.
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
-@SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 @Audited
 @Entity
 public class Betreuungspensum extends AbstractPensumEntity implements Comparable<Betreuungspensum> {
@@ -52,8 +51,8 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	public Betreuungspensum(BetreuungsmitteilungPensum betPensumMitteilung) {
 		this.setGueltigkeit(new DateRange(betPensumMitteilung.getGueltigkeit()));
 		this.setPensum(betPensumMitteilung.getPensum());
-		this.setMonatlicheMittagessen(betPensumMitteilung.getMonatlicheMittagessen());
-		this.setNichtEingetreten(false); //can not be set through BetreuungsmitteilungPensum
+		monatlicheMittagessen = betPensumMitteilung.getMonatlicheMittagessen();
+		nichtEingetreten = false; //can not be set through BetreuungsmitteilungPensum
 	}
 
 	public Betreuungspensum(DateRange gueltigkeit) {
