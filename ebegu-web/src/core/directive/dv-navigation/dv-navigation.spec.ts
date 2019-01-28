@@ -28,7 +28,7 @@ import TestDataUtil from '../../../utils/TestDataUtil';
 import {EbeguWebCore} from '../../core.module';
 import {NavigatorController} from './dv-navigation';
 
-fdescribe('dvNavigation', function () {
+describe('dvNavigation', function () {
 
     let navController: NavigatorController;
     let wizardStepManager: WizardStepManager;

@@ -319,4 +319,10 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
 
         return this.$translate.instant('LABEL_KEINE_ANGABE');
     }
+
+    public showIbanDaten(): boolean {
+        return (this.gesuchModelManager.getGesuchstellerNumber() === 1)
+            && this.gesuchModelManager.getGesuchsperiode()
+            && this.gesuchModelManager.getGesuchsperiode().isVerpflegungActive();
+    }
 }
