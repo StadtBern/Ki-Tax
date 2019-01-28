@@ -1467,14 +1467,18 @@ export default class GesuchModelManager {
      */
     public isFinanzielleSituationDesired(): boolean {
         return !this.getGesuchsperiode().hasTagesschulenAnmeldung()
-            || !this.areThereOnlySchulamtAngebote()
+            || (!this.areThereOnlySchulamtAngebote() && !this.getGesuchsperiode().isVerpflegungActive())
             || (this.getGesuch().extractFamiliensituation().verguenstigungGewuenscht === true
                 && this.getGesuch().extractFamiliensituation().sozialhilfeBezueger === false);
     }
 
     public showFinanzielleSituationStart(): boolean {
-        return this.isGesuchsteller2Required() ||
-            (this.getGesuchsperiode() && this.getGesuchsperiode().hasTagesschulenAnmeldung() && this.areThereOnlySchulamtAngebote());
+        return this.isGesuchsteller2Required()
+            || (this.getGesuchsperiode() && this.getGesuchsperiode().isVerpflegungActive())
+            || (this.getGesuchsperiode()
+                && this.getGesuchsperiode().hasTagesschulenAnmeldung()
+                && this.areThereOnlySchulamtAngebote()
+            );
     }
 
     /**

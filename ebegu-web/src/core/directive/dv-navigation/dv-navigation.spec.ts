@@ -14,6 +14,7 @@
  */
 
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import * as moment from 'moment';
 import GesuchModelManager from '../../../gesuch/service/gesuchModelManager';
 import WizardStepManager from '../../../gesuch/service/wizardStepManager';
 import {TSAntragTyp} from '../../../models/enums/TSAntragTyp';
@@ -22,11 +23,12 @@ import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
 import TSFall from '../../../models/TSFall';
 import TSGesuch from '../../../models/TSGesuch';
 import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSDateRange} from '../../../models/types/TSDateRange';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import {EbeguWebCore} from '../../core.module';
 import {NavigatorController} from './dv-navigation';
 
-describe('dvNavigation', function () {
+fdescribe('dvNavigation', function () {
 
     let navController: NavigatorController;
     let wizardStepManager: WizardStepManager;
@@ -205,7 +207,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(1);
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(true);
-            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(createGesuchsperiode1718());
             navController.dvSubStep = 1;
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {
@@ -217,7 +219,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(1);
             spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
-            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(createGesuchsperiode1718());
             navController.dvSubStep = 1;
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituationResultate', {gesuchId: ''});
@@ -226,7 +228,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             navController.dvSubStep = 2;
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue('1');
-            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(createGesuchsperiode1718());
             callNextStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {
                 gesuchstellerNumber: '1',
@@ -403,7 +405,7 @@ describe('dvNavigation', function () {
             spyOn(wizardStepManager, 'getCurrentStepName').and.returnValue(TSWizardStepName.FINANZIELLE_SITUATION);
             spyOn(gesuchModelManager, 'getGesuchstellerNumber').and.returnValue(2);
             navController.dvSubStep = 1;
-            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(new TSGesuchsperiode());
+            spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(createGesuchsperiode1718());
             callPreviousStep();
             expect($state.go).toHaveBeenCalledWith('gesuch.finanzielleSituation', {
                 gesuchstellerNumber: '1',
@@ -508,7 +510,7 @@ describe('dvNavigation', function () {
         gesuch.id = '123';
         gesuch.fall = new TSFall();
         gesuch.fall.id = '123';
-        gesuch.gesuchsperiode = new TSGesuchsperiode();
+        gesuch.gesuchsperiode = createGesuchsperiode1718();
         gesuch.gesuchsperiode.id = '123';
         spyOn(gesuch.gesuchsperiode, 'hasTagesschulenAnmeldung').and.returnValue(true);
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
@@ -540,5 +542,12 @@ describe('dvNavigation', function () {
         spyOn(gesuchModelManager, 'isGesuchsteller2Required').and.returnValue(false);
         callNextStep();
         $rootScope.$apply();
+    }
+
+    function createGesuchsperiode1718() {
+        return new TSGesuchsperiode(undefined,
+            new TSDateRange(moment('01.07.2017', 'DD.MM.YYYY'), moment('31.08.2018', 'DD.MM.YYYY')),
+            undefined, undefined
+        );
     }
 });

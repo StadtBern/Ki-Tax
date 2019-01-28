@@ -85,4 +85,11 @@ export default class TSGesuchsperiode extends TSAbstractDateRangedEntity {
     isEntwurf(): boolean {
         return this.status === TSGesuchsperiodeStatus.ENTWURF;
     }
+
+    /**
+     * Verpflegungen Rueckerstattung are active in all periods after 2019
+     */
+    public isVerpflegungActive(): boolean {
+        return this.gueltigkeit.gueltigAb.year() >= 2019;
+    }
 }

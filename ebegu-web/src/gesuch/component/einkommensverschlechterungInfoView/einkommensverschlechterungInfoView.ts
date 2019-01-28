@@ -257,11 +257,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     private initializeEKVContainers(): void {
-        if (this.gesuchModelManager.getGesuch().gesuchsteller1 && !this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+        const gesuch = this.gesuchModelManager.getGesuch();
+        if (gesuch.gesuchsteller1 && !gesuch.gesuchsteller1.einkommensverschlechterungContainer) {
+            gesuch.gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
         }
-        if (this.gesuchModelManager.isGesuchsteller2Required() && !this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer) {
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+        if (this.gesuchModelManager.isGesuchsteller2Required() && gesuch.gesuchsteller2
+            && !gesuch.gesuchsteller2.einkommensverschlechterungContainer) {
+            gesuch.gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
         }
     }
 

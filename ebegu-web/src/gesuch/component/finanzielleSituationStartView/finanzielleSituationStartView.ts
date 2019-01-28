@@ -146,8 +146,9 @@ export class FinanzielleSituationStartViewController extends AbstractGesuchViewC
         return this.finanzielleSituationRequired;
     }
 
-    private hasTagesschulenAnmeldung(): boolean {
-        return this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung();
+    private showFinanzielleSituationRequire(): boolean {
+        return this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung()
+            || this.gesuchModelManager.getGesuchsperiode().isVerpflegungActive();
     }
 
     public gemeinsameStekClicked(): void {

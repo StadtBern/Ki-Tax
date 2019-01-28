@@ -144,7 +144,7 @@ public abstract class AbstractTestfall {
 	}
 
 	private void setFinSitFieldsOfFamiliensituation(@Nonnull Familiensituation familiensituation) {
-		if (gesuchsperiode.hasTagesschulenAnmeldung()) {
+		if (gesuchsperiode.hasTagesschulenAnmeldung() || gesuchsperiode.isVerpflegungenActive()) {
 			// by default verguenstigung gewuenscht
 			familiensituation.setSozialhilfeBezueger(false);
 			familiensituation.setVerguenstigungGewuenscht(true);

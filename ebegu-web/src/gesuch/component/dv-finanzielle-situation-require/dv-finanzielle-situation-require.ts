@@ -63,7 +63,8 @@ export class DVFinanzielleSituationRequireController {
      * Das Feld sozialhilfeBezueger muss nur angezeigt werden, wenn es ein rein Schulamtgesuch ist.
      */
     public showSozialhilfeBezueger(): boolean {
-        return this.areThereOnlySchulamtangebote;
+        return (this.areThereOnlySchulamtangebote && this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung())
+            || this.gesuchModelManager.getGesuchsperiode().isVerpflegungActive();
     }
 
     /**
