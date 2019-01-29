@@ -228,7 +228,7 @@
                           dv-enable-expression="vm.areEmailTelefonEditable()">
 
                     <!--Mahlzeiten IBAN Checkbox-->
-                    <div class="row" ng-if="vm.gesuchModelManager.getGesuchstellerNumber() === 1">
+                    <div class="row" ng-if="vm.showIbanDaten()">
                         <div class="col-xs-12 dv-input-container-question">
                             <div class=" checkbox">
                                 <md-checkbox ng-model="vm.showIBAN" name="ibanCheckbox" id="ibanCheckbox"

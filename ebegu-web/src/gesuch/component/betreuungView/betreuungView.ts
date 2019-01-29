@@ -667,9 +667,10 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     }
 
     public showMonatlicheMittagessen(): boolean {
-        return this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND)
+        return this.gesuchModelManager.getGesuchsperiode().isVerpflegungActive()
+            && (this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND)
             || this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND)
-            || this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.KITA);
+            || this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.KITA));
     }
 
     public mutationsmeldungErstellen(): void {
