@@ -160,6 +160,7 @@ public final class FreigabeCopyUtil {
 		betreuungspensumGS.setGueltigkeit(betreuungspensumJA.getGueltigkeit());
 		betreuungspensumGS.setPensum(betreuungspensumJA.getPensum());
 		betreuungspensumGS.setNichtEingetreten(betreuungspensumJA.getNichtEingetreten());
+		betreuungspensumGS.setMonatlicheMittagessen(betreuungspensumJA.getMonatlicheMittagessen());
 	}
 
 	private static void copyAbwesenheitContainer(@Nullable AbwesenheitContainer container) {

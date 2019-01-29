@@ -18,6 +18,7 @@ package ch.dvbern.ebegu.entities;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,6 @@ import org.hibernate.envers.Audited;
  * Entity fuer Betreuungspensen.
  * Note: this class has a natural ordering that is inconsistent with equals.
  */
-@SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 @Audited
 @Entity
 public class Betreuungspensum extends AbstractPensumEntity implements Comparable<Betreuungspensum> {
@@ -41,13 +41,18 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	@Column(nullable = false)
 	private Boolean nichtEingetreten = false;
 
+	@Nullable
+	@Column(nullable = true)
+	private Integer monatlicheMittagessen;
+
 	public Betreuungspensum() {
 	}
 
 	public Betreuungspensum(BetreuungsmitteilungPensum betPensumMitteilung) {
 		this.setGueltigkeit(new DateRange(betPensumMitteilung.getGueltigkeit()));
 		this.setPensum(betPensumMitteilung.getPensum());
-		this.setNichtEingetreten(false); //can not be set through BetreuungsmitteilungPensum
+		monatlicheMittagessen = betPensumMitteilung.getMonatlicheMittagessen();
+		nichtEingetreten = false; //can not be set through BetreuungsmitteilungPensum
 	}
 
 	public Betreuungspensum(DateRange gueltigkeit) {
@@ -63,6 +68,16 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 		this.nichtEingetreten = nichtEingetreten;
 	}
 
+	@Nullable
+	public Integer getMonatlicheMittagessen() {
+		return monatlicheMittagessen;
+	}
+
+	public void setMonatlicheMittagessen(@Nullable Integer monatlicheMittagessen) {
+		this.monatlicheMittagessen = monatlicheMittagessen;
+	}
+
+	@SuppressWarnings("Duplicates")
 	@Override
 	public int compareTo(Betreuungspensum o) {
 		CompareToBuilder builder = new CompareToBuilder();
@@ -74,6 +89,7 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 	public Betreuungspensum copyForMutation(Betreuungspensum mutation) {
 		super.copyForMutation(mutation);
 		mutation.setNichtEingetreten(this.getNichtEingetreten());
+		mutation.setMonatlicheMittagessen(this.getMonatlicheMittagessen());
 		return mutation;
 	}
 
@@ -93,6 +109,7 @@ public class Betreuungspensum extends AbstractPensumEntity implements Comparable
 			return false;
 		}
 		final Betreuungspensum otherBetreuungspensum = (Betreuungspensum) other;
-		return Objects.equals(getNichtEingetreten(), otherBetreuungspensum.getNichtEingetreten());
+		return Objects.equals(getNichtEingetreten(), otherBetreuungspensum.getNichtEingetreten())
+			&& Objects.equals(getMonatlicheMittagessen(), otherBetreuungspensum.getMonatlicheMittagessen());
 	}
 }

@@ -243,9 +243,34 @@
                                                    ng-attr-placeholder="{{'PERCENTAGE_PLACEHOLDER' | translate}}">
                                             <dv-error-messages input-id="betreuungspensum-{{$index}}"
                                                                for="vm.form['betreuungspensum-' + $index].$error"></dv-error-messages>
-
-
                                         </dv-input-container>
+                                    </div>
+                                </div>
+
+                                <!--monatlicheMittagessen-->
+                                <div class="row" ng-if="vm.showMonatlicheMittagessen()">
+                                    <div class="col-sm-12 dv-input-container-question">
+                                        <div class="form-group">
+                                            <dv-input-container class="form-group">
+                                                <label class="md-no-float"
+                                                       for="monatlicheMittagessen-{{$index}}">
+                                                    <span data-translate="MONATLICHE_MITTAGESSEN"></span>
+                                                    <dv-tooltip input-id="monatlicheMittagessen-tooltip-{{$index}}"
+                                                                text="'MONATLICHE_MITTAGESSEN_HELP' | translate"></dv-tooltip>
+                                                </label>
+                                                <div class="dv-input-container-small" style="padding-right:32px;">
+                                                    <input aria-describedby="monatlicheMittagessen-{{$index}}-error"
+                                                           id="monatlicheMittagessen-{{$index}}"
+                                                           type="number" min="0" step="1"
+                                                           name="monatlicheMittagessen-{{$index}}"
+                                                           ng-model="vm.getBetreuungspensum($index).betreuungspensumJA.monatlicheMittagessen"
+                                                           class="form-control"
+                                                           ng-required="true">
+                                                    <dv-error-messages input-id="monatlicheMittagessen-{{$index}}"
+                                                                       for="vm.form['monatlicheMittagessen-' + $index].$error"></dv-error-messages>
+                                                </div>
+                                            </dv-input-container>
+                                        </div>
                                     </div>
                                 </div>
 

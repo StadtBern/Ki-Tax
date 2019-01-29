@@ -1046,6 +1046,7 @@
     "MUTATIONSMELDUNG_PENSUM": "Pensum ",
     "MUTATIONSMELDUNG_VON": " von ",
     "MUTATIONSMELDUNG_BIS": " bis ",
+    "MUTATIONSMELDUNG_MITTAGESSEN": " Mittagessen ",
     "MUTATIONSMELDUNG_UEBERNEHMEN": "Möchten Sie wirklich die Änderungen zur Mutation hinzufügen?",
     "MUTATIONSMELDUNG_UEBERNEHMEN_BESCHREIBUNG": "Die eingegebenen Daten werden der bestehenden Mutation bzw. einer neuen Mutation hinzugefügt",
     "ZAHLUNG_FAELLIGKEIT_UPPER": "FÄLLIGKEITSDATUM",
@@ -1309,5 +1310,7 @@
     "BENUTZER_ROLLENZUWEISUNG_CONFIRMATION_ADMIN_TEXT": "Mit diesem Schritt geben Sie dem Benutzer Administrationsrechte in Ki-Tax. Wollen Sie fortfahren?",
     "BENUTZER_STATISTIK": "BENUTZER",
     "IBAN_REQUIRED_QUESTION": "Wird Ihr Kind in einer Kita und/oder bei Tageseltern betreut?",
-    "GESUCHSTELLER_KONTOINHABER": "lautend auf (Name und Vorname)"
+    "GESUCHSTELLER_KONTOINHABER": "lautend auf (Name und Vorname)",
+    "MONATLICHE_MITTAGESSEN": "Anzahl monatliche Mittagessen",
+    "MONATLICHE_MITTAGESSEN_HELP": "Geben Sie die <b>Anzahl Mittagessen pro Monat</b> an. Wenn für den Betreuungszeitraum «vormittags oder nachmittags ohne Mittagessen» festgelegt wurde, müssen Sie in diesem Feld null erfassen. Die Mittagessen dürfen erst eingetragen werden, wenn effektive Verrechnung der Mittagessen an die Eltern erfolgt.<br><br><b>Beispiel:</b><br>Zeitraum ab 01.08.2019 bis 31.10.2019<br>Anzahl monatliche Mittagessen: 0 (noch Kind unter 12 Monat alt, Kita verrechnet keine Mittagessen)<br><br>Zeitraum ab 01.11.2019 bis 31.07.2020<br>Anzahl monatliche Mittagessen: 12 (wöchentliche Betreuung 60%, d.h. 3 ganze Tage mit Mittagessen pro Woche)"
 }
