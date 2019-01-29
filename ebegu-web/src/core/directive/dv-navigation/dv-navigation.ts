@@ -338,7 +338,9 @@ export class NavigatorController {
                     this.navigateToStepFinanzielleSituation('1');
 
                 } else if (this.gesuchModelManager.getGesuchstellerNumber() === 1 && (this.gesuchModelManager.isGesuchsteller2Required()
-                        || (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() && this.gesuchModelManager.areThereOnlySchulamtAngebote()))) {
+                        || (this.gesuchModelManager.getGesuchsperiode().hasTagesschulenAnmeldung() && this.gesuchModelManager.areThereOnlySchulamtAngebote()))
+                        || (this.gesuchModelManager.getGesuchsperiode().isVerpflegungActive())
+                ) {
                     this.navigateToStep(TSWizardStepName.FINANZIELLE_SITUATION);
                 } else {
                     this.navigateToStep(this.wizardStepManager.getPreviousStep(this.gesuchModelManager.getGesuch()));
