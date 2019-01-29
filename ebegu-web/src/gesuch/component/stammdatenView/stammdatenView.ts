@@ -100,7 +100,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
         this.showRechnungsadr = (this.model.rechnungsAdresse && this.model.rechnungsAdresse.adresseJA) ? true : false;
         this.showRechnungsadrGS = (this.model.rechnungsAdresse && this.model.rechnungsAdresse.adresseGS) ? true : false;
         this.showIBAN = (this.getModelJA() && this.getModelJA().iban) ? true : false;
-        this.showIBANGS = (this.model.gesuchstellerGS && this.model.gesuchstellerGS.iban) ? true : false;
+        this.showIBANGS = (this.getModelGS() && this.getModelGS().iban) ? true : false;
         this.allowedRoles = this.TSRoleUtil.getAllRolesButTraegerschaftInstitution();
         this.getModel().showUmzug = this.getModel().showUmzug || this.getModel().isThereAnyUmzug();
         this.setLastVerfuegtesGesuch();
@@ -314,9 +314,7 @@ export class StammdatenViewController extends AbstractGesuchViewController<TSGes
                 iban,
                 kontoinhaber,
             });
-
         }
-
         return this.$translate.instant('LABEL_KEINE_ANGABE');
     }
 }

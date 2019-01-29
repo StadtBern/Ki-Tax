@@ -969,7 +969,7 @@
     "JA_KORREKTUR_SELBSTAENDIG_EKV": "Selbständigkeit Geschäftsgewinn {{basisjahr}}: {{gewinn1}}",
     "JA_KORREKTUR_ZUSCHLAG_ERWERBSPENSUM": "Zuschlag von {{zuschlagsprozent}} wegen {{zuschlagsgrund}}",
     "JA_KORREKTUR_ADDR": "Organisation: {{organisation}}\nStrasse: {{strasse}} {{hausnummer}}\nZusatz: {{zusatzzeile}}\nPLZ/Ort: {{plz}} {{ort}}\nLand: {{land}}",
-    "JA_KORREKTUR_IBAN": "lautend auf (Name und Vorname): {{kontoinhaber}}\nIBAN: {{iban}}",
+    "JA_KORREKTUR_IBAN": "IBAN: {{iban}}\nlautend auf (Name und Vorname): {{kontoinhaber}}",
     "FREIGEBEN_DIALOG_TITLE": "Gesuch freigeben",
     "FREIGEBEN_DIALOG_LABEL_FALL": "Fall:",
     "FREIGEBEN_DIALOG_LABEL_VERANTWORTLICHER": "Verantwortlicher Jugendamt:",

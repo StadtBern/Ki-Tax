@@ -250,6 +250,21 @@
                     </div>
 
                     <div ng-if="vm.showIBAN" >
+                        <!--IBAN-->
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-medium">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="IBAN" for="iban"></label>
+                                    <input id="iban" type="text" name="iban"
+                                           ng-model="vm.getModelJA().iban"
+                                           dv-max-length class="form-control" required>
+                                    <dv-bisher gs="vm.getModelGS().iban"
+                                               ja="vm.getModelJA().iban"></dv-bisher>
+                                    <dv-error-messages for="vm.form.iban.$error" class="error"
+                                                       input-id="iban">></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
                         <!-- Kontoinhaber -->
                         <div class="row">
                             <div class="col-sm-12 dv-input-container-medium">
@@ -264,21 +279,6 @@
                                                ja="vm.getModelJA().kontoinhaber"></dv-bisher>
                                     <dv-error-messages for="vm.form.kontoinhaber.$error" class="error"
                                                        input-id="kontoinhaber"></dv-error-messages>
-                                </dv-input-container>
-                            </div>
-                        </div>
-                        <!--IBAN-->
-                        <div class="row">
-                            <div class="col-sm-12 dv-input-container-medium">
-                                <dv-input-container class="form-group">
-                                    <label class="md-no-float" data-translate="IBAN" for="iban"></label>
-                                    <input id="iban" type="text" name="iban"
-                                           ng-model="vm.getModelJA().iban"
-                                           dv-max-length class="form-control" required>
-                                    <dv-bisher gs="vm.getModelGS().iban"
-                                               ja="vm.getModelJA().iban"></dv-bisher>
-                                    <dv-error-messages for="vm.form.iban.$error" class="error"
-                                                       input-id="iban">></dv-error-messages>
                                 </dv-input-container>
                             </div>
                         </div>
