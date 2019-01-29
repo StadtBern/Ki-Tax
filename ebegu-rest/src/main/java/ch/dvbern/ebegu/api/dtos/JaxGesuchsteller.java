@@ -17,6 +17,7 @@ package ch.dvbern.ebegu.api.dtos;
 
 import java.time.LocalDate;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -49,6 +50,12 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 	private String telefon;
 
 	private String telefonAusland;
+
+	@Nullable
+	private String iban;
+
+	@Nullable
+	private String kontoinhaber;
 
 	private String ewkPersonId;
 
@@ -103,6 +110,24 @@ public class JaxGesuchsteller extends JaxAbstractPersonDTO {
 
 	public void setEwkAbfrageDatum(LocalDate ewkAbfrageDatum) {
 		this.ewkAbfrageDatum = ewkAbfrageDatum;
+	}
+
+	@Nullable
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(@Nullable String iban) {
+		this.iban = iban;
+	}
+
+	@Nullable
+	public String getKontoinhaber() {
+		return kontoinhaber;
+	}
+
+	public void setKontoinhaber(@Nullable String kontoinhaber) {
+		this.kontoinhaber = kontoinhaber;
 	}
 
 	public boolean isDiplomatenstatus() {
