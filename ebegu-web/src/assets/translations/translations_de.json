@@ -808,9 +808,9 @@
     "NACHWEIS_GELEISTETE_ALIMENTE": "Nachweis über geleistete Alimente",
     "NACHWEIS_VERMOEGEN": "Nachweis über das Vermögen, Stand 31.12., (z.B.: Kto.-Auszug, Immobilien, Zinsbestätigung usw.)",
     "NACHWEIS_SCHULDEN": "Nachweis über die Schulden, Stand: 31.12., (z.B.: Kto.-Auszug, Darlehensvertrag usw.)",
-    "ERFOLGSRECHNUNGEN_JAHR": "Erfolgsrechnungen",
-    "ERFOLGSRECHNUNGEN_JAHR_MINUS1": "Erfolgsrechnungen",
-    "ERFOLGSRECHNUNGEN_JAHR_MINUS2": "Erfolgsrechnungen",
+    "ERFOLGSRECHNUNGEN_JAHR": "Steuerveranlagung/Steuererklärung",
+    "ERFOLGSRECHNUNGEN_JAHR_MINUS1": "Steuerveranlagung/Steuererklärung",
+    "ERFOLGSRECHNUNGEN_JAHR_MINUS2": "Steuerveranlagung/Steuererklärung",
     "NACHWEIS_EINKOMMENSSITUATION_MONAT": "Unterlagen zur aktuellen Einkommenssituation (pro Monat)",
     "UNTERSTUETZUNGSBESTAETIGUNG": "Unterstützungsnachweis/Bestätigung des Sozialdienstes",
     "DIV": "Hier können Sie zusätzliche Dokumente hochladen",
@@ -959,7 +959,7 @@
     "EINVERSTAENDNISERKLAERUNG_TEXT": "Ich bin einverstanden, dass die oben aufgeführten Angaben zur Bemessung/Erhebung der Elterngebühr von Schulamt und Jugendamt der Stadt Bern verwendet werden. Ich ermächtige das Schulamt und Jugendamt, die Angaben zu Kontrollzwecken mit der Steuerverwaltung abzugleichen. Die Ermächtigung beinhaltet die Befugnis von Jugendamt, Schulamt und Steuerverwaltung, einander wechselseitig schriftlich und mündlich die zur Berechnung des massgebenden Einkommens notwendigen Daten zukommen zu lassen",
     "PDF_FREIGABEQUITTUNG_ANZEIGEN": "Freigabequittung als PDF anzeigen",
     "FREIGABEQUITTUNG_ERFOLG_TEXT": "Sie haben alle erforderlichen Daten für Ihr Gesuch am {{freigabedatum}} eingegeben.",
-    "FREIGABEQUITTUNG_AUSSTEHEND_TEXT": "Die unterschriebene Freigabequittung schicken uns Sie bitte per Post. Erst nach deren Eingang gilt Ihr Gesuch als eingereicht.",
+    "FREIGABEQUITTUNG_AUSSTEHEND_TEXT": "Ihre Anmeldung gilt erst als eingereicht, wenn die unterschriebene Freigabequittung zusammen mit den verlangten Belegen bei der zuständigen Stelle eingegangen ist. Bitte beachten Sie die unterschiedlichen Fristen der verschiedenen Betreuungsangebote.",
     "FREIGEBEN": "Freigeben",
     "ERROR_BESTAETIGUNG_REQUIRED": "Bestätigen Sie bitte die Vollständigkeit der Angaben um den Antrag freizugeben",
     "FREIGABEQUITTUNG_NOT_ALLOWED_TEXT": "Um den Antrag freigeben zu können dürfen keine Schritte mehr rot markiert sein und alle Plätze bestätigt sein. Geben Sie dafür bitte alle benötigten Daten ein.",
@@ -1314,5 +1314,5 @@
     "IBAN_REQUIRED_HELP": "Das Jugendamt benötigt diese Informationen um allfällige Rückerstattungen durchführen zu können.",
     "GESUCHSTELLER_KONTOINHABER": "lautend auf (Name und Vorname)",
     "MONATLICHE_MITTAGESSEN": "Anzahl monatliche Mittagessen",
-    "MONATLICHE_MITTAGESSEN_HELP": "Geben Sie die <b>Anzahl Mittagessen pro Monat</b> an. Wenn für den Betreuungszeitraum «vormittags oder nachmittags ohne Mittagessen» festgelegt wurde, müssen Sie in diesem Feld null erfassen. Die Mittagessen dürfen erst eingetragen werden, wenn effektive Verrechnung der Mittagessen an die Eltern erfolgt.<br><br><b>Beispiel:</b><br>Zeitraum ab 01.08.2019 bis 31.10.2019<br>Anzahl monatliche Mittagessen: 0 (noch Kind unter 12 Monat alt, Kita verrechnet keine Mittagessen)<br><br>Zeitraum ab 01.11.2019 bis 31.07.2020<br>Anzahl monatliche Mittagessen: 12 (wöchentliche Betreuung 60%, d.h. 3 ganze Tage mit Mittagessen pro Woche)"
+    "MONATLICHE_MITTAGESSEN_HELP": "Geben Sie die <b>Anzahl Mittagessen pro Monat</b> an, die für diese Betreuung tatsächlich verrechnet wird. Wenn für den Betreuungszeitraum «vormittags oder nachmittags ohne Mittagessen» festgelegt wurde oder wenn Sie für das Kind keine Verpflegungskosten verrechnen, müssen Sie in diesem Feld «0» erfassen. Falls sich die Anzahl verrechenbaren Mittagessen innerhalb der Periode ändert, müssen Sie zwingend eine neue Betreuung erfassen. Dies auch, wenn sich das Betreuungspensum nicht verändert.<br><br><b>Beispiele:</b><br>Zeitraum ab 01.08.2019 bis 31.10.2019<br>Anzahl monatliche Mittagessen: 0 (Kind noch unter 12 Monat alt, Kita verrechnet keine Mittagessen)<br><br>Zeitraum ab 01.11.2019 bis 31.07.2020<br>Anzahl monatliche Mittagessen: 12 (wöchentliche Betreuung 60%, d.h. 3 ganze Tage mit Mittagessen pro Woche)"
 }
