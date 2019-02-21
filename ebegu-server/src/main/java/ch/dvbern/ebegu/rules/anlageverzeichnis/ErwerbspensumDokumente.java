@@ -129,7 +129,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 				// Wird nur bei Neueintritt im Job verlangt. Neueintritt = DatumVon >= Periodenstart. Bei Mutationen
 				// wird das Erwerbspensum immer beendet und ein neues erfasst. Daher gilt diese Regel immer
 				return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart) &&
-					erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT;
+					(erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT || erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT_STUNDENLOHN);
 			default:
 				return isDokumentNeeded(dokumentTyp, erwerbspensum);
 			}

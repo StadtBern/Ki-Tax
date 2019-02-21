@@ -838,7 +838,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 
 		List<Erwerbspensum> erwerbspensenGS1 = containerGS1.getErwerbspensenAm(row.getZeitabschnittVon());
 		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS1) {
-			if (Taetigkeit.ANGESTELLT == erwerbspensumJA.getTaetigkeit()) {
+			if (Taetigkeit.ANGESTELLT == erwerbspensumJA.getTaetigkeit()
+				|| Taetigkeit.ANGESTELLT_STUNDENLOHN == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs1EwpAngestellt(row.getGs1EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.AUSBILDUNG == erwerbspensumJA.getTaetigkeit()) {
@@ -876,7 +877,8 @@ public class ReportServiceBean extends AbstractReportServiceBean implements Repo
 		// EWP Gesuchsteller 2
 		List<Erwerbspensum> erwerbspensenGS2 = containerGS2.getErwerbspensenAm(row.getZeitabschnittVon());
 		for (Erwerbspensum erwerbspensumJA : erwerbspensenGS2) {
-			if (Taetigkeit.ANGESTELLT == erwerbspensumJA.getTaetigkeit()) {
+			if (Taetigkeit.ANGESTELLT == erwerbspensumJA.getTaetigkeit()
+				|| Taetigkeit.ANGESTELLT_STUNDENLOHN == erwerbspensumJA.getTaetigkeit()) {
 				row.setGs2EwpAngestellt(row.getGs2EwpAngestellt() + erwerbspensumJA.getPensum());
 			}
 			if (Taetigkeit.AUSBILDUNG == erwerbspensumJA.getTaetigkeit()) {
