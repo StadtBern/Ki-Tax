@@ -1322,7 +1322,7 @@ public class JaxBConverter {
 	@Nullable
 	private Set<ModulTagesschule> moduleTagesschuleListToEntity(
 		@Nullable List<JaxModulTagesschule> jaxModuleTagesschule,
-		@Nullable Set<ModulTagesschule> moduleOfInstitution,
+		Set<ModulTagesschule> moduleOfInstitution,
 		@NotNull InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
 
 		if (moduleOfInstitution != null && jaxModuleTagesschule != null) {
