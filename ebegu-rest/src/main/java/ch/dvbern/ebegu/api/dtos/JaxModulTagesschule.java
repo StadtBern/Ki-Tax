@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ch.dvbern.ebegu.enums.ModulTagesschuleName;
 import ch.dvbern.lib.date.converters.LocalDateTimeXMLConverter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * DTO fuer Module fuer die Tagesschulen
@@ -81,5 +82,13 @@ public class JaxModulTagesschule extends JaxAbstractDTO {
 
 	public void setZeitBis(LocalDateTime zeitBis) {
 		this.zeitBis = zeitBis;
+	}
+
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("id", getId())
+			.toString();
 	}
 }
