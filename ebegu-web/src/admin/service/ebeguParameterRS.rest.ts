@@ -92,7 +92,7 @@ export class EbeguParameterRS {
     }
 
     public getEbeguParameterByKeyAndDate(dateParam: moment.Moment, keyParam: TSEbeguParameterKey): IPromise<TSEbeguParameter> {
-        return this.http.get(this.serviceURL + '/name/' + keyParam)
+        return this.http.get(this.serviceURL + '/name/' + keyParam, {params: {date: DateUtil.momentToLocalDate(dateParam)}})
             .then((param: IHttpResponse<TSEbeguParameter>) => {
                 return param.data;
             });
