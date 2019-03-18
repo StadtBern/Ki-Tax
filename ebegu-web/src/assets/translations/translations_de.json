@@ -1311,7 +1311,7 @@
     "BENUTZER_ROLLENZUWEISUNG_CONFIRMATION_ADMIN_TEXT": "Mit diesem Schritt geben Sie dem Benutzer Administrationsrechte in Ki-Tax. Wollen Sie fortfahren?",
     "BENUTZER_STATISTIK": "BENUTZER",
     "IBAN_REQUIRED_QUESTION": "Wird Ihr Kind in einer Kita und/oder bei Tageseltern betreut?",
-    "IBAN_REQUIRED_HELP": "Familie & Quartier Stadt Bern benötigt diese Informationen um allfällige Rückerstattungen durchführen zu können.",
+    "IBAN_REQUIRED_HELP": "Die Betreuungsgutscheinstelle von Familie & Quartier Stadt Bern benötigt diese Informationen um allfällige Rückerstattungen durchführen zu können.",
     "GESUCHSTELLER_KONTOINHABER": "lautend auf (Name und Vorname)",
     "MONATLICHE_MITTAGESSEN": "Anzahl monatliche Mittagessen",
     "MONATLICHE_MITTAGESSEN_HELP": "Geben Sie die <b>Anzahl Mittagessen pro Monat</b> an, die für diese Betreuung tatsächlich verrechnet wird. Wenn für den Betreuungszeitraum «vormittags oder nachmittags ohne Mittagessen» festgelegt wurde oder wenn Sie für das Kind keine Verpflegungskosten verrechnen, müssen Sie in diesem Feld «0» erfassen. Falls sich die Anzahl verrechenbaren Mittagessen innerhalb der Periode ändert, müssen Sie zwingend eine neue Betreuung erfassen. Dies auch, wenn sich das Betreuungspensum nicht verändert.<br><br><b>Beispiele:</b><br>Zeitraum ab 01.08.2019 bis 31.10.2019<br>Anzahl monatliche Mittagessen: 0 (Kind noch unter 12 Monat alt, Kita verrechnet keine Mittagessen)<br><br>Zeitraum ab 01.11.2019 bis 31.07.2020<br>Anzahl monatliche Mittagessen: 12 (wöchentliche Betreuung 60%, d.h. 3 ganze Tage mit Mittagessen pro Woche)"
