@@ -426,7 +426,7 @@ public class MitteilungResource {
 		throw new EbeguEntityNotFoundException("getMitteilungenForCurrentRolle", ErrorCodeEnum.ERROR_ENTITY_NOT_FOUND, FALL_ID_INVALID + jaxFallId.getId());
 	}
 
-	@ApiOperation(value = "Uebergibt die Mitteilung vom Schulamt ans Jugendamt", response = JaxMitteilung.class)
+	@ApiOperation(value = "Uebergibt die Mitteilung vom Schulamt an Familie & Quartier Stadt Bern", response = JaxMitteilung.class)
 	@Nonnull
 	@GET
 	@Path("/delegation/jugendamt/{mitteilungId}")
@@ -441,7 +441,7 @@ public class MitteilungResource {
 		return converter.mitteilungToJAX(mitteilung, new JaxMitteilung());
 	}
 
-	@ApiOperation(value = "Uebergibt die Mitteilung vom Jugendamt ans Schulamt", response = JaxMitteilung.class)
+	@ApiOperation(value = "Uebergibt die Mitteilung von Familie & Quartier Stadt Bern ans Schulamt", response = JaxMitteilung.class)
 	@Nonnull
 	@GET
 	@Path("/delegation/schulamt/{mitteilungId}")

@@ -4,7 +4,7 @@
 <#-- @ftlvariable name="empfaengerMail" type="java.lang.String" -->
 From: ${configuration.senderAddress}
 To: ${mitteilung.empfaenger.fullName} <${empfaengerMail}>
-Subject: <@base64Header>Neue Nachricht vom Jugendamt</@base64Header>
+Subject: <@base64Header>Neue Nachricht von Familie & Quartier Stadt Bern</@base64Header>
 Content-Type: text/html;charset=utf-8
 
 <html>
@@ -23,13 +23,13 @@ ${templateConfiguration.mailCss}
 		Sehr geehrte Familie
 	</p>
 	<p>
-		Das Jugendamt hat Ihnen eine
+		Familie & Quartier Stadt Bern hat Ihnen eine
 		<a href="<#if configuration.clientUsingHTTPS>https://<#else>http://</#if>${configuration.hostname}/mitteilungen/${mitteilung.fall.id}">Nachricht</a>
 		geschrieben.
 	</p>
 	<p>
 		Freundliche Grüsse <br/>
-		Jugendamt der Stadt Bern
+		Familie & Quartier Stadt Bern
 	</p>
 	<p>
 		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.

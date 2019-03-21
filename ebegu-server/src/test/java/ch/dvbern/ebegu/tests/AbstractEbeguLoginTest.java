@@ -137,7 +137,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		try {
 			createLoginContext("saja", "saja").login();
 		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
+			LOG.error("could not login as sachbearbeiter Familie & Quartier Stadt Bern saja for tests");
 		}
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
@@ -150,7 +150,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		try {
 			createLoginContext("admin", "admin").login();
 		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt admin for tests");
+			LOG.error("could not login as sachbearbeiter Familie & Quartier Stadt Bern admin for tests");
 		}
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");
@@ -164,7 +164,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		try {
 			createLoginContext(username, username).login();
 		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt {} for tests", username);
+			LOG.error("could not login as sachbearbeiter Familie & Quartier Stadt Bern {} for tests", username);
 		}
 		return user;
 		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen
@@ -177,7 +177,7 @@ public abstract class AbstractEbeguLoginTest extends AbstractEbeguTest {
 		try {
 			createLoginContext(username, username).login();
 		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt {} for tests", username);
+			LOG.error("could not login as sachbearbeiter Familie & Quartier Stadt Bern {} for tests", username);
 		}
 		return user;
 		//theoretisch sollten wir wohl zuerst ausloggen bevor wir wieder einloggen aber es scheint auch so zu gehen

@@ -285,7 +285,7 @@ export default class EbeguUtil {
     }
 
     public getKontaktJugendamt(): string {
-         return '<span>Jugendamt</span><br>'
+         return '<span>Familie & Quartier Stadt Bern</span><br>'
              + '<span>Effingerstrasse 21</span><br>'
              + '<span>3008 Bern</span><br>'
              + '<a href="tel:0313215115"><span>031 321 51 15</span></a><br>'

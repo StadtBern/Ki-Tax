@@ -72,7 +72,7 @@ public abstract class AbstractEbeguRestLoginTest extends AbstractEbeguRestTest {
 		try {
 			createLoginContext("saja", "saja").login();
 		} catch (LoginException e) {
-			LOG.error("could not login as sachbearbeiter jugendamt saja for tests");
+			LOG.error("could not login as sachbearbeiter Familie & Quartier Stadt Bern saja for tests");
 		}
 
 		Mandant mandant = persistence.find(Mandant.class, "e3736eb8-6eef-40ef-9e52-96ab48d8f220");

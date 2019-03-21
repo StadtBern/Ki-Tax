@@ -44,6 +44,7 @@ import ch.dvbern.ebegu.entities.InstitutionStammdaten;
 import ch.dvbern.ebegu.entities.Kind;
 import ch.dvbern.ebegu.entities.KindContainer;
 import ch.dvbern.ebegu.entities.Massenversand;
+import ch.dvbern.ebegu.enums.Eingangsart;
 import ch.dvbern.ebegu.enums.ErrorCodeEnum;
 import ch.dvbern.ebegu.enums.GesuchTypFromAngebotTyp;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
@@ -206,7 +207,7 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 
 				setKinderData(gesuch, row);
 
-				row.setEinreichungsart(ServerMessageUtil.translateEnumValue(gesuch.getEingangsart()));
+				row.setEinreichungsart(ServerMessageUtil.translateEnumValue(getEingangsartFromFallBesitzer(gesuch)));
 				row.setStatus(ServerMessageUtil.translateEnumValue(gesuch.getStatus()));
 				row.setTyp(ServerMessageUtil.translateEnumValue(gesuch.getTyp()));
 
@@ -215,6 +216,21 @@ public class ReportMassenversandServiceBean extends AbstractReportServiceBean im
 			.collect(Collectors.toList());
 
 		return rows;
+	}
+
+	/**
+	 * If we are only interested in the Eingangsart of the Erstgesuch, i.e:
+	 * Papier_erstgesuch + Papier_mutation --> Eingangsart = PAPIER
+	 * Online_erstgesuch + Papier_mutation --> Eingangsart = ONLINE
+	 * we need to take the Eingangsart of the Erstgesuch and not from the mutation. For this case there is a much
+	 * more performant way than to looking for the Erstgesuch.
+	 * If the fall has a Besitzer, it is an online Gesuch.
+	 */
+	private Eingangsart getEingangsartFromFallBesitzer(@Nonnull Gesuch gesuch) {
+		if (gesuch.getFall().getBesitzer() != null) {
+			return Eingangsart.ONLINE;
+		}
+		return Eingangsart.PAPIER;
 	}
 
 	private void setGS2Data(Gesuch gesuch, MassenversandDataRow row) {

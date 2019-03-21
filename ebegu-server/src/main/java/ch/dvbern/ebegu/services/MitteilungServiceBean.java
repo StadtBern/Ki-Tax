@@ -591,7 +591,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur bei einer Institution geschickt werden");
 		}
 		if (MitteilungTeilnehmerTyp.JUGENDAMT != betreuungsmitteilung.getEmpfaengerTyp()) {
-			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur an das Jugendamt geschickt werden");
+			throw new IllegalArgumentException("Eine Betreuungsmitteilung darf nur an Familie & Quartier Stadt Bern geschickt werden");
 		}
 		betreuungsmitteilung.setMitteilungStatus(MitteilungStatus.NEU); // vorsichtshalber
 		betreuungsmitteilung.setSentDatum(LocalDateTime.now());
@@ -724,7 +724,7 @@ public class MitteilungServiceBean extends AbstractBaseService implements Mittei
 			return persistence.merge(mitteilung);
 
 		}
-		throw new IllegalArgumentException("Die Mitteilung hat entweder keinen Empfänger oder dieser ist nicht in Rolle Jugendamt");
+		throw new IllegalArgumentException("Die Mitteilung hat entweder keinen Empfänger oder dieser ist nicht in Rolle Familie & Quartier Stadt Bern");
 	}
 
 	@Nonnull

@@ -434,7 +434,7 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
-	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch das Jugendamt",
+	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch Familie & Quartier Stadt Bern",
 		response = JaxGesuch.class)
 	@Nullable
 	@POST
