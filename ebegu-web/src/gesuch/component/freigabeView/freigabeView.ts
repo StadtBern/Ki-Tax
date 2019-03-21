@@ -189,8 +189,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     }
 
     public changeFristverlaengerung() {
-        this.gesuchModelManager.getGesuch().fristverlaengerung = getFristverlaengerungAsMoment(this.fristverlaengerungEnumValue, this.gesuchModelManager.getYearOfGesuchsperiodeBegin());
-        this.gesuchRS.changeFristverlaengerung(this.gesuchModelManager.getGesuch().id, this.gesuchModelManager.getGesuch().fristverlaengerung).then((response: any) => {
+        this.gesuchModelManager.getGesuch().fristverlaengerung =
+            getFristverlaengerungAsMoment(this.fristverlaengerungEnumValue, this.gesuchModelManager.getYearOfGesuchsperiodeBegin());
+        this.gesuchRS.changeFristverlaengerung(
+            this.gesuchModelManager.getGesuch().id,
+            this.gesuchModelManager.getGesuch().fristverlaengerung
+        ).then(() => {
             this.gesuchModelManager.setGesuch(this.gesuchModelManager.getGesuch());
             this.form.$setPristine();
         });

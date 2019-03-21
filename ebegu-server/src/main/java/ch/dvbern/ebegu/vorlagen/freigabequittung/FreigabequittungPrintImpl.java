@@ -136,10 +136,9 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 
 	@Override
 	public String getFristverlaengerung() {
-		if(gesuch.getFristverlaengerung()==null){
+		if (gesuch.getFristverlaengerung() == null) {
 			return ServerMessageUtil.getMessage("Freigabequittung_Keine_Fristverlaengerung");
-		}else{
-			return Constants.DATE_FORMATTER.format(gesuch.getFristverlaengerung());
 		}
+		return Constants.DATE_FORMATTER.format(gesuch.getFristverlaengerung());
 	}
 }

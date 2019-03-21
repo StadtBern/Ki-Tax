@@ -66,9 +66,9 @@ describe('freigabeView', function () {
         spyOn(applicationPropertyRS, 'isDevMode').and.returnValue($q.when(false));
         spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
-        let gesuch: TSGesuch = new TSGesuch();
-        gesuch.id = '123';
-        spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
+        this.gesuch = new TSGesuch();
+        this.gesuch.id = '123';
+        spyOn(gesuchModelManager, 'getGesuch').and.returnValue(this.gesuch);
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
             wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, authServiceRS, gesuchRS, $timeout);
@@ -78,9 +78,7 @@ describe('freigabeView', function () {
             return controller.form.$valid;
         });
 
-        let form = TestDataUtil.createDummyForm();
-        // $rootScope.form = form;
-        controller.form = form;
+        controller.form = TestDataUtil.createDummyForm();
     }));
     describe('canBeFreigegeben', function () {
         it('should return false when not all steps are true', function () {
@@ -158,7 +156,7 @@ describe('freigabeView', function () {
             controller.confirmationCallback();
             $scope.$apply();
 
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, true);
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(this.gesuch.id, true);
             expect(downloadRS.startDownload).toHaveBeenCalledWith(downloadFile.accessToken, downloadFile.filename, false, jasmine.any(Object));
         });
     });
@@ -175,7 +173,7 @@ describe('freigabeView', function () {
             controller.openFreigabequittungPDF(false);
             $scope.$apply();
 
-            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(gesuch.id, false);
+            expect(downloadRS.getFreigabequittungAccessTokenGeneratedDokument).toHaveBeenCalledWith(this.gesuch.id, false);
         });
     });
 });

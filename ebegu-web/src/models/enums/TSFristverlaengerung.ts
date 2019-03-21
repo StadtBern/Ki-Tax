@@ -36,7 +36,6 @@ export function getTSFristverlaengerungValuesForGS(): Array<TSFristverlaengerung
 }
 
 export function getFristverlaengerungAsMoment(fristverlaengerung: TSFristverlaengerung, gesuchsperiodeyear: number): moment.Moment {
-    //TODO imanol review: sollte das Datum hier anders hinterlegt werden?
     switch (fristverlaengerung) {
         case TSFristverlaengerung.FRISTVERLAENGERUNG_SEPTEMBER:
             return moment(gesuchsperiodeyear + '-09-15');
@@ -53,13 +52,12 @@ export function getFristverlaengerungFromMoment(fristverlaengerungMoment: moment
     if (fristverlaengerungMoment === undefined || fristverlaengerungMoment === null) {
         return TSFristverlaengerung.KEINE_FRISTVERLAENGERUNG;
     }
-    //TODO imanol review: sollte das Datum hier anders hinterlegt werden?
     if (fristverlaengerungMoment.get('month') === 8) {
         return TSFristverlaengerung.FRISTVERLAENGERUNG_SEPTEMBER;
-    } else if (fristverlaengerungMoment.get('month') === 10) {
-        return TSFristverlaengerung.FRISTVERLAENGERUNG_NOVEMBER;
-    } else {
-        return TSFristverlaengerung.KEINE_FRISTVERLAENGERUNG;
     }
+    if (fristverlaengerungMoment.get('month') === 10) {
+        return TSFristverlaengerung.FRISTVERLAENGERUNG_NOVEMBER;
+    }
+    return TSFristverlaengerung.KEINE_FRISTVERLAENGERUNG;
 }
 

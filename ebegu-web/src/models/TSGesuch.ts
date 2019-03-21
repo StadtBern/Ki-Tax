@@ -359,10 +359,8 @@ export default class TSGesuch extends TSAbstractAntragEntity {
     public canBeMahnen(): boolean {
         if (this.fristverlaengerung === null || this.fristverlaengerung === undefined) {
             return true;
-        } else if (moment(moment.now()).isAfter(this.fristverlaengerung)) {
-            return true;
         }
-        return false;
+        return moment(moment.now()).isAfter(this.fristverlaengerung);
     }
 
     /**

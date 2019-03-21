@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 
 import ch.dvbern.lib.date.feiertage.FeiertageHelper;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Utils fuer Date Elemente
  */
@@ -42,9 +44,15 @@ public final class DateUtil {
 	public static LocalDate parseStringToDateOrReturnNow(@Nullable String stringDate) {
 		LocalDate date = LocalDate.now();
 		if (stringDate != null && !stringDate.isEmpty()) {
-			date = LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			date = parseStringToDate(stringDate);
 		}
 		return date;
+	}
+
+	@Nonnull
+	public static LocalDate parseStringToDate(@Nonnull String stringDate) {
+		requireNonNull(stringDate);
+		return LocalDate.parse(stringDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 
 	/**

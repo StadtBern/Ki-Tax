@@ -1375,7 +1375,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
 			postGesuchVerfuegen(gesuch);
 		} else {
-			checkAndUpdateFristverlaengerung(gesuch);
+			checkAndResetFristverlaengerung(gesuch);
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
 		}
 
@@ -1600,14 +1600,14 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 		Root<Gesuch> root = update.from(Gesuch.class);
 		update.set(Gesuch_.fristverlaengerung, fristverlaengerung);
 
-		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
+		Predicate predGesuch = cb.equal(root.get(AbstractEntity_.id), antragId);
 		update.where(predGesuch);
 
 		return persistence.getEntityManager().createQuery(update).executeUpdate();
 	}
 
 	@Override
-	public void checkAndUpdateFristverlaengerung(@Nonnull Gesuch gesuch) {
+	public void checkAndResetFristverlaengerung(@Nonnull Gesuch gesuch) {
 		if (gesuch.getFristverlaengerung() != null && !gesuch.hasOnlyBetreuungenOfSchulamt()) {
 			changeFristverlaengerung(gesuch.getId(), null);
 		}

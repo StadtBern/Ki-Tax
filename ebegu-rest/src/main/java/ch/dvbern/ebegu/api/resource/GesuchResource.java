@@ -419,7 +419,7 @@ public class GesuchResource {
 
 		LocalDate fristverlaengerung = null;
 		if (stringDate != null && !stringDate.isEmpty()) {
-			fristverlaengerung = DateUtil.parseStringToDateOrReturnNow(stringDate);
+			fristverlaengerung = DateUtil.parseStringToDate(stringDate);
 		}
 
 		if (gesuchService.changeFristverlaengerung(antragId, fristverlaengerung) == 1) {
@@ -448,7 +448,7 @@ public class GesuchResource {
 		// Wenn der GS ein Erneuerungsgesuch macht, ist das Eingangsdatum erst null. Wir muessen das Gesuch so erstellen
 		LocalDate eingangsdatum = null;
 		if (stringDate != null && !stringDate.isEmpty()) {
-			eingangsdatum = DateUtil.parseStringToDateOrReturnNow(stringDate);
+			eingangsdatum = DateUtil.parseStringToDate(stringDate);
 		}
 		final String antragId = converter.toEntityId(antragJaxId);
 		final String gesuchsperiodeId = converter.toEntityId(gesuchsperiodeJaxId);

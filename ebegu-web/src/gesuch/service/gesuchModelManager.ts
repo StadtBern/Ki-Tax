@@ -293,7 +293,7 @@ export default class GesuchModelManager {
     }
 
     public reloadGesuch(): IPromise<TSGesuch> {
-        return this.gesuchRS.findGesuch(this.gesuch.id).then((gesuchResponse: any) => {
+        return this.gesuchRS.findGesuch(this.getGesuch().id).then((gesuchResponse: any) => {
             this.setGesuch(gesuchResponse);
             return this.gesuch;
         });

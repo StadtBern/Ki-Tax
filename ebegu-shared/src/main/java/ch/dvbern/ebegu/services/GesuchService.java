@@ -413,7 +413,7 @@ public interface GesuchService {
 
 	/**
 	 * ueberprueft die Fristverlaengerung auf dem Gesuch. Wenn das Gesuch NICHT nur Schulamt-Betreuungen hat,
-	 * muss die Fristverlaengerung entfernt werden
+	 * muss die Fristverlaengerung entfernt werden. Sonst wird nichts gemacht.
 	 */
-	void checkAndUpdateFristverlaengerung(@Nonnull Gesuch gesuch);
+	void checkAndResetFristverlaengerung(@Nonnull Gesuch gesuch);
 }
