@@ -402,6 +402,33 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(mutationToReturn)).build();
 	}
 
+	@ApiOperation(value = "Aendert die Fristverlaengerung im Gesuch", response = JaxGesuch.class)
+	@Nonnull
+	@POST
+	@Path("/changeFristverlaengerung/{antragId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response changeFristverlaengerung(
+		@Nonnull @NotNull @PathParam("antragId") JaxId antragJaxId,
+		@Nullable @QueryParam("date") String stringDate,
+		@Context UriInfo uriInfo,
+		@Context HttpServletResponse response) {
+
+		Validate.notNull(antragJaxId.getId());
+		final String antragId = converter.toEntityId(antragJaxId);
+
+		LocalDate fristverlaengerung = null;
+		if (stringDate != null && !stringDate.isEmpty()) {
+			fristverlaengerung = DateUtil.parseStringToDateOrReturnNow(stringDate);
+		}
+
+		if (gesuchService.changeFristverlaengerung(antragId, fristverlaengerung) == 1) {
+			return Response.ok().build();
+		}
+		throw new EbeguEntityNotFoundException("changeFristverlaengerung", ErrorCodeEnum
+			.ERROR_ENTITY_NOT_FOUND, GESUCH_ID_INVALID + antragJaxId.getId());
+	}
+
 	@ApiOperation(value = "Creates a new Antrag of type Erneuerungsgesuch in the database", response = JaxGesuch.class)
 	@Nullable
 	@POST

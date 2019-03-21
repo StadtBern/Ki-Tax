@@ -22,6 +22,7 @@ import {DownloadRS} from '../../../core/service/downloadRS.rest';
 import {isAnyStatusOfMahnung, isAnyStatusOfVerfuegt, isAtLeastFreigegeben, TSAntragStatus} from '../../../models/enums/TSAntragStatus';
 import {TSBetreuungsstatus} from '../../../models/enums/TSBetreuungsstatus';
 import {TSFinSitStatus} from '../../../models/enums/TSFinSitStatus';
+import {getFristverlaengerungAsMoment, getTSFristverlaengerungValuesForSCH, TSFristverlaengerung} from '../../../models/enums/TSFristverlaengerung';
 import {TSMahnungTyp} from '../../../models/enums/TSMahnungTyp';
 import {TSRole} from '../../../models/enums/TSRole';
 import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
@@ -35,6 +36,7 @@ import TSMahnung from '../../../models/TSMahnung';
 import AuthenticationUtil from '../../../utils/AuthenticationUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import {EnumEx} from '../../../utils/EnumEx';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import {BemerkungenDialogController} from '../../dialog/BemerkungenDialogController';
 import {RemoveDialogController} from '../../dialog/RemoveDialogController';
 import BerechnungsManager from '../../service/berechnungsManager';
@@ -68,6 +70,8 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     private mahnung: TSMahnung;
     private tempAntragStatus: TSAntragStatus;
     finSitStatus: Array<string>;
+    fristverlaengerungValues: Array<any>;
+    private fristverlaengerungEnumValue: TSFristverlaengerung;
 
     static $inject: string[] = ['$state', 'GesuchModelManager', 'BerechnungsManager', 'EbeguUtil', 'WizardStepManager',
         'DvDialog', 'DownloadRS', 'MahnungRS', '$log', 'AuthServiceRS', '$scope', 'GesuchRS', '$timeout'];
@@ -120,6 +124,12 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         this.refreshKinderListe();
         this.finSitStatus = EnumEx.getNames(TSFinSitStatus);
         this.setHasFSDokumentAccordingToFinSitState();
+        this.setFristverlaengerungValues();
+        if (this.gesuchModelManager.getGesuch().id) {
+            this.gesuchModelManager.reloadGesuch().then((gesuch: TSGesuch) => {
+                this.fristverlaengerungEnumValue = this.gesuchModelManager.getFristverlaengerungAsEnumValue(gesuch);
+            });
+        }
     }
 
     private refreshKinderListe(): IPromise<any> {
@@ -346,7 +356,7 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
     public showErsteMahnungErstellen(): boolean {
         // Nur wenn keine offenen Mahnungen vorhanden!
         return (this.gesuchModelManager.isGesuchStatus(TSAntragStatus.IN_BEARBEITUNG_JA) || this.gesuchModelManager.isGesuchStatus(TSAntragStatus.FREIGEGEBEN))
-            && this.mahnung === undefined && !this.hasOffeneMahnungen() && !this.isGesuchReadonly();
+            && this.mahnung === undefined && !this.hasOffeneMahnungen() && !this.isGesuchReadonly() && this.gesuchModelManager.getGesuch().canBeMahnen();
     }
 
     public showErsteMahnungAusloesen(): boolean {
@@ -560,6 +570,16 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
         return false;
     }
 
+    public canBeFristverlaengerung(): boolean {
+        let fristverlaengerungerlaubt = moment(moment.now()).isBefore(getFristverlaengerungAsMoment(
+            TSFristverlaengerung.FRISTVERLAENGERUNG_NOVEMBER, this.gesuchModelManager.getYearOfGesuchsperiodeBegin()));
+        return !this.isGesuchReadonly() && fristverlaengerungerlaubt;
+    }
+
+    public isSchulamtRole(): boolean {
+        return this.authServiceRs.isOneOfRoles(TSRoleUtil.getSchulamtRoles());
+    }
+
     public isFinSitAbglehnt() {
         if (this.isFinSitChoosen() && this.getGesuch().finSitStatus !== TSFinSitStatus.AKZEPTIERT) {
             return true;
@@ -618,6 +638,18 @@ export class VerfuegenListViewController extends AbstractGesuchViewController<an
                 this.form.$setPristine();
             });
         }
+    }
+
+    private setFristverlaengerungValues(): void {
+        this.fristverlaengerungValues = getTSFristverlaengerungValuesForSCH();
+    }
+
+    public changeFristverlaengerung() {
+        this.gesuchModelManager.getGesuch().fristverlaengerung = getFristverlaengerungAsMoment(this.fristverlaengerungEnumValue, this.gesuchModelManager.getYearOfGesuchsperiodeBegin());
+        this.gesuchRS.changeFristverlaengerung(this.getGesuch().id, this.getGesuch().fristverlaengerung).then((response: any) => {
+            this.gesuchModelManager.setGesuch(this.getGesuch());
+            this.form.$setPristine();
+        });
     }
 
     private setHasFSDokumentAccordingToFinSitState() {

@@ -911,6 +911,7 @@ public class JaxBConverter {
 		antrag.setHasFSDokument(antragJAXP.isHasFSDokument());
 		antrag.setFinSitStatus(antragJAXP.getFinSitStatus());
 		antrag.setDokumenteHochgeladen(antragJAXP.isDokumenteHochgeladen());
+		antrag.setFristverlaengerung(antragJAXP.getFristverlaengerung());
 		return antrag;
 	}
 
@@ -1049,6 +1050,7 @@ public class JaxBConverter {
 		jaxGesuch.setGueltig(persistedGesuch.isGueltig());
 		jaxGesuch.setDokumenteHochgeladen(persistedGesuch.getDokumenteHochgeladen());
 		jaxGesuch.setFinSitStatus(persistedGesuch.getFinSitStatus());
+		jaxGesuch.setFristverlaengerung(persistedGesuch.getFristverlaengerung());
 		return jaxGesuch;
 	}
 

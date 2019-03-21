@@ -224,6 +224,9 @@ public class Gesuch extends AbstractEntity implements Searchable {
 	@Column(nullable = true)
 	private Boolean gueltig = null;
 
+	@Column(nullable = true)
+	private LocalDate fristverlaengerung;
+
 	public Gesuch() {
 	}
 
@@ -507,6 +510,15 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		return this.gueltig != null && this.gueltig;
 	}
 
+	@Nullable
+	public LocalDate getFristverlaengerung() {
+		return fristverlaengerung;
+	}
+
+	public void setFristverlaengerung(@Nullable LocalDate fristverlaengerung) {
+		this.fristverlaengerung = fristverlaengerung;
+	}
+
 	public Boolean getDokumenteHochgeladen() {
 		return dokumenteHochgeladen;
 	}
@@ -731,6 +743,7 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		mutation.setTimestampVerfuegt(null);
 		mutation.setGueltig(false);
 		mutation.setDokumenteHochgeladen(false);
+//		TODO imanol review: hier auch fristverlaengerung ?
 		return mutation;
 	}
 
@@ -769,6 +782,7 @@ public class Gesuch extends AbstractEntity implements Searchable {
 		// null instead of false because of UK_Constraint UK_gueltiges_gesuch
 		folgegesuch.setGueltig(null);
 		folgegesuch.setDokumenteHochgeladen(false);
+		//TODO imanol review: hier auch Fristverlaengerung ?
 		return folgegesuch;
 	}
 

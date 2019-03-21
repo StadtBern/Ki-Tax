@@ -346,6 +346,7 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 			verfuegenWizardStep.setWizardStepStatus(WizardStepStatus.OK);
 			verfuegenWizardStep.getGesuch().setStatus(AntragStatus.VERFUEGT);
 			gesuchService.postGesuchVerfuegen(verfuegenWizardStep.getGesuch());
+			gesuchService.checkAndUpdateFristverlaengerung(verfuegenWizardStep.getGesuch());
 
 			// Hier wird das Gesuch oder die Mutation effektiv verfügt. Daher müssen hier noch andere Services gerufen werden!
 			try {

@@ -120,6 +120,10 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	private boolean gueltig;
 
+	@Nullable
+	@XmlJavaTypeAdapter(LocalDateXMLConverter.class)
+	private LocalDate fristverlaengerung;
+
 	private boolean dokumenteHochgeladen;
 
 
@@ -266,6 +270,15 @@ public class JaxGesuch extends JaxAbstractDTO {
 
 	public void setGueltig(boolean gueltig) {
 		this.gueltig = gueltig;
+	}
+
+	@Nullable
+	public LocalDate getFristverlaengerung() {
+		return fristverlaengerung;
+	}
+
+	public void setFristverlaengerung(@Nullable LocalDate fristverlaengerung) {
+		this.fristverlaengerung = fristverlaengerung;
 	}
 
 	public GesuchBetreuungenStatus getGesuchBetreuungenStatus() {

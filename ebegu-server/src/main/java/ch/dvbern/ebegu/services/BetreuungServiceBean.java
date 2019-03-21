@@ -170,6 +170,7 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		}
 
 		Gesuch mergedGesuch = gesuchService.updateBetreuungenStatus(mergedBetreuung.extractGesuch());
+		gesuchService.checkAndUpdateFristverlaengerung(mergedGesuch);
 
 		if (updateVerantwortlicheNeeded(mergedGesuch.getEingangsart(), mergedBetreuung.getBetreuungsstatus(), isNew)) {
 			String propertyDefaultVerantwortlicher = applicationPropertyService.findApplicationPropertyAsString(
@@ -502,7 +503,8 @@ public class BetreuungServiceBean extends AbstractBaseService implements Betreuu
 		gesuch.getKindContainers()
 			.forEach(kind -> kind.getBetreuungen().removeIf(bet -> bet.getId().equalsIgnoreCase(betreuung.getId())));
 
-		gesuchService.updateBetreuungenStatus(gesuch);
+		Gesuch mergedGesuch = gesuchService.updateBetreuungenStatus(gesuch);
+		gesuchService.checkAndUpdateFristverlaengerung(mergedGesuch);
 	}
 
 	@Override

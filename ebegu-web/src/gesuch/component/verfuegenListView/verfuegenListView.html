@@ -77,6 +77,29 @@
 
                     </div>
                 </div>
+                <!-- Fristverlaengerung -->
+                <div class="row marginTop20" ng-disabled="!vm.canBeFristverlaengerung()"
+                     ng-show="vm.gesuchModelManager.areThereOnlySchulamtAngebote() && vm.isSchulamtRole() ">
+                    <div class="col-sm-12 ">
+                        <div class="form-group">
+                            <label class="md-no-float" for="fristverlaengerung" aria-label="{{'FRISTVERLAENGERUNG_WAEHLEN' | translate}}">
+                                <span data-translate="FRISTVERLAENGERUNG_WAEHLEN"></span>
+                            </label>
+                            <p class="inlineHint" data-translate="FRISTVERLAENGERUNG_HINT"></p>
+                            <div class="dv-select-style dv-input-container-medium marginTop20">
+                                <select aria-describedby="fristverlaengerung-error" name="fristverlaengerung" id="fristverlaengerung"
+                                        ng-model="vm.fristverlaengerungEnumValue"
+                                        class="form-control"
+                                        ng-options="(fristverlaengerung |translate) for fristverlaengerung in vm.fristverlaengerungValues"
+                                        ng-disabled="!vm.canBeFristverlaengerung()"
+                                        ng-change="vm.changeFristverlaengerung()">
+                                </select>
+                                <dv-error-messages input-id="fristverlaengerung"
+                                                   for="vm.form.fristverlaengerung.$error"></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!--FinSitStatus-->
                 <div class="row marginTop30" ng-if="vm.showFinSitStatus()">
                     <div class="col-xs-12 dv-input-container-medium">

@@ -40,8 +40,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 
-import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragPredicateObjectDTO;
+import ch.dvbern.ebegu.dto.suchfilter.smarttable.AntragTableFilterDTO;
 import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Benutzer_;
 import ch.dvbern.ebegu.entities.Betreuung;
@@ -370,10 +370,18 @@ public class SearchServiceBean extends AbstractBaseService implements SearchServ
 		final Predicate predicateIsFlagFinSitNotSet = cb.isNull(root.get(Gesuch_.finSitStatus));
 
 		final Predicate predicateIsSCHgesuch = cb.and(predicateIsVerantwortlicherJA.not(), predicateIsVerantwortlicherSCH);
+		//bei SCH Gesuchen muss zusaetlich nach der Fristverlaengerung gefiltert werden
+		final Predicate predicateFristverlaengerungIsNull = cb.isNull(root.get(Gesuch_.fristverlaengerung));
+		final Predicate predicateFristverlaengerungOver = cb.lessThanOrEqualTo(root.get(Gesuch_.fristverlaengerung), LocalDate.now());
+		final Predicate predicateIsSCHgesuchFristvNullorOver = cb.and(
+			predicateIsSCHgesuch,
+			cb.or(predicateFristverlaengerungIsNull, predicateFristverlaengerungOver)
+		);
+
 		final Predicate predicateIsMischgesuch = cb.and(predicateIsVerantwortlicherJA, predicateIsVerantwortlicherSCH);
 		final Predicate predicateIsMischgesuchPendenz = cb.and(predicateIsMischgesuch, predicateIsFlagFinSitNotSet);
 
-		return cb.or(predicateIsSCHgesuch, predicateIsMischgesuchPendenz);
+		return cb.or(predicateIsSCHgesuchFristvNullorOver, predicateIsMischgesuchPendenz);
 	}
 
 

@@ -52,6 +52,8 @@ describe('verfuegenListViewTest', function () {
         spyOn(gesuchModelManager, 'getKinderWithBetreuungList').and.returnValue([tsKindContainer]);
         spyOn(gesuchModelManager, 'calculateVerfuegungen').and.returnValue($q.when({}));
 
+        let gesuch: TSGesuch = new TSGesuch();
+        gesuch.id = '456';
         spyOn(gesuchModelManager, 'getGesuch').and.returnValue(new TSGesuch());
 
         berechnungsManager = $injector.get('BerechnungsManager');

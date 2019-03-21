@@ -13,6 +13,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {getFristverlaengerungAsMoment, getTSFristverlaengerungValuesForGS, TSFristverlaengerung} from '../../../models/enums/TSFristverlaengerung';
+import TSGesuch from '../../../models/TSGesuch';
+import GesuchRS from '../../service/gesuchRS.rest';
 import AbstractGesuchViewController from '../abstractGesuchView';
 import {IComponentOptions, IPromise} from 'angular';
 import GesuchModelManager from '../../service/gesuchModelManager';
@@ -32,6 +35,7 @@ import {TSRoleUtil} from '../../../utils/TSRoleUtil';
 import EbeguUtil from '../../../utils/EbeguUtil';
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
+import moment = require('moment');
 
 let template = require('./freigabeView.html');
 require('./freigabeView.less');
@@ -51,15 +55,17 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
     isFreigebenClicked: boolean = false;
     private showGesuchFreigebenSimulationButton: boolean = false;
     TSRoleUtil: any;
+    fristverlaengerungValues: Array<any>;
+    private fristverlaengerungEnumValue: TSFristverlaengerung;
 
     static $inject = ['GesuchModelManager', 'BerechnungsManager', 'WizardStepManager',
-        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', 'AuthServiceRS', '$timeout'];
+        'DvDialog', 'DownloadRS', '$scope', 'ApplicationPropertyRS', 'AuthServiceRS', 'GesuchRS', '$timeout'];
 
     /* @ngInject */
     constructor(gesuchModelManager: GesuchModelManager, berechnungsManager: BerechnungsManager,
                 wizardStepManager: WizardStepManager, private DvDialog: DvDialog,
                 private downloadRS: DownloadRS, $scope: IScope, private applicationPropertyRS: ApplicationPropertyRS,
-                private authServiceRS: AuthServiceRS, $timeout: ITimeoutService) {
+                private authServiceRS: AuthServiceRS, private gesuchRS: GesuchRS, $timeout: ITimeoutService) {
 
         super(gesuchModelManager, berechnungsManager, wizardStepManager, $scope, TSWizardStepName.FREIGABE, $timeout);
         this.initViewModel();
@@ -69,6 +75,12 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         this.wizardStepManager.updateCurrentWizardStepStatus(TSWizardStepStatus.IN_BEARBEITUNG);
         this.initDevModeParameter();
         this.TSRoleUtil = TSRoleUtil;
+        this.setFristverlaengerungValues();
+        if (this.gesuchModelManager.getGesuch().id) {
+            this.gesuchModelManager.reloadGesuch().then((gesuch: TSGesuch) => {
+                this.fristverlaengerungEnumValue = this.gesuchModelManager.getFristverlaengerungAsEnumValue(gesuch);
+            });
+        }
     }
 
     public gesuchEinreichen(): IPromise<void> {
@@ -155,6 +167,10 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         }
     }
 
+    private setFristverlaengerungValues(): void {
+        this.fristverlaengerungValues = getTSFristverlaengerungValuesForGS();
+    }
+
     /**
      * Die Methodes wizardStepManager.areAllStepsOK() erlaubt dass die Betreuungen in Status PLATZBESTAETIGUNG sind
      * aber in diesem Fall duerfen diese nur OK sein, deswegen die Frage extra. Ausserdem darf es nur freigegebn werden
@@ -164,6 +180,24 @@ export class FreigabeViewController extends AbstractGesuchViewController<any> {
         return this.wizardStepManager.areAllStepsOK(this.gesuchModelManager.getGesuch()) &&
             this.wizardStepManager.isStepStatusOk(TSWizardStepName.BETREUUNG)
             && !this.isGesuchReadonly() && this.isGesuchInStatus(TSAntragStatus.IN_BEARBEITUNG_GS);
+    }
+
+    public canBeFristverlaengerung(): boolean {
+        let fristverlaengerungerlaubt = moment(moment.now()).isBefore(getFristverlaengerungAsMoment(
+            TSFristverlaengerung.FRISTVERLAENGERUNG_SEPTEMBER, this.gesuchModelManager.getYearOfGesuchsperiodeBegin()));
+        return !this.isGesuchReadonly() && fristverlaengerungerlaubt;
+    }
+
+    public changeFristverlaengerung() {
+        this.gesuchModelManager.getGesuch().fristverlaengerung = getFristverlaengerungAsMoment(this.fristverlaengerungEnumValue, this.gesuchModelManager.getYearOfGesuchsperiodeBegin());
+        this.gesuchRS.changeFristverlaengerung(this.gesuchModelManager.getGesuch().id, this.gesuchModelManager.getGesuch().fristverlaengerung).then((response: any) => {
+            this.gesuchModelManager.setGesuch(this.gesuchModelManager.getGesuch());
+            this.form.$setPristine();
+        });
+    }
+
+    public isGesuchstellerRole(): boolean {
+        return this.authServiceRS.isOneOfRoles(TSRoleUtil.getGesuchstellerRoles());
     }
 
     public isThereAnyAbgewieseneBetreuung(): boolean {

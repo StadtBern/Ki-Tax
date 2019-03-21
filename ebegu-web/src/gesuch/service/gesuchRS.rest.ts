@@ -242,6 +242,11 @@ export default class GesuchRS implements IEntityRS {
         return this.http.post(this.serviceURL + '/changeFinSitStatus/' + encodeURIComponent(antragId) + '/' + finSitStatus, null);
     }
 
+    public changeFristverlaengerung(antragId: string, fristverlaengerung: moment.Moment): IPromise<any> {
+        return this.http.post(this.serviceURL + '/changeFristverlaengerung/' + encodeURIComponent(antragId), null,
+            {params: {date: DateUtil.momentToLocalDate(fristverlaengerung)}});
+    }
+
     public isNeuestesGesuch(gesuchID: string): IPromise<boolean> {
         return this.http.get(this.serviceURL + '/newest/' + encodeURIComponent(gesuchID))
             .then((response: any) => {

@@ -1375,6 +1375,7 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 			gesuch.setStatus(AntragStatus.NUR_SCHULAMT);
 			postGesuchVerfuegen(gesuch);
 		} else {
+			checkAndUpdateFristverlaengerung(gesuch);
 			gesuch.setStatus(AntragStatus.VERFUEGEN);
 		}
 
@@ -1586,6 +1587,29 @@ public class GesuchServiceBean extends AbstractBaseService implements GesuchServ
 				throw new EbeguRuntimeException(methodname, "FinSit-Dokument konnte nicht erstellt werden"
 					+ persistedGesuch.getId(), e);
 			}
+		}
+	}
+
+	@Nonnull
+	@Override
+	@RolesAllowed({ SUPER_ADMIN, GESUCHSTELLER, SCHULAMT, ADMINISTRATOR_SCHULAMT })
+	public int changeFristverlaengerung(@Nonnull String antragId, @Nullable LocalDate fristverlaengerung) {
+
+		CriteriaBuilder cb = persistence.getCriteriaBuilder();
+		final CriteriaUpdate<Gesuch> update = cb.createCriteriaUpdate(Gesuch.class);
+		Root<Gesuch> root = update.from(Gesuch.class);
+		update.set(Gesuch_.fristverlaengerung, fristverlaengerung);
+
+		Predicate predGesuch = cb.equal(root.get(Gesuch_.id), antragId);
+		update.where(predGesuch);
+
+		return persistence.getEntityManager().createQuery(update).executeUpdate();
+	}
+
+	@Override
+	public void checkAndUpdateFristverlaengerung(@Nonnull Gesuch gesuch) {
+		if (gesuch.getFristverlaengerung() != null && !gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			changeFristverlaengerung(gesuch.getId(), null);
 		}
 	}
 }

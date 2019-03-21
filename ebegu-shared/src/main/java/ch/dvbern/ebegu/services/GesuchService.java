@@ -404,4 +404,16 @@ public interface GesuchService {
 	 * Schliesst die Pruefung STV ab und setzt den Status auf den Status, den das Gesuch vor der Pruefung hatte
 	 */
 	Gesuch stvPruefungAbschliessen(@Nonnull Gesuch gesuch);
+
+	/**
+	 * aendert das Datum der Fristverlaengerung
+	 */
+	@Nonnull
+	int changeFristverlaengerung(@Nonnull String antragId, @Nullable LocalDate fristverlaengerung);
+
+	/**
+	 * ueberprueft die Fristverlaengerung auf dem Gesuch. Wenn das Gesuch NICHT nur Schulamt-Betreuungen hat,
+	 * muss die Fristverlaengerung entfernt werden
+	 */
+	void checkAndUpdateFristverlaengerung(@Nonnull Gesuch gesuch);
 }

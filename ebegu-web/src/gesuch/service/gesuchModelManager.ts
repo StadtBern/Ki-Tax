@@ -14,6 +14,7 @@
  */
 
 import {TSCacheTyp} from '../../models/enums/TSCacheTyp';
+import {getFristverlaengerungFromMoment, TSFristverlaengerung} from '../../models/enums/TSFristverlaengerung';
 import TSFall from '../../models/TSFall';
 import TSGesuch from '../../models/TSGesuch';
 import TSGesuchsteller from '../../models/TSGesuchsteller';
@@ -656,6 +657,17 @@ export default class GesuchModelManager {
 
     public getBasisjahrToWorkWith(): number {
         return this.getBasisjahrPlus(this.basisJahrPlusNumber);
+    }
+
+    public getYearOfGesuchsperiodeBegin(): number {
+        if (this.getGesuchsperiode()) {
+            return this.getGesuchsperiodeBegin().year();
+        }
+        return undefined;
+    }
+
+    public getFristverlaengerungAsEnumValue(gesuch: TSGesuch): TSFristverlaengerung {
+        return getFristverlaengerungFromMoment(gesuch.fristverlaengerung);
     }
 
     /**

@@ -25,6 +25,7 @@ import TSGesuch from '../../../models/TSGesuch';
 import TestDataUtil from '../../../utils/TestDataUtil';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import GesuchModelManager from '../../service/gesuchModelManager';
+import GesuchRS from '../../service/gesuchRS.rest';
 import WizardStepManager from '../../service/wizardStepManager';
 import {FreigabeViewController} from './freigabeView';
 
@@ -40,6 +41,7 @@ describe('freigabeView', function () {
     let $httpBackend: angular.IHttpBackendService;
     let applicationPropertyRS: any;
     let authServiceRS: AuthServiceRS;
+    let gesuchRS: GesuchRS;
     let $timeout: angular.ITimeoutService;
 
     let gesuch: TSGesuch;
@@ -58,14 +60,18 @@ describe('freigabeView', function () {
         $httpBackend = $injector.get('$httpBackend');
         applicationPropertyRS = $injector.get('ApplicationPropertyRS');
         authServiceRS = $injector.get('AuthServiceRS');
+        gesuchRS = $injector.get('GesuchRS');
         $timeout = $injector.get('$timeout');
 
         spyOn(applicationPropertyRS, 'isDevMode').and.returnValue($q.when(false));
         spyOn(authServiceRS, 'isOneOfRoles').and.returnValue(true);
         spyOn(wizardStepManager, 'updateCurrentWizardStepStatus').and.returnValue({});
+        let gesuch: TSGesuch = new TSGesuch();
+        gesuch.id = '123';
+        spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
         controller = new FreigabeViewController(gesuchModelManager, $injector.get('BerechnungsManager'),
-            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, authServiceRS, $timeout);
+            wizardStepManager, dialog, downloadRS, $scope, applicationPropertyRS, authServiceRS, gesuchRS, $timeout);
         controller.form = <angular.IFormController>{};
 
         spyOn(controller, 'isGesuchValid').and.callFake(function () {
@@ -148,9 +154,6 @@ describe('freigabeView', function () {
             spyOn(downloadRS, 'getFreigabequittungAccessTokenGeneratedDokument').and.returnValue($q.when(downloadFile));
             spyOn(downloadRS, 'startDownload').and.returnValue($q.when({}));
             spyOn(gesuchModelManager, 'openGesuch').and.returnValue($q.when({}));
-            let gesuch: TSGesuch = new TSGesuch();
-            gesuch.id = '123';
-            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
 
             controller.confirmationCallback();
             $scope.$apply();
@@ -165,9 +168,6 @@ describe('freigabeView', function () {
             spyOn(gesuchModelManager, 'openGesuch').and.returnValue($q.when({}));
             spyOn(downloadRS, 'startDownload').and.returnValue($q.when({}));
             spyOn(downloadRS, 'getFreigabequittungAccessTokenGeneratedDokument').and.returnValue($q.when({}));
-            gesuch = new TSGesuch();
-            gesuch.id = '123';
-            spyOn(gesuchModelManager, 'getGesuch').and.returnValue(gesuch);
         });
         it('should call the service for Erstgesuch', function () {
             spyOn(gesuchModelManager, 'isGesuch').and.returnValue(true);

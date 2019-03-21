@@ -51,6 +51,7 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     private _timestampVerfuegt: moment.Moment;
     private _gueltig: boolean;
+    private _fristverlaengerung: moment.Moment;
 
     // Wir müssen uns merken, dass dies nicht das originalGesuch ist sondern eine Mutations- oder Erneuerungskopie
     // (Wichtig für laden des Gesuchs bei Navigation)
@@ -208,6 +209,14 @@ export default class TSGesuch extends TSAbstractAntragEntity {
         this._dokumenteHochgeladen = value;
     }
 
+    get fristverlaengerung(): moment.Moment {
+        return this._fristverlaengerung;
+    }
+
+    set fristverlaengerung(value: moment.Moment) {
+        this._fristverlaengerung = value;
+    }
+
     public isMutation(): boolean {
         return this.typ === TSAntragTyp.MUTATION;
     }
@@ -345,6 +354,15 @@ export default class TSGesuch extends TSAbstractAntragEntity {
 
     public canBeFreigegeben(): boolean {
         return this.status === TSAntragStatus.FREIGABEQUITTUNG;
+    }
+
+    public canBeMahnen(): boolean {
+        if (this.fristverlaengerung === null || this.fristverlaengerung === undefined) {
+            return true;
+        } else if (moment(moment.now()).isAfter(this.fristverlaengerung)) {
+            return true;
+        }
+        return false;
     }
 
     /**
