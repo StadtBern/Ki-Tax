@@ -94,9 +94,12 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 		for (ErwerbspensumContainer erwerbspensenContainer : erwerbspensenContainers) {
 			final Erwerbspensum erwerbspensumJA = erwerbspensenContainer.getErwerbspensumJA();
 			if (erwerbspensumJA != null) {
-				add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gueltigAb, erwerbspensumJA.getName(), DokumentGrundPersonType.GESUCHSTELLER,
 
+				add(getDokument(DokumentTyp.NACHWEIS_ERWERBSPENSUM, erwerbspensumJA, gueltigAb, erwerbspensumJA.getName(), DokumentGrundPersonType.GESUCHSTELLER,
 					gesuchstellerNumber, DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+				add(getDokument(DokumentTyp.NACHWEIS_SECHS_MONATE_ABRECHNUNG, erwerbspensumJA, gueltigAb, erwerbspensumJA.getName(), DokumentGrundPersonType.GESUCHSTELLER,
+					gesuchstellerNumber, DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
+
 				add(getDokument(DokumentTyp.NACHWEIS_SELBSTAENDIGKEIT, erwerbspensumJA, erwerbspensumJA.getName(), DokumentGrundPersonType.GESUCHSTELLER,
 					gesuchstellerNumber, DokumentGrundTyp.ERWERBSPENSUM), anlageVerzeichnis);
 				add(getDokument(DokumentTyp.NACHWEIS_AUSBILDUNG, erwerbspensumJA, erwerbspensumJA.getName(), DokumentGrundPersonType.GESUCHSTELLER,
@@ -128,8 +131,12 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 			case NACHWEIS_ERWERBSPENSUM:
 				// Wird nur bei Neueintritt im Job verlangt. Neueintritt = DatumVon >= Periodenstart. Bei Mutationen
 				// wird das Erwerbspensum immer beendet und ein neues erfasst. Daher gilt diese Regel immer
-				return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart) &&
-					(erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT || erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT_STUNDENLOHN);
+				return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart)
+					&& (erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT
+					 || erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT_STUNDENLOHN);
+			case NACHWEIS_SECHS_MONATE_ABRECHNUNG:
+				return !erwerbspensum.getGueltigkeit().getGueltigAb().isBefore(periodenstart)
+					&& erwerbspensum.getTaetigkeit() == Taetigkeit.ANGESTELLT_STUNDENLOHN;
 			default:
 				return isDokumentNeeded(dokumentTyp, erwerbspensum);
 			}
@@ -143,6 +150,7 @@ public class ErwerbspensumDokumente extends AbstractDokumente<Erwerbspensum, Loc
 		if (erwerbspensum != null) {
 			switch (dokumentTyp) {
 			case NACHWEIS_ERWERBSPENSUM:
+			case NACHWEIS_SECHS_MONATE_ABRECHNUNG:
 				// braucht Periodenstart-Datum als Parameter
 				return false;
 			case NACHWEIS_SELBSTAENDIGKEIT:
