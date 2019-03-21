@@ -43,4 +43,6 @@ public interface FreigabequittungPrint {
 	boolean isWithoutUnterlagen();
 
 	String getFristverlaengerung();
+
+	String getFristverlaengerungTitle();
 }

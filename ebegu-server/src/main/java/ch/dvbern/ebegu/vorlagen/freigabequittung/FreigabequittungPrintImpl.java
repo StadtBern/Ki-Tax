@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import ch.dvbern.ebegu.entities.Betreuung;
 import ch.dvbern.ebegu.entities.DokumentGrund;
 import ch.dvbern.ebegu.entities.Gesuch;
@@ -134,11 +136,24 @@ public class FreigabequittungPrintImpl extends BriefPrintImpl implements Freigab
 		return this.unterlagen == null || this.unterlagen.isEmpty();
 	}
 
+	@Nullable
 	@Override
 	public String getFristverlaengerung() {
-		if (gesuch.getFristverlaengerung() == null) {
-			return ServerMessageUtil.getMessage("Freigabequittung_Keine_Fristverlaengerung");
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			if (gesuch.getFristverlaengerung() == null) {
+				return ServerMessageUtil.getMessage("Freigabequittung_Keine_Fristverlaengerung");
+			}
+			return Constants.DATE_FORMATTER.format(gesuch.getFristverlaengerung());
 		}
-		return Constants.DATE_FORMATTER.format(gesuch.getFristverlaengerung());
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public String getFristverlaengerungTitle() {
+		if (gesuch.hasOnlyBetreuungenOfSchulamt()) {
+			return ServerMessageUtil.getMessage("Freigabequittung_Fristverlaengerung_Title");
+		}
+		return null;
 	}
 }
