@@ -31,7 +31,7 @@ ${templateConfiguration.mailCss}
 	</p>
 	<p>
 		Freundliche Grüsse <br/>
-		Jugendamt der Stadt Bern
+		Familie & Quartier Stadt Bern
 	</p>
 	<p>
 		Dies ist eine automatisch versendete E-Mail. Bitte antworten Sie nicht auf diese Nachricht.

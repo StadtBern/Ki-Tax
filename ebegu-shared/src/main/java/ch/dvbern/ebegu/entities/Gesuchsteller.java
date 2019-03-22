@@ -19,14 +19,19 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.EbeguUtil;
+import ch.dvbern.ebegu.validators.CheckIbanCH;
+import ch.dvbern.oss.lib.beanvalidation.embeddables.IBAN;
 import org.hibernate.envers.Audited;
 
 import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
@@ -34,6 +39,7 @@ import static ch.dvbern.ebegu.util.Constants.DB_DEFAULT_MAX_LENGTH;
 /**
  * Entity fuer gesuchstellerdaten
  */
+@CheckIbanCH
 @Audited
 @Entity
 public class Gesuchsteller extends AbstractPersonEntity {
@@ -56,6 +62,17 @@ public class Gesuchsteller extends AbstractPersonEntity {
 
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String telefonAusland;
+
+	@Nullable
+	@Column(nullable = true)
+	@Embedded
+	@Valid
+	private IBAN iban;
+
+	@Nullable
+	@Size(max = DB_DEFAULT_MAX_LENGTH)
+	@Column(nullable = true)
+	private String kontoinhaber;
 
 	@Column(nullable = true, length = Constants.DB_DEFAULT_MAX_LENGTH)
 	private String ewkPersonId;
@@ -101,6 +118,24 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		this.telefonAusland = telefonAusland;
 	}
 
+	@Nullable
+	public IBAN getIban() {
+		return iban;
+	}
+
+	public void setIban(@Nullable IBAN iban) {
+		this.iban = iban;
+	}
+
+	@Nullable
+	public String getKontoinhaber() {
+		return kontoinhaber;
+	}
+
+	public void setKontoinhaber(@Nullable String kontoinhaber) {
+		this.kontoinhaber = kontoinhaber;
+	}
+
 	public String getEwkPersonId() {
 		return ewkPersonId;
 	}
@@ -134,6 +169,8 @@ public class Gesuchsteller extends AbstractPersonEntity {
 		mutation.setEwkPersonId(this.getEwkPersonId());
 		mutation.setEwkAbfrageDatum(this.getEwkAbfrageDatum());
 		mutation.setDiplomatenstatus(this.isDiplomatenstatus());
+		mutation.setIban(this.getIban());
+		mutation.setKontoinhaber(this.getKontoinhaber());
 		return mutation;
 	}
 
@@ -169,6 +206,8 @@ public class Gesuchsteller extends AbstractPersonEntity {
 			Objects.equals(getMobile(), otherGesuchsteller.getMobile()) &&
 			Objects.equals(getTelefon(), otherGesuchsteller.getTelefon()) &&
 			Objects.equals(getTelefonAusland(), otherGesuchsteller.getTelefonAusland()) &&
+			Objects.equals(getIban(), otherGesuchsteller.getIban()) &&
+			Objects.equals(getKontoinhaber(), otherGesuchsteller.getKontoinhaber()) &&
 			EbeguUtil.isSameOrNullStrings(getEwkPersonId(), otherGesuchsteller.getEwkPersonId()) &&
 			Objects.equals(isDiplomatenstatus(), otherGesuchsteller.isDiplomatenstatus());
 	}

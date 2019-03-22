@@ -45,8 +45,8 @@
                                                     ng-change="vm.checkAllEwkRelevantDataPresent()"
                                                     aria-described-by="geschlecht-error">
                                 </dv-radio-container>
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.geschlecht"
-                                           ja="vm.getModel().gesuchstellerJA.geschlecht"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().geschlecht"
+                                           ja="vm.getModelJA().geschlecht"></dv-bisher>
                                 <dv-error-messages input-id="geschlecht" for="vm.form.geschlecht.$error"
                                                    class="error"></dv-error-messages>
                             </div>
@@ -61,8 +61,8 @@
                                 <input id="vorname_ID" type="text" name="vorname" ng-model="vm.getModelJA().vorname"
                                        dv-max-length class="form-control input-dv" required ng-blur="vm.checkAllEwkRelevantDataPresent()"
                                        aria-describedby="vorname_ID-error" autocomplete="given-name">
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.vorname"
-                                           ja="vm.getModel().gesuchstellerJA.vorname"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().vorname"
+                                           ja="vm.getModelJA().vorname"></dv-bisher>
                                 <dv-error-messages for="vm.form.vorname.$error"
                                                    input-id="vorname_ID"
                                                    class="error"></dv-error-messages>
@@ -74,8 +74,8 @@
                                 <input aria-describedby="name_ID-error" id="name_ID" type="text" name="name" ng-model="vm.getModelJA().nachname"
                                        dv-max-length class="form-control" required ng-blur="vm.checkAllEwkRelevantDataPresent()"
                                        autocomplete="family-name">
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.nachname"
-                                           ja="vm.getModel().gesuchstellerJA.nachname"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().nachname"
+                                           ja="vm.getModelJA().nachname"></dv-bisher>
                                 <dv-error-messages input-id="name_ID" for="vm.form.name.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
@@ -93,8 +93,8 @@
                                                ng-model="vm.getModelJA().geburtsdatum" ng-required="true"
                                                class="input-element" dv-on-blur="vm.checkAllEwkRelevantDataPresent()">
                                 </dv-datepicker>
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.geburtsdatum"
-                                           ja="vm.getModel().gesuchstellerJA.geburtsdatum"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().geburtsdatum"
+                                           ja="vm.getModelJA().geburtsdatum"></dv-bisher>
                                 <dv-error-messages input-id="geburtsdatum_ID" for="vm.form.geburtsdatum.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
@@ -148,8 +148,8 @@
                                              dv-enable-expression="!vm.isGesuchReadonly()">
                                     <span data-translate="GESUCHSTELLER_DIPLOMATENSTATUS"></span>
                                 </md-checkbox>
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.diplomatenstatus"
-                                           ja="vm.getModel().gesuchstellerJA.diplomatenstatus"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().diplomatenstatus"
+                                           ja="vm.getModelJA().diplomatenstatus"></dv-bisher>
                                 <dv-error-messages for="vm.form.diplomatenstatus.$error"
                                                    class="error"></dv-error-messages>
                             </div>
@@ -226,6 +226,64 @@
                 <fieldset dv-enable-element
                           dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
                           dv-enable-expression="vm.areEmailTelefonEditable()">
+
+                    <!--Mahlzeiten IBAN Checkbox-->
+                    <div class="row" ng-if="vm.showIbanDaten()">
+                        <div class="col-xs-12 dv-input-container-question">
+                            <div class=" checkbox">
+                                <md-checkbox ng-model="vm.showIBAN" name="ibanCheckbox" id="ibanCheckbox"
+                                             aria-label="{{'IBAN_REQUIRED_QUESTION'|translate}}"
+                                             dv-enable-element
+                                             dv-enable-allowed-roles="vm.TSRoleUtil.getAllRolesButTraegerschaftInstitution()"
+                                             dv-enable-expression="vm.areEmailTelefonEditable()">
+                                    <span data-translate="IBAN_REQUIRED_QUESTION"></span>
+                                </md-checkbox>
+                                <dv-tooltip input-id="ibanCheckbox"
+                                            text="'IBAN_REQUIRED_HELP' | translate"></dv-tooltip>
+                                <dv-bisher gs="vm.showIBANGS" class="dv-bisher-break"
+                                           ja="vm.showIBAN"
+                                           specific-bisher-text="vm.getTextIbanKorrekturJA()"></dv-bisher>
+                                <dv-error-messages for="vm.form.showIBAN.$error"
+                                                   class="error" style=""></dv-error-messages>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="vm.showIBAN" >
+                        <!--IBAN-->
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-medium">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float" data-translate="IBAN" for="iban"></label>
+                                    <input id="iban" type="text" name="iban"
+                                           ng-model="vm.getModelJA().iban"
+                                           dv-max-length class="form-control" required>
+                                    <dv-bisher gs="vm.getModelGS().iban"
+                                               ja="vm.getModelJA().iban"></dv-bisher>
+                                    <dv-error-messages for="vm.form.iban.$error" class="error"
+                                                       input-id="iban">></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                        <!-- Kontoinhaber -->
+                        <div class="row">
+                            <div class="col-sm-12 dv-input-container-medium">
+                                <dv-input-container class="form-group">
+                                    <label class="md-no-float"
+                                           data-translate="GESUCHSTELLER_KONTOINHABER"
+                                           for="kontoinhaber"></label>
+                                    <input id="kontoinhaber" type="text" name="kontoinhaber"
+                                           ng-model="vm.getModelJA().kontoinhaber" required
+                                           dv-max-length class="form-control">
+                                    <dv-bisher gs="vm.getModelGS().kontoinhaber"
+                                               ja="vm.getModelJA().kontoinhaber"></dv-bisher>
+                                    <dv-error-messages for="vm.form.kontoinhaber.$error" class="error"
+                                                       input-id="kontoinhaber"></dv-error-messages>
+                                </dv-input-container>
+                            </div>
+                        </div>
+                    </div>
+
                     <!--Email-->
                     <div class="row">
                         <div class="col-sm-12 dv-input-container-medium">
@@ -235,8 +293,8 @@
                                 <input aria-describedby="email_ID-error" id="email_ID" type="email" name="email" ng-model="vm.getModelJA().mail"
                                        dv-max-length class="form-control" required placeholder="hans.muster@example.com"
                                        ng-pattern="vm.CONSTANTS.PATTERN_EMAIL" autocomplete="email">
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.mail"
-                                           ja="vm.getModel().gesuchstellerJA.mail"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().mail"
+                                           ja="vm.getModelJA().mail"></dv-bisher>
                                 <dv-error-messages input-id="email_ID" for="vm.form.email.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
@@ -252,8 +310,8 @@
                                 <input aria-describedby="mobile_ID-error" id="mobile_ID" type="text" name="mobile" ng-model="vm.getModelJA().mobile"
                                        dv-max-length class="form-control" placeholder="e.g: +41 79 123 44 55"
                                        ng-pattern="vm.CONSTANTS.PATTERN_MOBILE" autocomplete="mobile">
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.mobile"
-                                           ja="vm.getModel().gesuchstellerJA.mobile"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().mobile"
+                                           ja="vm.getModelJA().mobile"></dv-bisher>
                                 <dv-error-messages input-id="mobile_ID" for="vm.form.mobile.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
@@ -265,8 +323,8 @@
                                 <input aria-describedby="tel_ID-error" id="tel_ID" type="text" name="telefon" ng-model="vm.getModelJA().telefon"
                                        dv-max-length class="form-control" placeholder="e.g: +41 33 123 45 67"
                                        ng-pattern="vm.CONSTANTS.PATTERN_PHONE" autocomplete="home tel">
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.telefon"
-                                           ja="vm.getModel().gesuchstellerJA.telefon"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().telefon"
+                                           ja="vm.getModelJA().telefon"></dv-bisher>
                                 <dv-error-messages input-id="tel_ID" for="vm.form.telefon.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>
@@ -281,8 +339,8 @@
                                 <input aria-describedby="ausl_tel-error" id="ausl_tel" type="text" name="telefonAusland"
                                        ng-model="vm.getModelJA().telefonAusland" autocomplete="tel"
                                        dv-max-length class="form-control">
-                                <dv-bisher gs="vm.getModel().gesuchstellerGS.telefonAusland"
-                                           ja="vm.getModel().gesuchstellerJA.telefonAusland"></dv-bisher>
+                                <dv-bisher gs="vm.getModelGS().telefonAusland"
+                                           ja="vm.getModelJA().telefonAusland"></dv-bisher>
                                 <dv-error-messages input-id="ausl_tel" for="vm.form.telefonAusland.$error"
                                                    class="error"></dv-error-messages>
                             </dv-input-container>

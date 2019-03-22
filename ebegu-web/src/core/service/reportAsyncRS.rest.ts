@@ -15,8 +15,8 @@
 
 import {IHttpParamSerializer, ILogService} from 'angular';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
-import IPromise = angular.IPromise;
 import IHttpService = angular.IHttpService;
+import IPromise = angular.IPromise;
 
 /**
  * spricht die reportAsync resourec an welce die reports async generiert
@@ -166,6 +166,25 @@ export class ReportAsyncRS {
         return this.http.get(this.serviceURL + '/excel/gesuchsteller?' + reportParams, {timeout: this.reportingTimeout})
             .then((response: any) => {
                 return  response.data;
+            });
+    }
+
+    public getMassenversandReportExcel(auswertungVon: string, auswertungBis: string, gesuchPeriodeID: string,
+                                       inklBgGesuche: boolean, inklMischGesuche: boolean, inklTsGesuche: boolean,
+                                       ohneErneuerungsgesuch: boolean, text: string): IPromise<string> {
+        let reportParams: string = this.httpParamSerializer({
+            auswertungVon: auswertungVon,
+            auswertungBis: auswertungBis,
+            gesuchPeriodeID: gesuchPeriodeID,
+            inklBgGesuche: inklBgGesuche,
+            inklMischGesuche: inklMischGesuche,
+            inklTsGesuche: inklTsGesuche,
+            ohneErneuerungsgesuch: ohneErneuerungsgesuch,
+            text: text
+        });
+        return this.http.get(this.serviceURL + '/excel/massenversand?' + reportParams, {timeout: this.reportingTimeout})
+            .then((response: any) => {
+                return response.data;
             });
     }
 

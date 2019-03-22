@@ -88,7 +88,7 @@ public class SearchResource {
 	 * Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck.
 	 * Sollte keine Pendenze gefunden werden oder ein Fehler passieren, wird eine leere Liste zurueckgegeben.
 	 */
-	@ApiOperation(value = "Gibt eine Liste mit allen Pendenzen des Jugendamtes zurueck",
+	@ApiOperation(value = "Gibt eine Liste mit allen Pendenzen von Familie & Quartier Stadt Bern zurueck",
 		responseContainer = "List", response = JaxAntragDTO.class)
 	@Nonnull
 	@POST

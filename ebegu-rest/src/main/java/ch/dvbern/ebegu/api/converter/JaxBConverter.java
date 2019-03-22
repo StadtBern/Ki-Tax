@@ -490,6 +490,12 @@ public class JaxBConverter {
 		gesuchsteller.setEwkPersonId(gesuchstellerJAXP.getEwkPersonId());
 		gesuchsteller.setEwkAbfrageDatum(gesuchstellerJAXP.getEwkAbfrageDatum());
 		gesuchsteller.setDiplomatenstatus(gesuchstellerJAXP.isDiplomatenstatus());
+		if (gesuchstellerJAXP.getIban() != null) {
+			gesuchsteller.setIban(new IBAN(gesuchstellerJAXP.getIban()));
+		} else {
+			gesuchsteller.setIban(null);
+		}
+		gesuchsteller.setKontoinhaber(gesuchstellerJAXP.getKontoinhaber());
 		return gesuchsteller;
 	}
 
@@ -626,6 +632,10 @@ public class JaxBConverter {
 		jaxGesuchsteller.setEwkPersonId(persistedGesuchsteller.getEwkPersonId());
 		jaxGesuchsteller.setEwkAbfrageDatum(persistedGesuchsteller.getEwkAbfrageDatum());
 		jaxGesuchsteller.setDiplomatenstatus(persistedGesuchsteller.isDiplomatenstatus());
+		if (persistedGesuchsteller.getIban() != null) {
+			jaxGesuchsteller.setIban(persistedGesuchsteller.getIban().getIban());
+		}
+		jaxGesuchsteller.setKontoinhaber(persistedGesuchsteller.getKontoinhaber());
 		return jaxGesuchsteller;
 	}
 
@@ -1302,18 +1312,40 @@ public class JaxBConverter {
 
 	}
 
+	/**
+	 * given a specific InstitutionStammdatenTagesschule object; map all the module data from the client to the existing
+	 * stammdaten entity. If there is no module for the matching weekday present in the databse then create a new one
+	 *
+	 * @param jaxModuleTagesschule moduleTagesschulden dto from client
+	 * @param moduleOfInstitution existing modulTagesschulen
+	 * @param institutionStammdatenTagesschule stammdaten to map modules to
+	 * @return list o mapped entities
+	 */
 	@Nullable
-	private Set<ModulTagesschule> moduleTagesschuleListToEntity(@Nullable List<JaxModulTagesschule> jaxModuleTagesschule, @Nullable Set<ModulTagesschule> moduleOfInstitution,
+	private Set<ModulTagesschule> moduleTagesschuleListToEntity(
+		@Nullable List<JaxModulTagesschule> jaxModuleTagesschule,
+		Set<ModulTagesschule> moduleOfInstitution,
 		@NotNull InstitutionStammdatenTagesschule institutionStammdatenTagesschule) {
 
 		if (moduleOfInstitution != null && jaxModuleTagesschule != null) {
 			final Set<ModulTagesschule> transformedModule = new TreeSet<>();
 			for (final JaxModulTagesschule jaxModulTagesschule : jaxModuleTagesschule) {
+
 				final ModulTagesschule modulTagesschuleToMergeWith = moduleOfInstitution
 					.stream()
-					.filter(existingModul -> existingModul.getId().equalsIgnoreCase(jaxModulTagesschule.getId()))
+					.filter(existingModule ->
+						// find existing by type and weekday
+						existingModule.getModulTagesschuleName() == jaxModulTagesschule.getModulTagesschuleName() &&
+							existingModule.getWochentag() == jaxModulTagesschule.getWochentag()
+					)
 					.reduce(StreamsUtil.toOnlyElement())
-					.orElse(new ModulTagesschule());
+					.orElseGet(() -> { //create new module on server if this is a new entity
+						if (!moduleOfInstitution.isEmpty()) {
+							LOGGER.warn("Received jaxModuleTagesschule from client that could not be matched to existing modules. Check if this is correct."
+								+ " It might be if there was a new moduleTagesschuleName inserted. Modul was: '{}'", jaxModulTagesschule );
+						}
+						return new ModulTagesschule();
+					});
 				final ModulTagesschule modulTagesschuleToAdd = modulTagesschuleToEntity(jaxModulTagesschule, modulTagesschuleToMergeWith);
 				if (modulTagesschuleToAdd != null) {
 					modulTagesschuleToAdd.setInstitutionStammdatenTagesschule(institutionStammdatenTagesschule);
@@ -1868,7 +1900,7 @@ public class JaxBConverter {
 	 * but not in the list of jax, won't be added to the list and are then removed (cascade and orphanremoval)
 	 *
 	 * @param jaxBetPenContainers Betreuungspensen DTOs from Client
-	 * @param existingBetreuungspensen List of currently stored BetreungspensumContainers
+	 * @param existingBetreuungspensen List of currently stored BetreuungspensumContainers
 	 */
 	private void betreuungsPensumContainersToEntity(final List<JaxBetreuungspensumContainer> jaxBetPenContainers,
 		final Collection<BetreuungspensumContainer> existingBetreuungspensen) {
@@ -1979,6 +2011,7 @@ public class JaxBConverter {
 	private Betreuungspensum betreuungspensumToEntity(final JaxBetreuungspensum jaxBetreuungspensum, final Betreuungspensum betreuungspensum) {
 		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
 		betreuungspensum.setNichtEingetreten(jaxBetreuungspensum.getNichtEingetreten());
+		betreuungspensum.setMonatlicheMittagessen(jaxBetreuungspensum.getMonatlicheMittagessen());
 		return betreuungspensum;
 	}
 
@@ -1990,15 +2023,19 @@ public class JaxBConverter {
 		return jaxBetreuungen;
 	}
 
-	private BetreuungsmitteilungPensum betreuungsmitteilungpensumToEntity(final JaxBetreuungsmitteilungPensum jaxBetreuungspensum, final
-	BetreuungsmitteilungPensum betreuungspensum) {
+	private BetreuungsmitteilungPensum betreuungsmitteilungpensumToEntity(
+		final JaxBetreuungsmitteilungPensum jaxBetreuungspensum,
+		final BetreuungsmitteilungPensum betreuungspensum
+	) {
 		convertAbstractPensumFieldsToEntity(jaxBetreuungspensum, betreuungspensum);
+		betreuungspensum.setMonatlicheMittagessen(jaxBetreuungspensum.getMonatlicheMittagessen());
 		return betreuungspensum;
 	}
 
 	private JaxBetreuungsmitteilungPensum betreuungsmitteilungPensumToJax(final BetreuungsmitteilungPensum betreuungspensum) {
 		final JaxBetreuungsmitteilungPensum jaxBetreuungspensum = new JaxBetreuungsmitteilungPensum();
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
+		jaxBetreuungspensum.setMonatlicheMittagessen(betreuungspensum.getMonatlicheMittagessen());
 		return jaxBetreuungspensum;
 	}
 
@@ -2290,6 +2327,7 @@ public class JaxBConverter {
 		final JaxBetreuungspensum jaxBetreuungspensum = new JaxBetreuungspensum();
 		convertAbstractPensumFieldsToJAX(betreuungspensum, jaxBetreuungspensum);
 		jaxBetreuungspensum.setNichtEingetreten(betreuungspensum.getNichtEingetreten());
+		jaxBetreuungspensum.setMonatlicheMittagessen(betreuungspensum.getMonatlicheMittagessen());
 		return jaxBetreuungspensum;
 	}
 
@@ -2343,7 +2381,7 @@ public class JaxBConverter {
 	}
 
 	private Set<Berechtigung> berechtigungenListToEntity(@Nonnull Set<JaxBerechtigung> jaxBerechtigungenList,
-			@Nonnull Set<Berechtigung> berechtigungenList, @Nonnull Benutzer benutzer) {
+		@Nonnull Set<Berechtigung> berechtigungenList, @Nonnull Benutzer benutzer) {
 
 		final Set<Berechtigung> convertedBerechtigungen = new TreeSet<>();
 		for (final JaxBerechtigung jaxBerechtigung : jaxBerechtigungenList) {
@@ -2375,9 +2413,12 @@ public class JaxBConverter {
 		jaxLoginElement.setGesperrt(benutzer.getGesperrt());
 		jaxLoginElement.setCurrentBerechtigung(berechtigungToJax(benutzer.getCurrentBerechtigung()));
 		// Berechtigungen
-		final Set<JaxBerechtigung> jaxBerechtigungen = new TreeSet<>();
+		Set<JaxBerechtigung> jaxBerechtigungen = new TreeSet<>();
 		if (benutzer.getBerechtigungen() != null) {
-			jaxBerechtigungen.addAll(benutzer.getBerechtigungen().stream().map(this::berechtigungToJax).collect(Collectors.toList()));
+			jaxBerechtigungen = benutzer.getBerechtigungen().stream()
+				.map(this::berechtigungToJax)
+				.sorted()
+				.collect(Collectors.toCollection(TreeSet::new));
 		}
 		jaxLoginElement.setBerechtigungen(jaxBerechtigungen);
 		return jaxLoginElement;
@@ -2972,7 +3013,8 @@ public class JaxBConverter {
 		return jaxZahlungsauftrag;
 	}
 
-	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, @Nullable UserRole userRole, Collection<Institution> allowedInst) {
+	public JaxZahlungsauftrag zahlungsauftragToJAX(final Zahlungsauftrag persistedZahlungsauftrag, @Nullable UserRole userRole,
+		Collection<Institution> allowedInst) {
 		final JaxZahlungsauftrag jaxZahlungsauftrag = getJaxZahlungsauftrag(persistedZahlungsauftrag, true);
 
 		// nur die Zahlungen welche inst sehen darf
@@ -3133,7 +3175,7 @@ public class JaxBConverter {
 	}
 
 	/**
-	 * Kopiert die Daten die fuer den Motag eingegeben wurden in alle andere Wochentage
+	 * Kopiert die Daten die fuer den Motag eingegeben wurden in alle andere Wochentage (im jax object)
 	 */
 	public JaxInstitutionStammdaten updateJaxModuleTagesschule(@Nonnull JaxInstitutionStammdaten jaxInstDaten) {
 		Objects.requireNonNull(jaxInstDaten);
@@ -3143,15 +3185,15 @@ public class JaxBConverter {
 			List<JaxModulTagesschule> moduleTagesschuleComplete = new ArrayList<>();
 			DayOfWeek[] arbeitstageOhneMontag = { DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY };
 			moduleTagesschule.stream()
-				.filter(m -> m.getWochentag() == DayOfWeek.MONDAY)
-				.forEach(res -> {
-					moduleTagesschuleComplete.add(res);
+				.filter(m -> m.getWochentag() == DayOfWeek.MONDAY) //monday serves as a 'template'
+				.forEach(mon -> {
+					moduleTagesschuleComplete.add(mon); // copy values to other weekdays
 					for (DayOfWeek dayOfWeek : arbeitstageOhneMontag) {
 						JaxModulTagesschule modulTagesschule = new JaxModulTagesschule();
 						modulTagesschule.setWochentag(dayOfWeek);
-						modulTagesschule.setModulTagesschuleName(res.getModulTagesschuleName());
-						modulTagesschule.setZeitVon(res.getZeitVon());
-						modulTagesschule.setZeitBis(res.getZeitBis());
+						modulTagesschule.setModulTagesschuleName(mon.getModulTagesschuleName());
+						modulTagesschule.setZeitVon(mon.getZeitVon());
+						modulTagesschule.setZeitBis(mon.getZeitBis());
 						moduleTagesschuleComplete.add(modulTagesschule);
 					}
 				});

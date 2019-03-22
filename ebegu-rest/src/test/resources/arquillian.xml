@@ -32,4 +32,18 @@
 		</configuration>
 	</container>
 
+	<!--suppress XmlDefaultAttributeValue -->
+	<container qualifier="wildfly-container-debug" default="false">
+		<configuration>
+			<!--Die naechste Zeilen wurden auch in der Konfiguration des surefire plugins im pom spezifiziert, so gelten
+			sie auch fuer embedded wildfly (dieser beachtet die javaVmArguments hier nicht weil er in der vm der ide laeuft -->
+			<property name="javaVmArguments">-Djboss.socket.binding.port-offset=10000 -Xms512m -Xmx1024m -XX:MaxPermSize=512m -Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005</property>
+			<!-- Port offset allows running the tests while a WildFly server is already running, note that the offset is
+					  added to the default management port 9990 as well, this needs to be specified -->
+			<property name="managementPort">19990</property>
+			<!--um die konfiguration des cache containers fuer test verfuegbar zu haben-->
+			<!--<property name="serverConfig">standalone-test.xml</property>-->
+		</configuration>
+	</container>
+
 </arquillian>

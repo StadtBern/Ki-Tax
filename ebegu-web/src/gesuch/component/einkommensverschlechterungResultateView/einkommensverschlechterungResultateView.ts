@@ -14,20 +14,19 @@
  */
 
 import {IComponentOptions, IPromise} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
-import GesuchModelManager from '../../service/gesuchModelManager';
+import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
+import ErrorService from '../../../core/errors/service/ErrorService';
+import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
+import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
+import TSFinanzModel from '../../../models/TSFinanzModel';
 import {IEinkommensverschlechterungResultateStateParams} from '../../gesuch.route';
 import BerechnungsManager from '../../service/berechnungsManager';
-import TSFinanzielleSituationResultateDTO from '../../../models/dto/TSFinanzielleSituationResultateDTO';
-import ErrorService from '../../../core/errors/service/ErrorService';
-import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
-import TSEinkommensverschlechterung from '../../../models/TSEinkommensverschlechterung';
+import GesuchModelManager from '../../service/gesuchModelManager';
 import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import TSFinanzModel from '../../../models/TSFinanzModel';
-import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import AbstractGesuchViewController from '../abstractGesuchView';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
@@ -241,19 +240,12 @@ export class EinkommensverschlechterungResultateViewController extends AbstractG
      */
     private isLastEinkVersStep(): boolean {
         // Letztes Jahr haengt von den eingegebenen Daten ab
-        return (this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 2)
-            || (!this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2 && this.gesuchModelManager.basisJahrPlusNumber === 1);
-    }
-
-    /**
-     * Da fuer STEUERAMT der Step EINKOMMENSVERSCHLECHTERUNG der letzte ist, muss man den Button next verstecken, wenn wir
-     * wirklich im LastEinkVersStep sind.
-     * Fuer alle andere rollen wird der Button immer eingeblendet
-     */
-    public isSteueramtLetzterStep(): boolean {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles())) {
-            return this.isLastEinkVersStep();
-        }
-        return false;
+        return (
+                this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2
+                && this.gesuchModelManager.basisJahrPlusNumber === 2
+            ) || (
+                !this.gesuchModelManager.getGesuch().extractEinkommensverschlechterungInfo().ekvFuerBasisJahrPlus2
+                && this.gesuchModelManager.basisJahrPlusNumber === 1
+            );
     }
 }

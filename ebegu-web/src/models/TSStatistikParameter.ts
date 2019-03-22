@@ -13,14 +13,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAbstractEntity from './TSAbstractEntity';
 import * as moment from 'moment';
+import TSAbstractEntity from './TSAbstractEntity';
 
 export default class TSStatistikParameter extends TSAbstractEntity {
     private _gesuchsperiode: string;
     private _stichtag: moment.Moment;
     private _von: moment.Moment;
     private _bis: moment.Moment;
+    private _text: string;
+    private _bgGesuche: boolean;
+    private _mischGesuche: boolean;
+    private _tsGesuche: boolean;
+    private _ohneFolgegesuche: boolean;
 
     constructor(gesuchsperiode?: string, stichtag?: moment.Moment,
                 von?: moment.Moment, bis?: moment.Moment) {
@@ -63,4 +68,43 @@ export default class TSStatistikParameter extends TSAbstractEntity {
         this._bis = value;
     }
 
+    public get text(): string {
+        return this._text;
+    }
+
+    public set text(value: string) {
+        this._text = value;
+    }
+
+    public get bgGesuche(): boolean {
+        return this._bgGesuche;
+    }
+
+    public set bgGesuche(value: boolean) {
+        this._bgGesuche = value;
+    }
+
+    public get mischGesuche(): boolean {
+        return this._mischGesuche;
+    }
+
+    public set mischGesuche(value: boolean) {
+        this._mischGesuche = value;
+    }
+
+    public get tsGesuche(): boolean {
+        return this._tsGesuche;
+    }
+
+    public set tsGesuche(value: boolean) {
+        this._tsGesuche = value;
+    }
+
+    public get ohneFolgegesuche(): boolean {
+        return this._ohneFolgegesuche;
+    }
+
+    public set ohneFolgegesuche(value: boolean) {
+        this._ohneFolgegesuche = value;
+    }
 }

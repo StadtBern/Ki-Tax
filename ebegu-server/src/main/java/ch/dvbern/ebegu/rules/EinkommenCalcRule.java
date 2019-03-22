@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 
 import ch.dvbern.ebegu.dto.FinanzDatenDTO;
 import ch.dvbern.ebegu.entities.Betreuung;
+import ch.dvbern.ebegu.entities.Familiensituation;
+import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.VerfuegungZeitabschnitt;
 import ch.dvbern.ebegu.enums.MsgKey;
 import ch.dvbern.ebegu.types.DateRange;
@@ -43,14 +45,40 @@ public class EinkommenCalcRule extends AbstractCalcRule {
 	@SuppressWarnings("PMD.CollapsibleIfStatements")
 	@Override
 	protected void executeRule(@Nonnull Betreuung betreuung, @Nonnull VerfuegungZeitabschnitt verfuegungZeitabschnitt) {
+		final Gesuch gesuch = betreuung.extractGesuch();
+
+		if (gesuch.getGesuchsperiode().isVerpflegungenActive()) {
+			// Es gibt zwei Faelle, in denen die Finanzielle Situation nicht bekannt ist:
+			// - Sozialhilfeempfaenger: Wir rechnen mit Einkommen = 0
+			// - Keine Vergünstigung gewünscht: Wir rechnen mit dem Maximalen Einkommen
+			Familiensituation familiensituation = gesuch.extractFamiliensituation();
+			if (familiensituation != null) {
+				int basisjahr = betreuung.extractGesuchsperiode().getBasisJahr();
+				if (Boolean.TRUE.equals(familiensituation.getSozialhilfeBezueger())) {
+					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(BigDecimal.ZERO);
+					verfuegungZeitabschnitt.setAbzugFamGroesse(BigDecimal.ZERO);
+					verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMEN_SOZIALHILFEEMPFAENGER_MSG);
+					return;
+				}
+				if (Boolean.FALSE.equals(familiensituation.getVerguenstigungGewuenscht())) {
+					verfuegungZeitabschnitt.setMassgebendesEinkommenVorAbzugFamgr(maximalesEinkommen);
+					verfuegungZeitabschnitt.setAbzugFamGroesse(BigDecimal.ZERO);
+					verfuegungZeitabschnitt.setEinkommensjahr(basisjahr);
+					verfuegungZeitabschnitt.setAnspruchberechtigtesPensum(0);
+					verfuegungZeitabschnitt.addBemerkung(RuleKey.EINKOMMEN, MsgKey.EINKOMMEN_MSG);
+					return;
+				}
+			}
+		}
 
 		// Die Finanzdaten berechnen
 		FinanzDatenDTO finanzDatenDTO;
 		if (verfuegungZeitabschnitt.isHasSecondGesuchstellerForFinanzielleSituation()) {
-			finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO_zuZweit();
+			finanzDatenDTO = gesuch.getFinanzDatenDTO_zuZweit();
 			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1ZuZweit(), verfuegungZeitabschnitt.isEkv2ZuZweit(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
 		} else {
-			finanzDatenDTO = betreuung.extractGesuch().getFinanzDatenDTO_alleine();
+			finanzDatenDTO = gesuch.getFinanzDatenDTO_alleine();
 			setMassgebendesEinkommen(verfuegungZeitabschnitt.isEkv1Alleine(), verfuegungZeitabschnitt.isEkv2Alleine(), finanzDatenDTO, verfuegungZeitabschnitt, betreuung);
 		}
 

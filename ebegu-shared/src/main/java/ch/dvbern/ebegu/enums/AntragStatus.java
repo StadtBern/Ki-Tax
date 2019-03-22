@@ -15,11 +15,9 @@
 
 package ch.dvbern.ebegu.enums;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -276,20 +274,46 @@ public enum AntragStatus {
 			PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV, KEIN_ANGEBOT);
 	}
 
-	public static Collection<AntragStatus> getAllStatesSchulamtInterface() {
-		List<AntragStatus> states = new ArrayList<>();
-		states.addAll(getAllVerfuegtStates());
-		states.add(VERFUEGEN);
-		states.add(GEPRUEFT);
-		return states;
-	}
-
 	public static Collection<AntragStatus> getVerfuegtAndSTVStates() {
 		return Arrays.asList(VERFUEGT, PRUEFUNG_STV, IN_BEARBEITUNG_STV, GEPRUEFT_STV);
 	}
 
 	public static Collection<AntragStatus> getInBearbeitungGSStates() {
 		return Arrays.asList(FREIGABEQUITTUNG, IN_BEARBEITUNG_GS);
+	}
+
+	public static Collection<AntragStatus> getAllGepruefteStatus() {
+		return Arrays.asList(
+			NUR_SCHULAMT,
+			GEPRUEFT,
+			VERFUEGEN,
+			VERFUEGT,
+			KEIN_ANGEBOT,
+			BESCHWERDE_HAENGIG,
+			PRUEFUNG_STV,
+			IN_BEARBEITUNG_STV,
+			GEPRUEFT_STV
+		);
+	}
+
+	public static Collection<AntragStatus> getAllFreigegebeneStatus() {
+		return Arrays.asList(
+			NUR_SCHULAMT,
+			FREIGEGEBEN,
+			IN_BEARBEITUNG_JA,
+			ERSTE_MAHNUNG,
+			ERSTE_MAHNUNG_ABGELAUFEN,
+			ZWEITE_MAHNUNG,
+			ZWEITE_MAHNUNG_ABGELAUFEN,
+			GEPRUEFT,
+			VERFUEGEN,
+			VERFUEGT,
+			KEIN_ANGEBOT,
+			BESCHWERDE_HAENGIG,
+			PRUEFUNG_STV,
+			IN_BEARBEITUNG_STV,
+			GEPRUEFT_STV
+		);
 	}
 
 	/**

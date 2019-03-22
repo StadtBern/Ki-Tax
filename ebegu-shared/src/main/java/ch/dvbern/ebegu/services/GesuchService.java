@@ -30,6 +30,7 @@ import ch.dvbern.ebegu.entities.Benutzer;
 import ch.dvbern.ebegu.entities.Fall;
 import ch.dvbern.ebegu.entities.Gesuch;
 import ch.dvbern.ebegu.entities.Gesuchsperiode;
+import ch.dvbern.ebegu.entities.Massenversand;
 import ch.dvbern.ebegu.enums.AntragStatus;
 import ch.dvbern.ebegu.enums.FinSitStatus;
 import ch.dvbern.ebegu.enums.GesuchDeletionCause;
@@ -404,6 +405,33 @@ public interface GesuchService {
 	 * Schliesst die Pruefung STV ab und setzt den Status auf den Status, den das Gesuch vor der Pruefung hatte
 	 */
 	Gesuch stvPruefungAbschliessen(@Nonnull Gesuch gesuch);
+
+	/**
+	 * Speichert einen Massenversand in der Datenbank
+	 */
+	Massenversand createMassenversand(@Nonnull Massenversand massenversand);
+
+	/**
+	 * Gibt die Texte aller Massenversände zurück, welche zum übergebenen Gesuch verschickt wurden
+	 */
+	List<String> getMassenversandTexteForGesuch(@Nonnull String gesuchId);
+
+	/**
+	 * Returns all Gesuche that have been set as GEPRUEFT (for Papiergesuche) or as FREIGEGEBEN (for Onlinegesuche)
+	 * between the given dates and that belongs to the given period.
+	 */
+	@Nonnull
+	List<Gesuch> getGepruefteFreigegebeneGesucheForGesuchsperiode(
+		@Nonnull LocalDate datumVon,
+		@Nonnull LocalDate datumBis,
+		@Nonnull String gesuchsperiodeId);
+
+	/**
+	 * Returns true when the fall linked to the Gesuch has another gesuch in a newer Gesuchsperiode.
+	 * The status of the Gesuch must be at least freigegeben, because it must be available for Amt-users.
+	 * It will check all Gesuche independently if the user is allowed to access them or not though.
+	 */
+	boolean hasFolgegesuchForAmt(@Nonnull String gesuchId);
 
 	/**
 	 * aendert das Datum der Fristverlaengerung

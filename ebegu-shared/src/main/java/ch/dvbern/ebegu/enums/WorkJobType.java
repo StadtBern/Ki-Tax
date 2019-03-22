@@ -24,7 +24,16 @@ import java.util.List;
  */
 public enum WorkJobType {
 
-	REPORT_GENERATION( WorkJobConstants.REPORT_VORLAGE_TYPE_PARAM, WorkJobConstants.DATE_FROM_PARAM, WorkJobConstants.DATE_TO_PARAM, WorkJobConstants.GESUCH_PERIODE_ID_PARAM);
+	REPORT_GENERATION(
+		WorkJobConstants.REPORT_VORLAGE_TYPE_PARAM,
+		WorkJobConstants.DATE_FROM_PARAM,
+		WorkJobConstants.DATE_TO_PARAM,
+		WorkJobConstants.GESUCH_PERIODE_ID_PARAM,
+		WorkJobConstants.INKL_BG_GESUCHE,
+		WorkJobConstants.INKL_MISCH_GESUCHE,
+		WorkJobConstants.INKL_TS_GESUCHE,
+		WorkJobConstants.OHNE_ERNEUERUNGSGESUCHE,
+		WorkJobConstants.TEXT);
 
 	List<String> paramNames = new ArrayList<>();
 

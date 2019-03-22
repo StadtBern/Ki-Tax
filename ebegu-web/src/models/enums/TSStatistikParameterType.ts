@@ -22,7 +22,8 @@ export enum TSStatistikParameterType {
     MITARBEITERINNEN = <any>'MITARBEITERINNEN',
     GESUCHSTELLER_KINDER_BETREUUNG = <any>'GESUCHSTELLER_KINDER_BETREUUNG',
     ZAHLUNGEN_PERIODE = <any>'ZAHLUNGEN_PERIODE',
-    BENUTZER = <any>'BENUTZER'
+    BENUTZER = <any>'BENUTZER',
+    MASSENVERSAND = <any>'MASSENVERSAND',
 }
 
 export function getTSStatistikParameterKeyValues(): Array<TSStatistikParameterType> {
@@ -36,5 +37,6 @@ export function getTSStatistikParameterKeyValues(): Array<TSStatistikParameterTy
         TSStatistikParameterType.GESUCHSTELLER_KINDER_BETREUUNG,
         TSStatistikParameterType.ZAHLUNGEN_PERIODE,
         TSStatistikParameterType.BENUTZER,
+        TSStatistikParameterType.MASSENVERSAND
     ];
 }

@@ -39,7 +39,7 @@
 
                 <div ng-if="!vm.areThereOnlyFerieninsel">
 
-                    <div ng-if="vm.hasTagesschulenAnmeldung()">
+                    <div ng-if="vm.showFinanzielleSituationRequire()">
                         <dv-finanzielle-situation-require sozialhilfe-bezueger="vm.model.sozialhilfeBezueger"
                                                           verguenstigung-gewuenscht="vm.model.verguenstigungGewuenscht"
                                                           finanzielle-situation-required="vm.finanzielleSituationRequired"
@@ -48,7 +48,7 @@
                     </div>
 
 
-                    <div ng-if="!vm.hasTagesschulenAnmeldung() || (vm.isFinanziellesituationRequired() && vm.is2GSRequired())">
+                    <div ng-if="!vm.showFinanzielleSituationRequire() || (vm.isFinanziellesituationRequired() && vm.is2GSRequired())">
                         <!-- Gemeinsame Steuererklaerung -->
                         <div class="row">
                             <div class="col-xs-12 dv-input-container-question">

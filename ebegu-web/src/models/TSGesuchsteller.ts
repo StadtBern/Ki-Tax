@@ -13,9 +13,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import TSAbstractPersonEntity from './TSAbstractPersonEntity';
-import {TSGeschlecht} from './enums/TSGeschlecht';
 import * as moment from 'moment';
+import {TSGeschlecht} from './enums/TSGeschlecht';
+import TSAbstractPersonEntity from './TSAbstractPersonEntity';
 
 export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
@@ -24,12 +24,15 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
     private _telefon: string;
     private _telefonAusland: string;
     private _diplomatenstatus: boolean;
+    private _iban: string;
+    private _kontoinhaber: string;
     private _ewkPersonId: string;
     private _ewkAbfrageDatum: moment.Moment;
 
     constructor(vorname?: string, nachname?: string, geburtsdatum?: moment.Moment, geschlecht?: TSGeschlecht,
                 email?: string, mobile?: string, telefon?: string, telefonAusland?: string,
-                diplomatenstatus?: boolean, ewkPersonId?: string, ewkAbfrageDatum?: moment.Moment) {
+                diplomatenstatus?: boolean, ewkPersonId?: string, ewkAbfrageDatum?: moment.Moment,
+                iban?: string, kontoinhaber?: string) {
         super(vorname, nachname, geburtsdatum, geschlecht);
         this._mail = email;
         this._mobile = mobile;
@@ -38,6 +41,8 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
         this._diplomatenstatus = diplomatenstatus;
         this._ewkPersonId = ewkPersonId;
         this._ewkAbfrageDatum = ewkAbfrageDatum;
+        this._iban = iban;
+        this._kontoinhaber = kontoinhaber;
     }
 
     public get mail(): string {
@@ -78,6 +83,22 @@ export default class TSGesuchsteller extends TSAbstractPersonEntity {
 
     set diplomatenstatus(value: boolean) {
         this._diplomatenstatus = value;
+    }
+
+    public get iban(): string {
+        return this._iban;
+    }
+
+    public set iban(value: string) {
+        this._iban = value;
+    }
+
+    public get kontoinhaber(): string {
+        return this._kontoinhaber;
+    }
+
+    public set kontoinhaber(value: string) {
+        this._kontoinhaber = value;
     }
 
     get ewkPersonId(): string {

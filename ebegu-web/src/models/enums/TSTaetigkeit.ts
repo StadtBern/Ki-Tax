@@ -15,6 +15,7 @@
 
 export enum TSTaetigkeit {
     ANGESTELLT = <any> 'ANGESTELLT',
+    ANGESTELLT_STUNDENLOHN = <any> 'ANGESTELLT_STUNDENLOHN',
     SELBSTAENDIG = <any> 'SELBSTAENDIG',
     AUSBILDUNG = <any> 'AUSBILDUNG',
     RAV = <any> 'RAV',
@@ -24,6 +25,7 @@ export enum TSTaetigkeit {
 export function getTSTaetigkeit(): Array<TSTaetigkeit> {
     return [
         TSTaetigkeit.ANGESTELLT,
+        TSTaetigkeit.ANGESTELLT_STUNDENLOHN,
         TSTaetigkeit.SELBSTAENDIG,
         TSTaetigkeit.AUSBILDUNG,
         TSTaetigkeit.RAV,

@@ -140,4 +140,8 @@ public class Gesuchsperiode extends AbstractDateRangedEntity {
 	public boolean hasTagesschulenAnmeldung() {
 		return getDatumFreischaltungTagesschule() != null;
 	}
+
+	public boolean isVerpflegungenActive() {
+		return getGueltigkeit().getGueltigAb().getYear() >= 2019;
+	}
 }

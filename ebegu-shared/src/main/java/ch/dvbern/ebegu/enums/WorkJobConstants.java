@@ -18,11 +18,19 @@ package ch.dvbern.ebegu.enums;
 /**
  * Class to store constants needed for batch jobs
  */
-public class WorkJobConstants {
+public final class WorkJobConstants {
 	public static final String REPORT_VORLAGE_TYPE_PARAM = "reportVolageType";
 	public static final String DATE_FROM_PARAM = "dateFrom";
 	public static final String DATE_TO_PARAM = "dateTo";
 	public static final String GESUCH_PERIODE_ID_PARAM = "gesuchPeriodeID";
 	public static final String ZAHLUNGSAUFTRAG_ID_PARAM = "zahlungsauftragID";
+	public static final String INKL_BG_GESUCHE = "inklBgGesuche";
+	public static final String INKL_MISCH_GESUCHE = "inklMischGesuche";
+	public static final String INKL_TS_GESUCHE = "InklTsGesuche";
+	public static final String OHNE_ERNEUERUNGSGESUCHE = "OhneErneuerungsgesuche";
+	public static final String TEXT = "text";
 	public static final String EMAIL_OF_USER = "emailOfUser";
+
+	private WorkJobConstants() {
+	}
 }

@@ -85,4 +85,47 @@ public class JaxBerechtigung extends JaxAbstractDateRangedDTO {
 		DateRange dateRange = new DateRange(dateFrom, dateUntil);
 		return dateRange.contains(LocalDate.now());
 	}
+
+	@Override
+	public boolean equals(@Nullable Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof JaxBerechtigung)) {
+			return false;
+		}
+
+		JaxBerechtigung other = (JaxBerechtigung) o;
+
+		//noinspection NonFinalFieldReferenceInEquals
+		return this.role == other.role
+			&& Objects.equals(this.getGueltigAb(), other.getGueltigAb())
+			&& Objects.equals(this.getGueltigBis(), other.getGueltigBis());
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode()
+			+ Objects.hashCode(this.getRole())
+			+ Objects.hashCode(this.getGueltigAb())
+			+ Objects.hashCode(this.getGueltigBis());
+	}
+
+	@Override
+	public int compareTo(@Nonnull JaxAbstractDTO o) {
+		if (o instanceof JaxBerechtigung) {
+			final JaxBerechtigung other = (JaxBerechtigung) o;
+			if (getGueltigAb() != null && other.getGueltigAb() != null) {
+				return getGueltigAb().compareTo(other.getGueltigAb());
+			}
+			if (getGueltigAb() == null && other.getGueltigAb() == null) {
+				return 0;
+			}
+			if (getGueltigAb() == null && other.getGueltigAb() != null) {
+				return 1;
+			}
+			return -1;
+		}
+		return super.compareTo(o);
+	}
 }

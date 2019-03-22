@@ -239,7 +239,8 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
     public setErsterSchultag(): void {
         // Default Eintrittsdatum ist erster Schultag, wenn noch in Zukunft
         let ersterSchultag: moment.Moment = this.gesuchModelManager.getGesuchsperiode().datumErsterSchultag;
-        if (!this.getBetreuungModel().keineDetailinformationen && DateUtil.today().isBefore(ersterSchultag)) {
+        if (this.getBetreuungModel() && this.getBetreuungModel().belegungTagesschule
+            && !this.getBetreuungModel().keineDetailinformationen && DateUtil.today().isBefore(ersterSchultag)) {
             this.getBetreuungModel().belegungTagesschule.eintrittsdatum = ersterSchultag;
         }
     }
@@ -468,7 +469,12 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         if (!this.getBetreuungModel()) {
             this.errorService.addMesageAsError('Betreuungsmodel ist nicht initialisiert.');
         }
-        this.getBetreuungspensen().push(new TSBetreuungspensumContainer(undefined, new TSBetreuungspensum(false, undefined, new TSDateRange())));
+        this.getBetreuungspensen().push(
+            new TSBetreuungspensumContainer(
+                undefined,
+                new TSBetreuungspensum(false, undefined, undefined, new TSDateRange())
+            )
+        );
     }
 
     public removeBetreuungspensum(betreuungspensumToDelete: TSBetreuungspensumContainer): void {
@@ -661,9 +667,11 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
         return false;
     }
 
-    public showAngabeKorrigieren(): boolean {
-        return (this.isBetreuungsstatusBestaetigt() || this.isBetreuungsstatusAbgewiesen())
-            && !this.isGesuchReadonly() && this.isFromMutation();
+    public showMonatlicheMittagessen(): boolean {
+        return this.gesuchModelManager.getGesuchsperiode().isVerpflegungActive()
+            && (this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_KLEINKIND)
+            || this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.TAGESELTERN_SCHULKIND)
+            || this.isBetreuungsangebottyp(TSBetreuungsangebotTyp.KITA));
     }
 
     public mutationsmeldungErstellen(): void {
@@ -695,7 +703,7 @@ export class BetreuungViewController extends AbstractGesuchViewController<TSBetr
                 elementID: undefined
             }).then(() => {   //User confirmed removal
                 this.mitteilungRS.sendbetreuungsmitteilung(this.gesuchModelManager.getGesuch().fall,
-                    this.mutationsmeldungModel).then((response) => {
+                    this.mutationsmeldungModel).then(() => {
 
                     this.form.$setUntouched();
                     this.form.$setPristine();

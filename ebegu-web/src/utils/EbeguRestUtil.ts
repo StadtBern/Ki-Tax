@@ -409,6 +409,8 @@ export default class EbeguRestUtil {
             restGesuchsteller.telefonAusland = gesuchsteller.telefonAusland || undefined;
             restGesuchsteller.diplomatenstatus = gesuchsteller.diplomatenstatus;
             restGesuchsteller.ewkPersonId = gesuchsteller.ewkPersonId;
+            restGesuchsteller.iban = gesuchsteller.iban;
+            restGesuchsteller.kontoinhaber = gesuchsteller.kontoinhaber;
             restGesuchsteller.ewkAbfrageDatum = DateUtil.momentToLocalDate(gesuchsteller.ewkAbfrageDatum);
             return restGesuchsteller;
         }
@@ -423,6 +425,8 @@ export default class EbeguRestUtil {
             gesuchstellerTS.telefon = gesuchstellerFromServer.telefon;
             gesuchstellerTS.telefonAusland = gesuchstellerFromServer.telefonAusland;
             gesuchstellerTS.diplomatenstatus = gesuchstellerFromServer.diplomatenstatus;
+            gesuchstellerTS.iban = gesuchstellerFromServer.iban;
+            gesuchstellerTS.kontoinhaber = gesuchstellerFromServer.kontoinhaber;
             gesuchstellerTS.ewkPersonId = gesuchstellerFromServer.ewkPersonId;
             gesuchstellerTS.ewkAbfrageDatum = DateUtil.localDateToMoment(gesuchstellerFromServer.ewkAbfrageDatum);
             return gesuchstellerTS;
@@ -1291,12 +1295,14 @@ export default class EbeguRestUtil {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
         if (betreuungspensum.nichtEingetreten !== null) { // wenn es null ist, wird es als null zum Server geschickt und der Server versucht, es zu validieren und wirft eine NPE
             restBetreuungspensum.nichtEingetreten = betreuungspensum.nichtEingetreten;
+            restBetreuungspensum.monatlicheMittagessen = betreuungspensum.monatlicheMittagessen;
         }
         return restBetreuungspensum;
     }
 
     public betreuungsmitteilungPensumToRestObject(restBetreuungspensum: any, betreuungspensum: TSBetreuungsmitteilungPensum): any {
         this.abstractPensumEntityToRestObject(restBetreuungspensum, betreuungspensum);
+        restBetreuungspensum.monatlicheMittagessen = betreuungspensum.monatlicheMittagessen;
         return restBetreuungspensum;
     }
 
@@ -1404,6 +1410,7 @@ export default class EbeguRestUtil {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
             betreuungspensumTS.nichtEingetreten = betreuungspensumFromServer.nichtEingetreten;
+            betreuungspensumTS.monatlicheMittagessen = betreuungspensumFromServer.monatlicheMittagessen;
             return betreuungspensumTS;
         }
         return undefined;
@@ -1412,6 +1419,7 @@ export default class EbeguRestUtil {
     public parseBetreuungsmitteilungPensum(betreuungspensumTS: TSBetreuungsmitteilungPensum, betreuungspensumFromServer: any): TSBetreuungsmitteilungPensum {
         if (betreuungspensumFromServer) {
             this.parseAbstractPensumEntity(betreuungspensumTS, betreuungspensumFromServer);
+            betreuungspensumTS.monatlicheMittagessen = betreuungspensumFromServer.monatlicheMittagessen;
             return betreuungspensumTS;
         }
         return undefined;

@@ -48,7 +48,9 @@ public enum ReportVorlage {
 	VORLAGE_REPORT_KINDER("/reporting/Kinder.xlsx", "Kinder.xlsx", Constants.DATA,
 		MergeFieldGesuchstellerKinderBetreuung.class),
 	VORLAGE_REPORT_GESUCHSTELLER("/reporting/Gesuchsteller.xlsx", "Gesuchsteller.xlsx", Constants.DATA,
-		MergeFieldGesuchstellerKinderBetreuung.class);
+		MergeFieldGesuchstellerKinderBetreuung.class),
+	VORLAGE_REPORT_MASSENVERSAND("/reporting/Massenversand.xlsx", "Massenversand.xlsx", Constants.DATA,
+		MergeFieldMassenversand.class);
 
 	@Nonnull
 	private final String templatePath;
@@ -99,7 +101,8 @@ public enum ReportVorlage {
 		}
 		if (UserRole.getSchulamtRoles().contains(role)) {
 			if (vorlage == VORLAGE_REPORT_GESUCH_STICHTAG || vorlage == VORLAGE_REPORT_GESUCH_ZEITRAUM
-				|| vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_GESUCHSTELLER) {
+				|| vorlage == VORLAGE_REPORT_KINDER || vorlage == VORLAGE_REPORT_GESUCHSTELLER
+				|| vorlage == VORLAGE_REPORT_MASSENVERSAND) {
 				return true;
 			}
 			return false;

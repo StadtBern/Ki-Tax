@@ -13,6 +13,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import TSGesuchsperiode from '../../../models/TSGesuchsperiode';
+import {TSDateRange} from '../../../models/types/TSDateRange';
+import * as moment from 'moment';
 import {EbeguWebGesuch} from '../../gesuch.module';
 import {DVFinanzielleSituationRequireController} from './dv-finanzielle-situation-require';
 import GesuchModelManager from '../../service/gesuchModelManager';
@@ -38,6 +41,10 @@ describe('finanzielleSituationRequire', function () {
         $q = $injector.get('$q');
         $componentController = $injector.get('$componentController');
         spyOn(ebeguParameterRS, 'getEbeguParameterByKeyAndDate').and.returnValue($q.when(150000));
+        const gesuchsperiode = new TSGesuchsperiode(undefined,
+            new TSDateRange(moment('01.07.2017', 'DD.MM.YYYY'), moment('31.08.2018', 'DD.MM.YYYY')),
+            undefined, undefined);
+        spyOn(gesuchModelManager, 'getGesuchsperiode').and.returnValue(gesuchsperiode);
         controller = new DVFinanzielleSituationRequireController(ebeguParameterRS, gesuchModelManager);
     }));
 

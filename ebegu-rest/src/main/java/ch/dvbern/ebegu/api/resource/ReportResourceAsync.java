@@ -16,11 +16,14 @@
 package ch.dvbern.ebegu.api.resource;
 
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -42,11 +45,13 @@ import ch.dvbern.ebegu.enums.WorkJobType;
 import ch.dvbern.ebegu.enums.reporting.ReportVorlage;
 import ch.dvbern.ebegu.errors.EbeguRuntimeException;
 import ch.dvbern.ebegu.services.WorkjobService;
+import ch.dvbern.ebegu.util.Constants;
 import ch.dvbern.ebegu.util.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.jboss.ejb3.annotation.TransactionTimeout;
 
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMIN;
 import static ch.dvbern.ebegu.enums.UserRoleName.ADMINISTRATOR_SCHULAMT;
@@ -326,6 +331,66 @@ public class ReportResourceAsync {
 		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
 
 		workJob = workjobService.createNewReporting(workJob, ReportVorlage.VORLAGE_REPORT_GESUCHSTELLER, date, null, null);
+
+		return Response.ok(workJob.getId()).build();
+	}
+
+	@ApiOperation(value = "Erstellt ein Excel mit der Statistik 'Massenversand'", response = JaxDownloadFile.class)
+	@Nonnull
+	@GET
+	@Path("/excel/massenversand")
+	@TransactionTimeout(value = Constants.STATISTIK_TIMEOUT_MINUTES, unit = TimeUnit.MINUTES)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getMassenversandReportExcel(
+		@QueryParam("auswertungVon") @Nullable String auswertungVon,
+		@QueryParam("auswertungBis") @Nonnull String auswertungBis,
+		@QueryParam("gesuchPeriodeID") @Nonnull @Valid JaxId gesuchPeriodIdParam,
+		@QueryParam("inklBgGesuche") @Nullable String inklBgGesuche,
+		@QueryParam("inklMischGesuche") @Nullable String inklMischGesuche,
+		@QueryParam("inklTsGesuche") @Nullable String inklTsGesuche,
+		@QueryParam("ohneErneuerungsgesuch") @Nullable String ohneErneuerungsgesuch,
+		@QueryParam("text") @Nullable String text,
+		@Context HttpServletRequest request, @Context UriInfo uriInfo)
+		throws EbeguRuntimeException {
+
+		String ip = downloadResource.getIP(request);
+
+		Validate.notNull(auswertungBis);
+
+		// auswertungVon might be null
+		LocalDate dateFrom = auswertungVon == null
+			? Constants.START_OF_TIME
+			: DateUtil.parseStringToDateNullSafe(auswertungVon);
+
+		LocalDate dateTo = DateUtil.parseStringToDateOrReturnNow(auswertungBis);
+		String periodeId = gesuchPeriodIdParam.getId();
+
+		if (!dateTo.isAfter(dateFrom)) {
+			throw new EbeguRuntimeException("getMassenversandReportExcel",
+				"Fehler beim erstellen Report Massenversand",
+				DAS_VON_DATUM_MUSS_VOR_DEM_BIS_DATUM_SEIN);
+		}
+
+		final boolean inklBgGesucheBoolean = Boolean.parseBoolean(inklBgGesuche);
+		final boolean inklMischGesucheBoolean = Boolean.parseBoolean(inklMischGesuche);
+		final boolean inklTsGesucheBoolean = Boolean.parseBoolean(inklTsGesuche);
+		Validate.isTrue(inklBgGesucheBoolean || inklMischGesucheBoolean || inklTsGesucheBoolean);
+
+		Workjob workJob = createWorkjobForReport(request, uriInfo, ip);
+
+		workJob = workjobService.createNewReporting(
+			workJob,
+			ReportVorlage.VORLAGE_REPORT_MASSENVERSAND,
+			dateFrom,
+			dateTo,
+			periodeId,
+			inklBgGesucheBoolean,
+			inklMischGesucheBoolean,
+			inklTsGesucheBoolean,
+			Boolean.valueOf(ohneErneuerungsgesuch),
+			text);
 
 		return Response.ok(workJob.getId()).build();
 	}

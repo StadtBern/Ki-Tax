@@ -17,6 +17,7 @@ import {IHttpPromise, IHttpService, ILogService, IPromise} from 'angular';
 import * as moment from 'moment';
 import {IEntityRS} from '../../core/service/iEntityRS.rest';
 import {TSAntragStatus} from '../../models/enums/TSAntragStatus';
+import {TSFinSitStatus} from '../../models/enums/TSFinSitStatus';
 import {TSGesuchBetreuungenStatus} from '../../models/enums/TSGesuchBetreuungenStatus';
 import {TSMitteilungEvent} from '../../models/enums/TSMitteilungEvent';
 import TSAntragDTO from '../../models/TSAntragDTO';
@@ -25,7 +26,6 @@ import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
 import WizardStepManager from './wizardStepManager';
 import IRootScopeService = angular.IRootScopeService;
-import {TSFinSitStatus} from '../../models/enums/TSFinSitStatus';
 
 export default class GesuchRS implements IEntityRS {
     serviceURL: string;
@@ -257,6 +257,14 @@ export default class GesuchRS implements IEntityRS {
     public getIdOfNewestGesuch(gesuchsperiodeId: string, fallId: string): IPromise<string> {
         return this.http.get(this.serviceURL + '/newestid/' + encodeURIComponent(gesuchsperiodeId) + '/' + encodeURIComponent(fallId))
             .then((response: any) => {
+                return response.data;
+            });
+    }
+
+    public getMassenversandTexteForGesuch(gesuchID: string): IPromise<string[]> {
+        return this.http.get(this.serviceURL + '/massenversand/' + encodeURIComponent(gesuchID))
+            .then((response: any) => {
+                this.$log.debug('PARSING antragDTO REST object ', response.data);
                 return response.data;
             });
     }

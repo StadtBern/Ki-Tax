@@ -20,6 +20,7 @@ package ch.dvbern.ebegu.enums;
  */
 public enum Taetigkeit {
 	ANGESTELLT,
+	ANGESTELLT_STUNDENLOHN,
 	SELBSTAENDIG,
 	AUSBILDUNG,
 	RAV,

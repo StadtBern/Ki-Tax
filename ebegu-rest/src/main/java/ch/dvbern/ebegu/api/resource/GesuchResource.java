@@ -461,7 +461,7 @@ public class GesuchResource {
 		return Response.ok(converter.gesuchToJAX(gesuchToReturn)).build();
 	}
 
-	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch das Jugendamt",
+	@ApiOperation(value = "Gibt den Antrag frei und bereitet ihn vor für die Bearbeitung durch Familie & Quartier Stadt Bern",
 		response = JaxGesuch.class)
 	@Nullable
 	@POST
@@ -888,5 +888,17 @@ public class GesuchResource {
 			return Response.ok(idOfNeuestesGesuch.get()).build();
 		}
 		return Response.ok().build();
+	}
+
+	@ApiOperation(value = "Gibt alle Antraege (Gesuche und Mutationen) eines Falls zurueck",
+		responseContainer = "List", response = JaxAntragDTO.class)
+	@Nonnull
+	@GET
+	@Path("/massenversand/{gesuchId}")
+	@Consumes(MediaType.WILDCARD)
+	@Produces(MediaType.WILDCARD)
+	public List<String> getMassenversandTexteForGesuch(@Nonnull @NotNull @PathParam("gesuchId") JaxId gesuchIdJax) {
+		Validate.notNull(gesuchIdJax.getId());
+		return gesuchService.getMassenversandTexteForGesuch(converter.toEntityId(gesuchIdJax));
 	}
 }

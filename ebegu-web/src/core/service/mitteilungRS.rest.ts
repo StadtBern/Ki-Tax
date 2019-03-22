@@ -20,6 +20,7 @@ import {TSMitteilungStatus} from '../../models/enums/TSMitteilungStatus';
 import {TSMitteilungTeilnehmerTyp} from '../../models/enums/TSMitteilungTeilnehmerTyp';
 import TSBetreuung from '../../models/TSBetreuung';
 import TSBetreuungsmitteilung from '../../models/TSBetreuungsmitteilung';
+import TSBetreuungsmitteilungPensum from '../../models/TSBetreuungsmitteilungPensum';
 import TSBetreuungspensum from '../../models/TSBetreuungspensum';
 import TSBetreuungspensumContainer from '../../models/TSBetreuungspensumContainer';
 import TSFall from '../../models/TSFall';
@@ -27,6 +28,7 @@ import TSMitteilung from '../../models/TSMitteilung';
 import TSMtteilungSearchresultDTO from '../../models/TSMitteilungSearchresultDTO';
 import DateUtil from '../../utils/DateUtil';
 import EbeguRestUtil from '../../utils/EbeguRestUtil';
+import EbeguUtil from '../../utils/EbeguUtil';
 import ITranslateService = angular.translate.ITranslateService;
 
 export default class MitteilungRS {
@@ -232,21 +234,28 @@ export default class MitteilungRS {
                     return DateUtil.compareDateTime(a.betreuungspensumJA.gueltigkeit.gueltigAb, b.betreuungspensumJA.gueltigkeit.gueltigAb);
                 }
             ).forEach(betpenContainer => {
-            if (betpenContainer.betreuungspensumJA) {
-                // z.B. -> Pensum 1 vom 1.8.2017 bis 31.07.2018: 80%
-                if (i > 1) {
-                    message += '\n';
+                if (betpenContainer.betreuungspensumJA) {
+                    // z.B. -> Pensum 1 vom 1.8.2017 bis 31.07.2018: 80%
+                    if (i > 1) {
+                        message += '\n';
+                    }
+                    let datumAb: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
+                    let datumBis: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigBis, 'DD.MM.YYYY');
+
+                    const mittagessen: string = EbeguUtil.isNotNullOrUndefined(betpenContainer.betreuungspensumJA.monatlicheMittagessen)
+                        ? this.$translate.instant('MUTATIONSMELDUNG_MITTAGESSEN') + betpenContainer.betreuungspensumJA.monatlicheMittagessen
+                        : '';
+
+                    datumBis = datumBis ? datumBis : DateUtil.momentToLocalDateFormat(betreuung.gesuchsperiode.gueltigkeit.gueltigBis, 'DD.MM.YYYY'); // by default Ende der Periode
+                    message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i
+                        + this.$translate.instant('MUTATIONSMELDUNG_VON') + datumAb
+                        + this.$translate.instant('MUTATIONSMELDUNG_BIS') + datumBis
+                        + mittagessen
+                        + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
                 }
-                let datumAb: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigAb, 'DD.MM.YYYY');
-                let datumBis: string = DateUtil.momentToLocalDateFormat(betpenContainer.betreuungspensumJA.gueltigkeit.gueltigBis, 'DD.MM.YYYY');
-                datumBis = datumBis ? datumBis : DateUtil.momentToLocalDateFormat(betreuung.gesuchsperiode.gueltigkeit.gueltigBis, 'DD.MM.YYYY'); // by default Ende der Periode
-                message += this.$translate.instant('MUTATIONSMELDUNG_PENSUM') + i
-                    + this.$translate.instant('MUTATIONSMELDUNG_VON') + datumAb
-                    + this.$translate.instant('MUTATIONSMELDUNG_BIS') + datumBis
-                    + ': ' + betpenContainer.betreuungspensumJA.pensum + '%';
+                i++;
             }
-            i++;
-        });
+        );
         return message;
     }
 
@@ -254,13 +263,21 @@ export default class MitteilungRS {
      * Kopiert alle Betreuungspensen der gegebenen Betreuung in einer neuen Liste und
      * gibt diese zurueck. By default wird eine leere Liste zurueckgegeben
      */
-    private extractPensenFromBetreuung(betreuung: TSBetreuung): Array<TSBetreuungspensum> {
-        let pensen: Array<TSBetreuungspensum> = [];
+    private extractPensenFromBetreuung(betreuung: TSBetreuung): Array<TSBetreuungsmitteilungPensum> {
+        let pensen: Array<TSBetreuungsmitteilungPensum> = [];
         betreuung.betreuungspensumContainers.forEach(betpenContainer => {
             let pensumJA = angular.copy(betpenContainer.betreuungspensumJA);
             pensumJA.id = undefined; // the id must be set to undefined in order no to duplicate it
-            pensen.push(pensumJA);
+            pensen.push(this.convertBetreuungspensumToBetreuungsmitteilung(pensumJA));
         });
         return pensen;
+    }
+
+    private convertBetreuungspensumToBetreuungsmitteilung(betreuungspensum: TSBetreuungspensum): TSBetreuungsmitteilungPensum {
+        const betreuungsmitteilung = new TSBetreuungsmitteilungPensum();
+        betreuungsmitteilung.monatlicheMittagessen = betreuungspensum.monatlicheMittagessen;
+        betreuungsmitteilung.pensum = betreuungspensum.pensum;
+        betreuungsmitteilung.gueltigkeit = betreuungspensum.gueltigkeit;
+        return betreuungsmitteilung;
     }
 }

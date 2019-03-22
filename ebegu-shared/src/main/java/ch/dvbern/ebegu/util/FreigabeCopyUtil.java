@@ -160,6 +160,7 @@ public final class FreigabeCopyUtil {
 		betreuungspensumGS.setGueltigkeit(betreuungspensumJA.getGueltigkeit());
 		betreuungspensumGS.setPensum(betreuungspensumJA.getPensum());
 		betreuungspensumGS.setNichtEingetreten(betreuungspensumJA.getNichtEingetreten());
+		betreuungspensumGS.setMonatlicheMittagessen(betreuungspensumJA.getMonatlicheMittagessen());
 	}
 
 	private static void copyAbwesenheitContainer(@Nullable AbwesenheitContainer container) {
@@ -217,6 +218,8 @@ public final class FreigabeCopyUtil {
 		gesuchstellerGS.setEwkPersonId(gesuchstellerJA.getEwkPersonId());
 		gesuchstellerGS.setEwkAbfrageDatum(gesuchstellerJA.getEwkAbfrageDatum());
 		gesuchstellerGS.setDiplomatenstatus(gesuchstellerJA.isDiplomatenstatus());
+		gesuchstellerGS.setIban(gesuchstellerJA.getIban());
+		gesuchstellerGS.setKontoinhaber(gesuchstellerJA.getKontoinhaber());
 	}
 
 	private static void copyGesuchstellerAdresseContainer(@Nullable GesuchstellerAdresseContainer container) {

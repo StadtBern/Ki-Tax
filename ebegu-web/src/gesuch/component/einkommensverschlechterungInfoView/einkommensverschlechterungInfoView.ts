@@ -14,28 +14,28 @@
  */
 
 import {IComponentOptions, IPromise} from 'angular';
-import AbstractGesuchViewController from '../abstractGesuchView';
-import GesuchModelManager from '../../service/gesuchModelManager';
-import BerechnungsManager from '../../service/berechnungsManager';
-import ErrorService from '../../../core/errors/service/ErrorService';
-import EbeguUtil from '../../../utils/EbeguUtil';
-import {getTSMonthValues, getTSMonthWithVorjahrValues, TSMonth} from '../../../models/enums/TSMonth';
-import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
-import WizardStepManager from '../../service/wizardStepManager';
-import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
-import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
-import {RemoveDialogController} from '../../dialog/RemoveDialogController';
-import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
-import {TSRole} from '../../../models/enums/TSRole';
-import TSEinkommensverschlechterungInfoContainer from '../../../models/TSEinkommensverschlechterungInfoContainer';
-import EinkommensverschlechterungInfoRS from '../../service/einkommensverschlechterungInfoRS.rest';
 import * as moment from 'moment';
 import AuthServiceRS from '../../../authentication/service/AuthServiceRS.rest';
-import {TSRoleUtil} from '../../../utils/TSRoleUtil';
-import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
-import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
-import EinkommensverschlechterungContainerRS from '../../service/einkommensverschlechterungContainerRS.rest';
+import {DvDialog} from '../../../core/directive/dv-dialog/dv-dialog';
+import ErrorService from '../../../core/errors/service/ErrorService';
 import {isAtLeastFreigegeben} from '../../../models/enums/TSAntragStatus';
+import {getTSMonthValues, getTSMonthWithVorjahrValues, TSMonth} from '../../../models/enums/TSMonth';
+import {TSRole} from '../../../models/enums/TSRole';
+import {TSWizardStepName} from '../../../models/enums/TSWizardStepName';
+import {TSWizardStepStatus} from '../../../models/enums/TSWizardStepStatus';
+import TSEinkommensverschlechterungContainer from '../../../models/TSEinkommensverschlechterungContainer';
+import TSEinkommensverschlechterungInfo from '../../../models/TSEinkommensverschlechterungInfo';
+import TSEinkommensverschlechterungInfoContainer from '../../../models/TSEinkommensverschlechterungInfoContainer';
+import TSGesuchstellerContainer from '../../../models/TSGesuchstellerContainer';
+import EbeguUtil from '../../../utils/EbeguUtil';
+import {TSRoleUtil} from '../../../utils/TSRoleUtil';
+import {RemoveDialogController} from '../../dialog/RemoveDialogController';
+import BerechnungsManager from '../../service/berechnungsManager';
+import EinkommensverschlechterungContainerRS from '../../service/einkommensverschlechterungContainerRS.rest';
+import EinkommensverschlechterungInfoRS from '../../service/einkommensverschlechterungInfoRS.rest';
+import GesuchModelManager from '../../service/gesuchModelManager';
+import WizardStepManager from '../../service/wizardStepManager';
+import AbstractGesuchViewController from '../abstractGesuchView';
 import IQService = angular.IQService;
 import IScope = angular.IScope;
 import ITimeoutService = angular.ITimeoutService;
@@ -257,11 +257,13 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
     }
 
     private initializeEKVContainers(): void {
-        if (this.gesuchModelManager.getGesuch().gesuchsteller1 && !this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer) {
-            this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+        const gesuch = this.gesuchModelManager.getGesuch();
+        if (gesuch.gesuchsteller1 && !gesuch.gesuchsteller1.einkommensverschlechterungContainer) {
+            gesuch.gesuchsteller1.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
         }
-        if (this.gesuchModelManager.isGesuchsteller2Required() && !this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer) {
-            this.gesuchModelManager.getGesuch().gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
+        if (this.gesuchModelManager.isGesuchsteller2Required() && gesuch.gesuchsteller2
+            && !gesuch.gesuchsteller2.einkommensverschlechterungContainer) {
+            gesuch.gesuchsteller2.einkommensverschlechterungContainer = new TSEinkommensverschlechterungContainer();
         }
     }
 
@@ -322,13 +324,6 @@ export class EinkommensverschlechterungInfoViewController extends AbstractGesuch
             && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== null
             && this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer !== undefined
             && !this.gesuchModelManager.getGesuch().gesuchsteller1.einkommensverschlechterungContainer.isEmpty();
-    }
-
-    public isSteueramtLetzterStep(): boolean {
-        if (this.authServiceRS.isOneOfRoles(TSRoleUtil.getSteueramtOnlyRoles())) {
-            return !this.getEinkommensverschlechterungsInfo().einkommensverschlechterung;
-        }
-        return false;
     }
 
     public isAmt(): boolean {

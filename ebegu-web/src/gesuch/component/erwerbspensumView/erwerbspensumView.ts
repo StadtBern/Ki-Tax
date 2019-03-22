@@ -150,6 +150,7 @@ export class ErwerbspensumViewController extends AbstractGesuchViewController<TS
 
     viewZuschlag(): boolean {
         return this.model.erwerbspensumJA.taetigkeit === TSTaetigkeit.ANGESTELLT ||
+            this.model.erwerbspensumJA.taetigkeit === TSTaetigkeit.ANGESTELLT_STUNDENLOHN ||
             this.model.erwerbspensumJA.taetigkeit === TSTaetigkeit.AUSBILDUNG ||
             this.model.erwerbspensumJA.taetigkeit === TSTaetigkeit.SELBSTAENDIG;
     }

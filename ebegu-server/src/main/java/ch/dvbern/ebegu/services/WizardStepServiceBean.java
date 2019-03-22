@@ -717,22 +717,26 @@ public class WizardStepServiceBean extends AbstractBaseService implements Wizard
 		if (wizardStep.getWizardStepName() == WizardStepName.EINKOMMENSVERSCHLECHTERUNG
 			|| wizardStep.getWizardStepName() == WizardStepName.FINANZIELLE_SITUATION) {
 
-			final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(wizardStep.getGesuch().getId());
+			final Gesuch gesuch = wizardStep.getGesuch();
+			if (!gesuch.getGesuchsperiode().isVerpflegungenActive()) {
+				// only when Verpflegungen are not active we need to validate the steps
+				final List<Betreuung> betreuungenFromGesuch = betreuungService.findAllBetreuungenFromGesuch(gesuch.getId());
 
-			BetreuungsangebotTyp dominantType = getDominantBetruungsangebotTyp(betreuungenFromGesuch);
+				BetreuungsangebotTyp dominantType = getDominantBetruungsangebotTyp(betreuungenFromGesuch);
 
-			if (dominantType == BetreuungsangebotTyp.FERIENINSEL) {
-				setWizardStepOkOrMutiert(wizardStep);
-			}
-			if (dominantType == BetreuungsangebotTyp.KITA && EbeguUtil.isFinanzielleSituationNotIntroduced(wizardStep.getGesuch())
-				&& wizardStep.getWizardStepStatus() != WizardStepStatus.IN_BEARBEITUNG) {
-				wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-			}
-			if (dominantType == BetreuungsangebotTyp.TAGESSCHULE) {
-				if (EbeguUtil.isSozialhilfeBezuegerNull(wizardStep.getGesuch())) {
-					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
-				} else if (!EbeguUtil.isFinanzielleSituationRequired(wizardStep.getGesuch())) {
+				if (dominantType == BetreuungsangebotTyp.FERIENINSEL) {
 					setWizardStepOkOrMutiert(wizardStep);
+				}
+				if (dominantType == BetreuungsangebotTyp.KITA && EbeguUtil.isFinanzielleSituationNotIntroduced(gesuch)
+					&& wizardStep.getWizardStepStatus() != WizardStepStatus.IN_BEARBEITUNG) {
+					wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+				}
+				if (dominantType == BetreuungsangebotTyp.TAGESSCHULE) {
+					if (EbeguUtil.isSozialhilfeBezuegerNull(gesuch)) {
+						wizardStep.setWizardStepStatus(WizardStepStatus.NOK);
+					} else if (!EbeguUtil.isFinanzielleSituationRequired(gesuch)) {
+						setWizardStepOkOrMutiert(wizardStep);
+					}
 				}
 			}
 		}
