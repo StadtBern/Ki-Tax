@@ -387,7 +387,7 @@
             <dependency>
                 <groupId>org.infinispan</groupId>
                 <artifactId>infinispan-core</artifactId>
-                <version>9.2.3.Final</version>
+                <version>11.0.6.Final</version>
                 <!-- Provided as we use the Infinispan provided by Wildfly -->
                 <scope>provided</scope>
             </dependency>
